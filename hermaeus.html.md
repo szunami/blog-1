@@ -1,0 +1,153 @@
+# What Is Hermaeus
+
+In case you didn’t know, and haven’t yet looked at the “My *TES* Writings” part
+of the navigation menu, one of my larger hobbies involves hanging out on a forum
+for discussing and creating lore for the *Elder Scrolls* universe. If you hadn’t
+figured out I was a huge nerd from the computer stuff yet, well, I am.
+
+The community in which I found myself involved is a wonderfully vibrant place,
+and we pride ourselves on the level of volume and quality of posts the community
+members create to talk about existing lore, or make new things up for each other
+to talk about. The best of these are collected into a giant list called the
+Compendium.
+
+Unfortunately, the Compendium doesn’t **copy** the posts stored in it; it just
+references the original posts. Which means that any damage done to the originals
+is damage done to the Compendium as well. That is not the kind of behavior
+desirable in a library, but there hasn’t been much we could do about it. By the
+time anyone (by which I mean, I) realized there was a problem, the Compendium
+had two thousand entries and so manually copying all the posts that still
+existed was obviously not going to happen.
+
+As it so happens, though, I had been reading up on reddit’s API for a different
+project on the subreddit, and so I decided to take matters into my own hands.
+
+In about six hours (I’ll let you guess which six… it was 2300-0500), I had drawn
+up a prototype script that was capable of logging into reddit, finding the
+Compendium index page, sniffing out the reference links, following them, and
+downloading the posts. It took my script over an hour to crawl the 1,951 links
+on the index page and download their contents. It took me about ten minutes into
+that process to realize that many of the documents I was saving just said
+`[deleted]`, so I tacked in the functionality to inspect a post to see if it was
+deleted or not before saving, which brought the archive down to 1,634 posts.
+
+This may come as a surprise to some, but certain mental states have significant
+influence on programming ability. Sleep deprivation and intoxication are the two
+more prominent ones, to the point where there’s a joke about the ideal BAC for
+programming inspiration. For me, sleeplessness is my drug of choice. And it
+actually works!
+
+Unfortunately, the genius of exhaustion’s code is matched by its ugliness.
+
+So I scrapped the first script and rebuilt Hermaeus properly over the course of
+the day after that morning, when I could approach it with some sleep and mulling
+over the design.
+
+I’m proud to say that Hermaeus is my first actually useful tool, officially
+published, able to be used by someone who isn’t me. Granted, it’s a Ruby CLI
+script, so the audience isn’t going to be much wider, but it’s a start.
+
+# Things I Learned
+
+## Forever Is A Myth
+
+The main lesson of Hermaeus is that it is never too soon to start making backups
+of important things. The internet doesn’t *actually* mean forever; in fact, the
+internet is incredibly transient in most cases. There’s so much information
+generated and published these days that we can’t help but lose huge quantities
+of it in the churn, and most people don’t notice. Unless, like /r/teslore did,
+they make lists of links and call that a library, and slowly those links start
+dying.
+
+## RTFM
+
+Another lesson from my work on Hermaeus was to **READ THE FANCY MANUAL**. it’s
+a core part of programmer jargon for a reason, and a good lesson for everyday
+life.
+
+Do you know *why* the first Hermaeus took over an hour to chew through the
+Compendium, and even then it crashed several times and I had to manually adjust
+its selection window and restart it?
+
+I didn’t realize I could ask reddit for posts in large batches, so I was making
+an individual request for each entry, and waiting the requisite one second
+between requests to keep the server from cutting me off. That made the process
+spend the vast, vast majority of its time waiting on the network, which is never
+a good bound to have on your program’s operating speed because the network is
+*slow*.
+
+After I read the documentation on the reddit API and discovered I could make
+batch requests, I also learned that a batch of nearly two thousand is too big
+for the network to carry. So I wrote a monkeypatch for Ruby’s `Array` class to
+break up an array into chunks, which worked wonderfully, not realizing that
+such a method already existed in the standard library and I just had to turn it
+on.
+
+But at least it was good exercise.
+
+## Tests Are Good
+
+I didn’t use formal testing on either implementation of Hermaeus. I really
+should have; that failure is why Hermaeus is version 1.0.2 instead of 1.0.0; I
+deployed it to a clean machine and promptly found two bugs because I was testing
+in my development environment, not in a cleanroom.
+
+I also spent easily as much time in the debugger as I did actually writing code.
+Ruby’s `pry` console is a magical, wonderful, tool, and I had to use it in depth
+every time I wanted to slightly tweak a function or check what was coming out of
+the network.
+
+## Goals Are Also Good
+
+I set out to build Hermaeus with a pretty clear goal: Look at two types of index
+page on /r/teslore, dereference the links on those pages, and scrape *those*
+posts to the filesystem.
+
+Hermaeus does exactly that.
+
+I started getting feature creep at the end; the Archivist class which actually
+writes files to disk also reformats the text.
+
+Rather than keep going down the rabbit hole of adding more features onto
+Hermaeus (though I do have some planned, such as: storing in a database;
+performing general scraping without a specific index; updating stored posts with
+extra data like categories), I stopped at a 1.0 release and left that list
+sitting in my TODO list.
+
+## Utility Means Everything
+
+It doesn’t matter how well designed a piece of software is, if it never gets
+used. Hermaeus is completely useless right now, because its output – a slew of
+Markdown text – just sits on the filesystem. It’s like a library with no front
+door and no catalogue cards.
+
+So my next project is to make a web interface so that Hermaeus can be put to
+real use.
+
+# Conclusion
+
+Programming *really* needs to be more mainstream and commonplace. Computers are
+a huge and integral part of modern life.
+
+And yet many people have no idea how to actually control the machines they use;
+we stick to pre-assembled tools and interfaces and if there isn’t a convenient
+solution to a problem, the problem goes unsolved or badly solved. It’s like only
+eating frozen dinners because you don’t cook, and what’s worse, most houses
+don’t have a kitchen. (I’m exaggerating slightly, but seriously, programming on
+Windows has higher hurdles than on macOS, which has higher hurdles than on
+Linux.)
+
+I spent a day or so thinking about this and came up with a simple tool that
+fills a need I didn’t even realize I had until recently. It’s nothing special to
+look at, it’s not a groundbreaking new development in terms of functionality,
+but it’s useful for my life. And being able to make little conveniences like
+that is incredibly empowering, and something on which many people are missing
+out.
+
+Everyone has unique lives and needs. Make things that fit you, rather than
+trying to make you fit things that already exist. It’s the little touches that
+make all the difference.
+
+This applies to pretty much everything; I personally just happen to have the
+most talent at applying it to computers. I imagine carpenters decry IKEA much in
+the same way, yet here I sit at an IKEA desk. But hey, at least I did something.
