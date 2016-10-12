@@ -1,3 +1,9 @@
+---
+title: Hermaeus and Simple Tools
+date: 2016-10-12
+tags: reddit, ruby, software design
+---
+
 # What Is Hermaeus
 
 In case you didn’t know, and haven’t yet looked at the “My *TES* Writings” part
