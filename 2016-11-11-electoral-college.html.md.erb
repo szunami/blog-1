@@ -1,0 +1,327 @@
+---
+title: Utility of the Electoral College
+date: 2016-11-11
+tags: current events, politics
+---
+
+<% cwd = File.dirname __FILE__ %>
+<% dir = File.basename __FILE__, ".html.md.erb" %>
+<% load File.join cwd, dir, "math.rb" %>
+
+# Foreword
+
+The way the U.S. national election process works is the subject of a fair amount
+of criticism. I’m a critic of it myself, but many of the complaints I’ve seen
+levied – especially since Election Day – are, in my opinion, actually harmful to
+the successful operation of American political structure.
+
+For whom I did or didn’t vote is irrelevant, and frankly nobody’s concern. The
+election was determined before my state was even *counted*, so we’ve already
+established that my vote was effectively worthless. That’s not a nice sentiment,
+considering one of the things we teach our citizens is that everyone has a vote
+and everyone’s vote matters, but, there are 350 million US citizens. It’s pretty
+difficult to have any individual voice stand out.
+
+# Electoral College History
+
+“Ms. Clinton won the popular vote!” people declaim. “This is a democracy and
+therefore she should be president!”
+
+Well, no. The US **isn’t** a democracy. It’s a representative republic, and it
+started out as a federation but that turned out to be impractical in global
+politics at the time. It also would be impractical now, if the EU’s troubles are
+any gauge.
+
+If you’ll hearken back to high school civics class, you may remember some
+discussions about how the legislative branch of the government (that’s Congress)
+would be put together. Of the original thirteen states-née-colonies,
+there was a fair amount of size and power disparity.
+
+Virginia was very large and populous, and proposed a population-based
+representation. Edmund Randolph argued that since Virginia had a large
+population and many citizens, Virginia should have more of a say in the national
+government. After all, the nation’s decisions would have a very large absolute
+effect on Virginians.
+
+New Jersey was very small and unpopulated, and proposed a state-based
+representation. William Paterson argued that the large and populous states (like
+Virginia), would simply steamroll the small states and disregard their interests
+when convenient. If this was truly to be a union of equal states, all states
+should be able to partake in the government.
+
+Connecticut, like the girl in that cereal commercial, stepped up and said “why
+not both?” Roger Sherman and Oliver Ellsworth drafted a compromise that would
+allocate one house of the legislature by population count, satisfying Virginia,
+and allocate the other equally among all states, satisfying New Jersey.
+
+This turned out to be a good plan, because it allows for representation of each
+citizen in the House and representation of each region in the Senate. America is
+big on personal liberty, sovereignty, and equality, but equally important if
+less obvious is the concept of collective liberty, sovereignty, and equality. To
+say that each person is of equal importance is to say that small groups are
+worth less than large groups; to say that each group is of equal importance
+diminishes the value of individuals in large groups. A mixed Congress must
+therefore balance the wishes of both.
+
+The Electoral College is, ideally, the application of the Connecticut compromise
+to the Executive branch. I cannot stress this enough – America is not now and
+has never been a classical democracy.
+
+Under a more democratic structure (Virginia plan), the populous regions would
+outweigh the sparse regions. Large groups could throw their weight around, and
+small groups have little defense. This was not good in the early days of the
+country and is even less good now, for reasons I’ll explore later.
+
+Under a more republican strucutre (New Jersey plan), the will of the people
+would be drastically inflated or curtailed based on where they happened to live.
+This is also not a good thing, since it makes a tyranny of the minority rather
+easy to accomplish.
+
+The Connecticut Compromise theory mixes both of these. The Electoral College (in
+theory) is largely beholden to the will of the people and satisfies democracy,
+but allows for adjustments so that small states are not completely drowned out
+and satisfies federation and the republic.
+
+# Modern Relevance
+
+How does this apply to the modern era? Let’s look at population distribution.
+For this table, the U.S. population is estimated to be almost 325 million.
+
+<% table_cities do |row| %>
+<%= row %>
+<% end %>
+
+Thirty-nine metropolitan regions comprise a majority of the population. Under
+first-past-the-post voting rules, those 39 cities can control the course for the
+entire nation. This is pure democracy in action, and it’s not a good thing. This
+is what the small states feared from the Virginia plan, and they’re right to do
+so.
+
+Ultimately, roughly 75% of the American population lives in urban regions
+comprising 3% of the total land area. Even setting aside partisan allegiances in
+the cities, this *clearly* shows that pure democracy would result in national
+policy favoring the urban population, and silencing the rural population. That’s
+pure tyranny of the majority, and it’s something the New Jersey plan feared and
+something the rural citizens still fear today.
+
+The Senate, with two senators per state regardless of population, permits the
+rural and sparsely-populated states to still have a say in federal legislation.
+Similarly, the Electoral College, which gives each state one elector per
+congressman (senators and representatives), gives the rural states with low
+population more of a voice in the presidential election.
+
+## Republic or Democracy?
+
+This is the fifth election in U.S. history in which the Electoral College has
+had a different result from the popular vote.
+
+Considering the system is designed to stymie tyranny of the majority while still
+allowing a largely democratic process, occasionally the minority has to win.
+
+The system is working as it should be, more or less, it’s just that this was a
+singularly unpopular time for a minority win to crop up.
+
+Also, considering the razor-thin margin between the two leading candidates,
+neither of whom possess a national majority (at time of writing, Mrs. Clinton
+has 47.79% of the national vote and Mr. Trump has 47.30%), there are much more
+pressing problems than a popularity inversion.
+
+## Unfair Voting Power Distribution
+
+It’s easy to claim the Electoral College is flawed, which it is, but not due to
+the allocation of electors. People claim that it is unfair because if you take
+the two extreme ends (California, pop. 39.14 million, 55 electors and Wyoming,
+pop. 586,107, 3 electors) and do the requisite math, California has 711 thousand
+citizens per elector while Wyoming has 195 thousand citizens per elector. As
+such, the claim is that democracy is violated because Wyoming votes for the
+presidency are more than three times more powerful than California votes for the
+presidency.
+
+On the other hand, urban voters are much more likely to vote in blocs, whereas
+rural voters are not. Furthermore, the population disparity is so massive that
+even giving Wyoming voters three votes while California voters have only one,
+California will still thrash Wyoming in a general election.
+
+Take this cartogram, for example, which shows the states’ electoral clout as
+area. (Cartogram source: Washington Post)
+
+![](<%= File.join dir, "cartogram.jpg" %>)
+
+So, it’s un-democratic to say that Wyoming voters are thrice as important as
+California voters, but isn’t it also un-republican to say that the San Francisco
+urban area carries the same electoral weight as the entire *state* of Wyoming?
+
+(Incidentally, Mrs. Clinton’s lead margin, 630,877, is slightly larger than the
+population of Vermont, second-from-last thanks to Wyoming.)
+
+The Electoral College being a winner-take-all system for all but two states,
+however, *is* a huge flaw. It effectively silences half of the population in
+each state. For instance, rural California counties usually vote Republican, yet
+the urban cores make it utterly pointless for rural California citizens to vote
+at all, since they can’t possibly outweigh the cities, and the cities habitually
+vote Democrat.
+
+### Absurd Math
+
+Let’s look at three examples *ad absurdum* of the current Electoral College
+implementation. The first will concentrate on winning the fewest states, and the
+second on the fewest people. Each will result in 270 electoral votes, and a
+national victory, without coming *remotely* close to a representative vote. The
+third will show a massively popular favorite losting the race.
+
+1. Half of the electoral votes are found in the eleven most populated states:
+California, Texas, Florida, New York, Illinois, Pennsylvania, Ohio, Georgia,
+Michigan, North Carolina, New Jersey, Virginia. Since the College is
+Winner-Take-All for all these states, only half-plus-one of the population need
+be courted. This comes out to be **<%= minority_win[0][0] %>**, or
+<%= minority_win[0][1]%>.
+
+2. Starting from the lowest population states (whose citizens have the highest
+electoral clout per capita) and working up, a candidate must win the bottom 41
+(D.C. included) in order to clear 270. This comes out to be
+**<%= minority_win[1][0] %>**, or <%= minority_win[1][1] %>.
+
+3. A candidate who takes the inverse of scenario 2, collecting 100% of the top
+10 states’ votes for 256 electors, 100% of Washington state for another 12
+electors, and half-minus-one of the other thirty-nine states plus D.C., will
+fail to satisfy the electoral college even with **<%= majority_loss[0] %>**
+votes (<%= majority_loss[1] %>).
+
+The Electoral College is implemented to defray the potential of a tyranny of the
+majority, but its implementation by the states (Maine and Nebraska are the only
+two which do not use winner-take-all) makes it susceptible to tyranny of the
+minority instead. This is the fifth election in which the popular vote has
+disagreed with the electoral vote – not by much, but enough that people are
+complaining.
+
+# Solutions
+
+There are a few solutions available. The simplest and, in my opinion, most
+obvious choice is to take the Electoral College, which is already allocated like
+Congress, and make it represent like Congress as well. Another would be to
+change how votes are tallied in the first place, before Electors come into play
+at all.
+
+## Granularity of Electors
+
+Given that laws governing allocation of Congressional districts already state
+that all districts in a state must have rougly the same amount of population,
+allocating electors to track Congressional representatives (all but two vote by
+the district results, and the last two vote according to state decision) would
+be much more fair to all voters, and likely result in Electoral College votes
+more closely mirroring reality. Congressional districts are already susceptible
+to gerrymandering, but that’s another issue entirely.
+
+Unfortunately for those decrying the Electoral College this time around, chances
+are that it *still* wouldn’t exactly mirror the popular vote, and Mr. Trump
+would still win. After all, the two Senate-representing Electors vote would vote
+with their state’s popular majority, and we’ve seen how that turned out.
+
+I’d do the math for this scenario, except I can’t find a readily-accessible list
+of election results by county and I certainly have no intention of manually
+compiling one at this time.
+
+## Other Voting Systems
+
+I trust by now I’ve made it clear that winner-takes-all scorekeeping is hugely
+troublesome. It doesn’t represent the actual will of the voters, and it
+naturally tends towards a two-party system. As we’ve seen in every election with
+even remotely strong third-party candidates, they wind up taking votes away from
+the candidate closer to them and thus inadvertently strengthening the candidate
+less like them. For instance, in 2016, Mr. Johnson stole votes from Mr. Trump,
+not from Mrs. Clinton, and Mrs. Stein stole votes from Mrs. Clinton, not from
+Mr. Trump.
+
+As it stands, there is no positive incentive, and a strong negative incentive,
+for voting for third-party candidates who may more accurately reflect one’s
+views. In a presidential race, where the field must ultimately be narrowed to
+one individual, there’s not much room for change. However, a system such as
+Single Transferrable Vote, combined with a more granular Electoral College,
+could make a difference.
+
+In STV, each voter still only has one vote, but rather than having their vote
+be discarded when their chosen candidate is eliminated, their vote automatically
+transfers to another.
+
+Imagine a centrist, independent voter who feels the exact opposite way from
+popular American opinions. They feel most in favor with Mrs. Stein, and feel
+that if she is an unviable candidate, they would rather go with Mr. Johnson,
+with whom they disagree but at least respect that he’s another third-party
+candidate. Barring those two, they lastly would pick Mrs. Clinton over Mr. Trump
+and have no intention of voting for him whatsoever.
+
+This voter would mark their ballot for Mrs. Stein as first favor, Mr. Johnson as
+second, Mrs. Clinton as third, and leave Mr. Trump’s slot empty.
+
+The counters for their Congressional district would, upon determining that Mrs.
+Stein is hopelessly outnumbered, go through the list of Stein voters and recount
+for their second choice. In this instance, Mr. Johnson now collects this
+particular vote from Mrs. Stein, who no longer needs it.
+
+Imagine that Mr. Johnson did not have enough votes initially to be a viable
+candidate in the district, but after Mrs. Stein’s elimination, collected enough
+votes from her former voters that he passed the majority. Now, rather than
+wholly discarding the votes of everyone who voted for either third-party
+candidate, they have become viable.
+
+This is, admittedly, an unlikely situation in the current climate, and more
+realistically Mr. Johnson also is disqualified. The counters now go through and
+take all of Mr. Johnson’s votes, whether first or second choice, and adjust
+those ballots again. Some votes go to Mrs. Clinton, and some to Mr. Trump, and
+most importantly, the penalty of voting third-party is reduced from having one’s
+ballot effectively shredded, to merely getting a candidate one supports somewhat
+less.
+
+Imagine a right-leaning voter. Without third-party candidates, they would vote
+for Mr. Trump. With third-party candidates, they vote for one of them. The
+presence of third-party candidates thus takes a vote away from Mr. Trump, and
+will never return it even when those candidates are eliminated. Thus, it is in
+the interest of the major parties to ensure that there is not a third-party
+candidate who is ideologically close to them, but it is *very much* in the
+parties’ interests to support a third-party candidate ideologically close to
+their opponent.
+
+If your political system favors false-flag operations to support your opponents’
+candidates in hopes of ensuring your own victory due to infighting, do you think
+*maybe your political system is broken*?
+
+# Look to the Future
+
+What can we do about this?
+
+The national Constitution mandates only that the Electoral College exist, and
+be allocated numbers according to each state’s Congressional representation.
+The fact that Electors are 96% of the time assigned as winner-takes-all is the
+fault of the states and the major parties.
+
+Start petitions to adopt a district-based Elector system, with the two remaining
+Electors going as the state wishes, either popular or by district count,
+depending on how democratic or republican the lawmakers are feeling.
+
+Start petitions to change how your district, or state, tallies votes. STV is
+able to be implemented within a legal framework expecting FPTP, since it is just
+a few recounts before declaring a majority winner by virtue of repeatedly
+eliminating the least-popular candidate.
+
+Remember your civics classes, though. The U.S. is **not** a democracy, and we
+definitely do not want it to become one, because tyranny of the majority is a
+very real thing, especially with increasing polarization of society and culture
+between urban and rural populations. The Electoral College shouldn’t be
+abolished, but it should definitely be overhauled.
+
+Let’s make American politics great. Not great again, because we have no glory
+days of well-executed voting systems on which to look back. Let’s change that.
+
+# Afterword
+
+The data on which I’m drawing my conclusions is scraped from Wikipedia. It can
+be seen [here][data-html] or in plaintext [here][data-text]. The Ruby data
+processing can be seen [here][math-html] or in plaintext [here][math-text].
+
+The Washington Post has an excellent [article] on this topic as well.
+
+[data-html]: <%= canonicalize File.join(dir, "data.html") %>
+[data-text]: <%= File.join(dir, "data.toml") %>
+[math-html]: <%= canonicalize File.join(dir, "math.html") %>
+[math-text]: <%= File.join(dir, "math.rb") %>
+[article]: https://www.washingtonpost.com/graphics/politics/2016-election/how-election-maps-lie/
