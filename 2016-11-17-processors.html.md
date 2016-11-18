@@ -33,6 +33,9 @@ processing device, including *peripheral devices* (single-purpose computers
 controlled by a CPU, which provide real functionality such as storage or
 transmission).
 
+1. ToC
+{:toc}
+
 # CPU Components
 
 In order to determine what should go in a CPU, we first need to identify what it

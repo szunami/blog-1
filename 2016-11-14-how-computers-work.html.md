@@ -6,6 +6,9 @@ category: How Computers Work
 number: 0
 ---
 
+1. ToC
+{:toc}
+
 # Introduction
 
 Computing is an incredibly complex and detailed topic, and one about which I’m

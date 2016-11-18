@@ -6,6 +6,9 @@ category: How Computers Work
 number: 1
 ---
 
+1. ToC
+{:toc}
+
 # Introduction
 
 I studied Computer Engineering, which involved a good number of Electrical
