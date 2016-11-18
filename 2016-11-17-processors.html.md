@@ -102,6 +102,12 @@ The solution to this problem is called a *multiplexer*. A multiplexer is a logic
 element which is capable of acting like a railway switch: multiple input buses
 enter the device, which uses `AND` gates to only connect one of them to output.
 
+<aside markdown="block" class="terminology">
+If you’re interested, the formula for a mux is
+$$Y = (A \land S) \lor (B \land \lnot S)$$, or `Y = (A & S) | (B & ~S)` in C
+syntax.
+</aside>
+
 There also exists a demultiplexer, which is just a multiplexer facing backwards.
 One input bus comes in, and gets routed among different output buses. We’ll get
 back to that later.
@@ -165,6 +171,35 @@ It looks something like this:
 As you can see, every doubling of input buses only requires one more selector
 line. The new selector line controls where the end mux looks, while the old
 selector line gets forwarded to each leaf (left) mux.
+
+<aside markdown="block" class="terminology">
+The downside of binary tree structures is their *overhead*. A 4:1 mux has three
+internal buses which are not part of the interface, and rather than being a
+single unit, is three.
+
+An 8:1 mux consists of two 4:1 muxes connected to a 2:1 mux. This structure has
+two 2:1 muxes sitting in the internal logic, not part of the interface at all,
+as well six internal paths.
+
+<aside markdown="block" class="terminology">
+The expense formula for binary trees is both incredibly simple (make one and
+count) and also requires Calculus II. This is the calculus; I’m throwing it in
+as a bonus and you can skip this if you want; I will only reference it one time.
+
+If you take a sum, starting at some number and successively adding half of that
+to your result, your sum approaches twice the starting number.
+
+$$\sum_{k=0}^{\infty}\frac{1}{2^k} = 2$$
+
+If you have an n-bit-wide binary tree, you wind up with $$2^n - 1$$ nodes in the
+tree.
+
+$$\sum_{k=log_2{n}}^{0}2^k = n + \frac{n}{2} + \frac{n}{4} + \frac{n}{8} + ... + 8 + 4 + 2 + 1 = 2^n - 1$$
+
+Deep trees have a *lot* of middleware that links them together, but performs no
+user-facing work.
+</aside>
+</aside>
 
 Suppose you want to mux 8 things? You take two of these, slap a 2:1 mux between
 them, and now you're done. The lower two bits of the now-three-bit select line
@@ -361,6 +396,13 @@ long as the replacement module is mathematically correct, the formal behavior of
 the system is unchanged. (Obviously, the layout and power consumption are
 altered, but that’s an electrical engineer’s problem, not ours.)
 
+<aside markdown="block" class="terminology">
+A Look-Ahead Carry adder is a binary tree structure, which I discussed earlier.
+A 32-bit adder requires 63 worker elements, so while it operates quickly (carry
+math goes up and down the tree, so it only takes 5 steps to stabilize), it costs
+almost twice as much as a ripple-carry adder. This tradeoff is not always ideal.
+</aside>
+
 #### Binary Subtraction
 
 First, let’s talk about how numbers are represented in binary. 8-bit *unsigned*
@@ -385,6 +427,30 @@ Notice, though, that addition that passes the overflow point winds up being
 a subtraction of 256. Thanks to properties of arithmetic, we can thusly say that
 subtraction is actually addition plus 256. The way 2’s-complement notation maps
 to bits, means that in bit representation, `A - B` is actually `A + ¬B + 1`.
+
+Let me prove I’m not making this up:
+
+~~~
+let minus_one = 0b1111_1111;
+let plus_one  = 0b0000_0001;
+
+~minus_one = ~0b1111_1111 = 0b0000_0000;
+plus_one = 0b0000_0000 + 0b1 = 0b0000_0001 = ~minus_one + 0b1;
+
+let plus_127  = 0b0111_1111;
+let minus_128 = 0b1000_0000;
+let minus_127 = 0b1000_0001;
+
+~plus_127 = 0b1000_0000;
+minus_127 = 0b1000_0000 + 0b1 = 0b1000_0001 = ~plus_one + 0b1
+
+Inductively:
+
+~(number-in-2s-complement) = -number - 1
+~(number-in-2s-complement) + 1 = -number
+~~~
+
+This works for all `n`-bit numbers, which can represent integers from $$-2^{n-1}$$ to $$+2^{n-1} - 1$$.
 
 So to implement subtraction, we use the exact same hardware, but stick a `NOT`
 gate in front of `B` and force the carry input high. Since we can use the same
