@@ -1,7 +1,7 @@
 ---
 title: Transistors and Logic Gates
 date: 2016-11-16
-tags: computers
+tags: computers, electronics
 category: How Computers Work
 number: 1
 ---
