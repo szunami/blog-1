@@ -27,11 +27,12 @@ the other articles to grasp it.
 
 ## General Knowledge
 
-I will strive to avoid using jargon and technical information as though they are
-common words and knowledge, but I can’t avoid them completely. I will strive to
-explain things as best I can. Since I have yet to set up a commenting system on
-this site, feel free to write me by email or any other means with questions or
-followups of any kind.
+One of the hazards of specialization is that jargon and technical information
+become common knowledge to me, so I lose track of what is or isn’t actually
+common knowledge. I will strive to avoid using such terms carelessly, and to
+clearly define all the necessary terms when they are first encountered. Since I
+have yet to set up a commenting system on this site, feel free to write me by
+email or any other means with questions or followups of any kind.
 
 Without further ado, let’s begin.
 
@@ -39,8 +40,8 @@ Without further ado, let’s begin.
 
 In the general sense, a computer is any device which is capable of manipulating
 information to suit a human’s purpose. The abacus could be included in this
-category as a very early, primitive computer, as it assited humans in performing
-arithmetic.
+category as a very early, primitive computer, as it assisted humans in
+performing arithmetic.
 
 ## Mechanical Computation
 
