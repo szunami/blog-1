@@ -195,7 +195,10 @@ to your result, your sum approaches twice the starting number.
 $$\sum_{k=0}^{\infty}\frac{1}{2^k} = 2$$
 
 If you have an n-bit-wide binary tree, you wind up with $$2^n - 1$$ nodes in the
-tree.
+tree. This formula uses $$log_2{n}$$ to compute the *depth* of the tree, and
+accumulates the width of the tree at each level. Since each level closer to the
+root has half as many nodes as the previous root, we wind up following the above
+series to a finite end.
 
 $$\sum_{k=log_2{n}}^{0}2^k = n + \frac{n}{2} + \frac{n}{4} + \frac{n}{8} + ... + 8 + 4 + 2 + 1 = 2^n - 1$$
 
@@ -310,10 +313,12 @@ emits a 0 as its bit output and sends a carry to the next column over.
   1100
 +_____
  10110
- └┴───── This generates a carry, which rolls to the next column. In 4-bit
-addition, the result is also 4-bit, and the carry output goes on a different
-wire.
 ~~~
+
+The left-most column of the addends generates a carry, which rolls to the next
+column left. In 4-bit addition, the result is also 4-bits, so the carry output
+(the fifth bit from the right) is not part of the returned sum, but on a carry
+line, which goes somewhere else.
 
 ### Ripple-Carry Adder
 
