@@ -69,9 +69,9 @@ counter, causing the computer to jump to a different part of the instruction
 sequence.
 
 CPUs also define a special “status register” which contains, instead of a single
-n-bit value, n 1-bit “flag” values indicating the state of the CPU. This status
-register holds flags for things like arithmetic overflow, arithmetic carry
-output, *interrupt* state, CPU mode, and comparison results.
+`n`bit value, `n` 1-bit “flag” values indicating the state of the CPU. This
+status register holds flags for things like arithmetic overflow, arithmetic
+carry output, *interrupt* state, CPU mode, and comparison results.
 
 <aside markdown="block">
 The ALU I showed last post actually ties its `Cin` and `Cout` lines to this
@@ -278,9 +278,8 @@ That’s incredibly useless.
 
 Peripheral devices allow a CPU to interact with the outside world and expand its
 functionality. Each of these devices has its own controlling processor, but the
-way those work is defined by the manufacturer the manufacturer provides (or the
-Linux community reverse-engineers) *driver specifications* that tell the CPU how
-to talk to it.
+way those work is defined by a *driver specification* the manufacturer provides
+(or the FOSS community reverse-engineers) that tells the CPU how to talk to it.
 
 ## Expanded Memory
 
@@ -291,15 +290,17 @@ is small for the following reasons:
 - reduce the area footprint of the CPU
 - reduce wiring complexity
 
-and most importantly
-
-- **memory chips trade speed for size**
+but most importantly, memory chips are constrained by a triangle of speed, size,
+and cost. Cost is not very fluid, so memory mainly trades speed for size.
 
 If we want a memory component that can keep up with a CPU, it can’t be very
 large, because that kind of memory is supremely expensive and delicate.
 
 If we want a memory component that has lots of room and is robust, it can’t be
 very fast, because physics is cruel.
+
+If we want a memory component that is not cripplingly expensive, it can be fast
+or large, but not both.
 
 The solution for this is a memory hierarchy, with small and fast at one end and
 large and slow at the other.
@@ -317,8 +318,8 @@ Even L4 cache, though, is orders of magnitude faster than RAM.
 
 RAM (**R**andom **A**ccess **M**emory) is a large array of memory cells. It is
 called random-access in contrast to sequential-access memory (like magnetic
-tape) because access time to a cell is not dependent on that cell’s location in
-RAM.
+tape, or magnetic platters) because access time to a cell is not dependent on
+that cell’s location in memory, absolute or relative to the accessing element.
 
 Current RAM speeds are roughly two to four thousand times slower than CPUs. This
 is why CPU caches exist; when the CPU first asks for a chunk of RAM, the CPU
@@ -335,42 +336,92 @@ addressed by single bytes. Thus, to preserve *alignment*, RAM accesses typically
 leave the last several bits of the address blank.
 
 Let’s look at what one 64-bit word of RAM looks like, with byte-wise addressing.
-Note: these are hexadecimal digits, which run 0123456789ABCDEF, and represent
-four bits each.
+
+Each row in this table is an 8-byte word, and each cell is one byte. The least
+significant nibble (four bits) of each cell’s address is marked in the cell, and
+the remaining nibbles are marked to the left.
+
+<aside markdown="block" class="terminology">
+Programming and computer science often work with numbers that make little sense
+to express in base-10, and much more sense to express in bases such as -2, -8,
+or -16.
+
+These are commonly denoted by using an `0<tag>` prefix.
+
+- Binary (base 2) is denoted by `0b` and uses the digits `01`, like `0b1010`.
+- Octal (base 8) is denoted by `0o` or `\` and uses the digits `01234567`. It
+    can be written `0o012` or `\012`. The latter form is a quirk from early C
+    compilers, and is often preferred to the former because `0` and `o` look
+    very similar. A disadvantage of octal is that because each digit is three
+    bits wide, octal digits do not cleanly divide bytes.
+- Hexadecimal (base 16) is denoted by `0x` and uses the digits
+    `0123456789ABCDEF`. Hexadecimal digits are four bits wide, and so a byte is
+    cleanly represented by a pair. This makes hexadecimal the most common
+    notation for working with large binary numbers, as it is an optimal balance
+    between compression, legibility, and regularity.
+
+Where hexadecimal numbers are used and include the digits `A` through `F`, a
+prefix is not required; however, it is considered good practice for almost all
+occasions. I am not using it in the table below to save space, and because it is
+obvious that the numbers are hexadecimal.
+</aside>
 
 ~~~
-Main bits   Last 4 bits
-         │               │
-0000003  │8│9│A│B│C│D│E│F│
-0000003  │0│1│2│3│4│5│6│7│
-0000002  │8│9│A│B│C│D│E│F│
-0000002  │0│1│2│3│4│5│6│7│
-0000001  │8│9│A│B│C│D│E│F│
-0000001  │0│1│2│3│4│5│6│7│
-0000000  │8│9│A│B│C│D│E│F│
-0000000  │0│1│2│3│4│5│6│7│
-         └─┴─┴─┴─┴─┴─┴─┴─┘
+Main bits            Last 4 bits
+64       32       │               │
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000003  │8│9│A│B│C│D│E│F│
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000003  │0│1│2│3│4│5│6│7│
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000002  │8│9│A│B│C│D│E│F│
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000002  │0│1│2│3│4│5│6│7│
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000001  │8│9│A│B│C│D│E│F│
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000001  │0│1│2│3│4│5│6│7│
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000000  │8│9│A│B│C│D│E│F│
+                  ├─┼─┼─┼─┼─┼─┼─┼─┤
+00000000_0000000  │0│1│2│3│4│5│6│7│
+                  └─┴─┴─┴─┴─┴─┴─┴─┘
 ~~~
 
-So, when the CPU asks RAM for a word of memory, it only needs to specify with a
-precision of 3¼ bytes (in base-16, that would be 3.4, not 3.25 as in decimal),
-since the 1-bit cells specified by the last ¾ bytes (six bits) will all be
-fetched by RAM regardless.
+Modern RAM and motherboards are built for 64-bit words, and so no matter what
+byte address is requested by the CPU, the RAM controller will ship the entire
+word containing that byte. Since words are 8 bytes wide, the bottom 3
+($$log{2}{8}$$) bits of an address are unused, and the address bus can get away
+with not even having those bottom three lines.
 
-Knowing this, the RAM controller is actually set up to not have the six lowest
-bits of a select line, since they are wholly useless. If the CPU wants to ask
-for, say byte `0x28` in the above diagram, the CPU will receive the eight-byte
-word starting at `0x00`, and the CPU will have to throw out the other seven
-bytes itself. This takes time, so RAM access is generally optimized to align
-such that the CPU asks for multiples of `0x00_00_00_40`, or `0b0100_0000`.
+Since RAM is built to operate on evenly spaced, or *aligned*, words, but the CPU
+is capable of working with byte-level addresses, requests for *unaligned* memory
+gets penalized. Suppose the CPU wants a 32-bit number stored at address `0x1C`:
+it issues a request for address `0b_0001_1100`, but the bottom three bits are
+discarded and so RAM acts on the word `0b_0001_1000` (`0x18`). When the CPU
+receives that word, it knows to ignore the low four bytes and only use the high
+four. This requires that the CPU *shift* the word down by 32 bits so that it is
+working with a number at the correct power of 2.
+
+Now imagine that a 32-bit value is stored at `0x10` and a 64-bit value is stored
+at `0x14`. In order to access the 64-bit value, which runs from `0x14` through
+`0x1B`, the CPU must request word `0x10` into one register and shift down, then
+request word `0x18` into another register, shift up, and merge the two. This
+takes far more time and space, and so most compilers will decide to skip the
+four bytes `0x14` through `0x17`, and store the 64-bit value in the full word
+`0x18`-`0x1F`.
+
+Efficient memory usage requires that variables be properly aligned according to
+their sizes, and this comes into play significantly in low-level programming.
 
 ### Bulk Storage
 
 RAM is great, but requires constant power supplies to preserve its stored values
 (dynamic RAM slowly leaks charge; electrical science is just rude like that),
 and there’s only so much of it. Even though 64-bit CPUs, which have 48-bit
-addressing capability, can access a horrific amount of RAM, very few computers
-have the space or power necessary to fill that.
+addressing capability (it’s a weird topic; I’ll address it later), can access a
+horrific amount of RAM, very few computers have the space or power necessary to
+fill that.
 
 So hard drives, solid state drives, magnetic tapes, and CD-ROMs provide an
 extremely dense, unpowered storage solution. The only problem is they are
@@ -386,6 +437,11 @@ On a CPU which can only run one program at a time, accessing the hard drive is
 a crippling blow to performance. Fortunately, since hard drives can operate
 autonomously once told to access a certain address, the CPU can issue a request
 and go back to working on other things until that request completes.
+
+When CPUs decide they need to ask RAM or bulk storage for data, they usually
+stop doing whatever task required that transaction and pick up some other task
+instead. This is called *multitasking* and is one of the more important features
+of modern operating systems.
 
 ## I/O
 
@@ -421,7 +477,7 @@ and the computer was sandwiched between, so that instead of the typewriter’s
 keyboard going to the typewriter’s printer, the computer sat between them and
 read from the keyboard and wrote to the printer.
 
-That happened in the 60s. Nearly sixty years later, and that interface has
+That happened in the ‘60s. Nearly sixty years later, and that interface has
 barely changed; the command line is still present in all computers and pretty
 much impossible for a programmer to ignore.
 
@@ -442,7 +498,7 @@ The latter, called *interrupt*- or *event*- based programming, is awesome, but
 complicated.
 
 Basically, the CPU dangles certain wires to the outside world and, when those
-wires go high, cause an immediate *context switch* in the CPU to a special
+wires change state, cause an immediate *context switch* in the CPU to a special
 function called an *interrupt handler*.
 
 A context switch means the CPU pauses what it was doing, loads new instructions,
