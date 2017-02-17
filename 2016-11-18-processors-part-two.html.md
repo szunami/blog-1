@@ -1,7 +1,10 @@
 ---
 title: Processors Part II
 date: 2016-11-18
-tags: computers, electronics, digital design
+tags:
+- computers
+- electronics
+- digital design
 category: How Computers Work
 number: 3
 ---

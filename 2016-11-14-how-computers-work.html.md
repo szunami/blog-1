@@ -1,7 +1,9 @@
 ---
 title: How Computers Work
 date: 2016-11-14
-tags: computers, computing theory
+tags:
+- computers
+- computing theory
 category: How Computers Work
 number: 0
 ---

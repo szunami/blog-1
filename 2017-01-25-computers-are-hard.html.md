@@ -2,6 +2,7 @@
 title: Computers Are Hard
 date: 2017-01-25
 tags:
+- computers
 - personal
 category: misc
 ---
