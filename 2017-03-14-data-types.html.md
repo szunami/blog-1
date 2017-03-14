@@ -5,6 +5,7 @@ tags:
 - computers
 - computing theory
 - software design
+category: misc
 ---
 
 1. ToC
