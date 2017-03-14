@@ -212,7 +212,7 @@ more into their operation in a future article.
 
 There are two overarching kinds of computer: those which keep their programming
 separate from their data, and those that do not. The former class is referred to
-as the [Harvard architecture], and the latter as [von Neumann machines]. all
+as the [Harvard architecture], and the latter as [von Neumann machines]. All
 computers, from Babbage’s Analytical Engine onwards, were Harvard-type machines
 until after the invention of transistors allowed computers to use the same
 signals and pathways for instruction programming as for data processing.
