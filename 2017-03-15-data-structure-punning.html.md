@@ -242,7 +242,7 @@ bool t2 = &arr[3] == arr + 3; // true
 ~~~
 
 <aside markdown="block">
-Addition is reflexive. $$a + b$$ is identical to $$b + a$$. So the C arithmetic
+Addition is commutative. $$a + b$$ is identical to $$b + a$$. So the C arithmetic
 `base + offset` is equivalent to `offset + base`.
 
 You may be ahead of me. If not, remember that in C, `*(base + offset)` is also
@@ -369,8 +369,15 @@ that structures are as packed as can be. This isn’t perfect: If, for some
 reason, there was implicit padding space between the `vtab` field and the `info`
 field, this would fail.
 
-I don’t know offhand if C will permit `sizeof(Device.vtab)` as a type, but that
-would be the safest way.
+The better way, which I'm not sure offhand how new it is, uses a different
+compiler builtin. The `offsetof` builtin takes a struct type and a struct field,
+and finds the offset of the field within that struct, summing the widths of all
+prior members and any padding.
+
+~~~c
+struct DevHdr* pdh; // from kernel
+struct Device* pdev = (void*)pdh - offsetof(Device, info);
+~~~
 
 But it works. I can take a pointer aimed inside a larger structure and rewind it
 to point at the entirety of the larger structure rather than one component.
