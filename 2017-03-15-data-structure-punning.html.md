@@ -565,7 +565,7 @@ pub struct Foo {
     bar: Bar,
     id: i32,
     bar2: Bar,
-    }
+}
 extern {
     fn register_bar(&Bar);
     fn register_bar2(&Bar);
