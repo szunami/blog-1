@@ -72,6 +72,30 @@ The above example is hilariously unsafe and relies on hardware specifics about
 the way floating point numbers are represented as bits according to the IEEE754
 standard, and likely doesn’t work for all possible float values.
 
+<aside markdown="block">
+It also doesn’t compile anymore under `-Wall`. I copied it verbatim and didn’t
+attempt to actually run it myself. I also wanted to use that exact notation
+because that’s the syntax we’ll be using later with `struct` pointers, where C
+is much more relaxed.
+
+C’s firm glare of a warning in this case explicitly mentions type punning and
+that a float can’t be stored in an integral type even if we try to sweet-talk
+our way past the compiler like this. But this is C, and nothing is truly
+forbidden. So we use a `union`, which lets us bypass silly things like alias
+restrictions and interpret a bit pattern however we so please.
+
+~~~c
+float orig;
+union { float f; long l; } u;
+u.f = orig;
+u.l = 0x5F3759DF - (u.l >> 1);
+return u.f;
+~~~
+
+This was pointed out to me by some kind redditors and so I updated this post
+with the *proper* way to break the rules.
+</aside>
+
 Type punning can also be used to reclassify structured data rather than raw
 primitives, as I’ll show below.
 
