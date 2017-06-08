@@ -45,14 +45,15 @@ both in $$A$$ and in $$B$$ go in the intersection in the middle.
 <aside markdown="block">
 Incidentally, this maps well to Boolean logic. The [Venn Diagram][1] of two
 intersecting circles in a universe is equivalent to the [Karnaugh Map][2] of two
-binary variables.
+binary variables. The diagram below has a K-map on the left and a Venn diagram
+(which is harder to draw in text than one might think) on the right.
 
 ~~~text
-   ┌─┬─┐
- A │1│3│
-   ├─┼─┤
-¬A │0│2│
-   └─┴─┘
+   ┌─┬─┐    ┌─────────────────┐
+ A │1│3│    │   ┌───┮━━━┭───┐ │
+   ├─┼─┤    │ 0 │ 1 │ 3 │ 2 │ │
+¬A │0│2│    │   └───┶━━━┵───┘ │
+   └─┴─┘    └─────────────────┘
    ¬B B
 ~~~
 
@@ -86,21 +87,24 @@ If we are treating it as an unsigned integer, it is a representation of the
 number 165. If we are treating it as a signed integer, it is a representation of
 the number -91. If we assume it is a piece of text, it gets even stranger. It's
 not valid ASCII, and in UTF-8 it is a continuation byte of a longer character
-sequence. It could also be a pointer to memory location `0xA5` where the data we
-really want lives.
+sequence. It could also be an index into memory that informs us where the data
+we *really* seek can be found.
 
 It's impossible to tell purely by inspection, because bits are bits and carry no
 meta information. To describe bits, we encode that information in yet more bits,
 and anyone looking at the system has to agree to abide by arbitrary rules about
-interpreting meaning.
+interpreting meaning. Some examples of these arbitrary rules are text encodings
+such as ASCII, UTF-8, or the myriad other standards, memory models (also known
+as Application Binary Interface, or ABI for short), or transmission protocols
+used to operate communication lines like Ethernet, telephone, serial, or more.
 
 # Data Types
 
-As I briefly nouched on above, computing has a concept of *data types* that
+As I briefly touched on above, computing has a concept of *data types* that
 governs how bits are interpreted. All programming languages have some kind of
 type system that determines how data is interpreted. In some languages, the type
 of a variable is just a number that lives alongside the variable data itself,
-whereas in some others the type in known by the compiler and does not need to be
+whereas in some others the type is known by the compiler and does not need to be
 visible at runtime if the compiler knows it has arranged the code in such a way
 as to not need it.
 
@@ -176,6 +180,11 @@ leading `*`, this would attempt to redefine the symbol `bytes` to point to
 However, because computers are weird, the memory at `bytes` may likely turn out
 to be `0x78563412`, not `0x12345678`, because most modern CPUs store bytes from
 least significant first to most significant last.
+
+I am convinced that endianness exists solely because every discipline has to
+have some kind of issue over which to bitterly feud despite, if not because of,
+there being no real difference between the sides, and the hardware engineers
+were feeling left out.
 </aside>
 
 C also lets us build complex data structures, like so:
@@ -189,7 +198,7 @@ struct Foo {
 } foo;
 
 //  Assign four bytes into foo
-(int)foo = i;
+(int)foo = i; // i is still 0x12345678
 
 printf("%i, %i, %i", foo.s, foo.c1, foo.c2);
 //  4660 86 120 (big endian) or
@@ -252,15 +261,18 @@ identical 32-bit integers. There is no difference, whatsoever, between them, and
 certainly no trace of the `Foo` or `Bar` wrapper types.
 
 ~~~rust
-let foobar: Foo = bar;
+if foo == bar { do_something(); }
 ~~~
 
-This will cause a compilation failure. I have informed the compiler that
-`foobar` is a `Foo` type, and then attempted to assign a `Bar` type to it. This
-does not cause memory failure (remember, in memory `Foo` and `Bar` are idential)
-but does cause type failure. I have informed the compiler that there exists a
-mathematical set $$Foo$$, and a mathematical set $$Bar$$, and elements of one
-are **not** elements of the other.
+This will cause a compilation failure. I have informed the compiler that the
+variable `foo` is of `Foo` type, and `bar` is of `Bar` type, and the compiler
+treats these as completely separate, independent, never-the-twain-shall-meet,
+groups. Unless I give the compiler instructions permitting it, `Foo` and `Bar`
+types are as Capulets and Montagues, and aspiring Romeos find themselves
+mercilessly shut down at compile time, even though an inspection of the raw
+memory would consider this comparison successful. Mathematically, this means
+that the compiler sees a set $$Foo$$ and a set $$Bar$$, and elements of one are
+**not** elements of the other.
 
 In set theory terms, these plain types are fully disjoint and cannot mix.
 Rust does offer a way around this, however.
@@ -299,25 +311,30 @@ which many things are elements, but `None` is not.
 `Option` is a type which includes `Some` and `None` both. All `Some`s are
 `Options`, and all `None`s are `Option`s, and all `Option`s are either a `Some`
 or a `None` but there is no `Option` that is both a `Some` and a `None` at the
-same time. Let’s put that in mathematical terms: the set Option is the sum of
-the sets Some and None, which are two sets such that their intersection is
-empty.
+same time. Let’s put that in mathematical terms: the set $$Option$$ is the sum
+of the sets $$Some$$ and $$None$$, which are two sets such that their
+intersection is empty.
 
 $$Option := \{ Some + None \} | \{ Some \} \cap \{ None \} = \{∅\}$$
 
+(The $$|$$ character above means “where”, and this states that the left side is
+only true when the right side is satisfied. If there exists an element that is
+both $$Some$$ and $$None$$, then the whole expression is invalid.)
+
 Normally, this distinction would require an extra bit alongside the data to
 state what flavor of `Option` some value was. However, Rust knows that for many
-data types, the memory value of a `None` is unique and will never be the memory
-value of a `Some`, so it makes that special value the *discriminant*.
+data types (specifically, pointers and references), the memory value of a `None`
+is unique and will never be the memory value of a `Some`, so it makes that
+special value the *discriminant*.
 
-C nullable pointers use the `NULL` value to indicate invalidity. This value is
-often presumed to be 0, but might not be, depending on the hardware. In Rust,
-the exact value is hidden from us, but for `Option<Pointer>`, the `None`
-variant is just the platform’s `NULL` value, and the `Some(Pointer)` variant is
-anything else. This permits memory that looks in Rust to be identical to C, but
-is treated by the code as being two completely different types. The compiler
-will refuse to treat a `None` as a `Some`, and if it can’t prove it at compile
-time, it will inject code that will enforce this behavior at runtime.
+C pointers use the `NULL` value to indicate invalidity. This value is often
+presumed to be 0, but might not be, depending on the hardware. In Rust, the
+exact value is hidden from us, but for `Option<Pointer>`, the `None` variant is
+just the platform’s `NULL` value, and the `Some(Pointer)` variant is anything
+else. This permits memory that looks in Rust to be identical to C, but is
+treated by the code as being two completely different types. The compiler will
+refuse to treat a `None` as a `Some`, and if it can’t prove it at compile time,
+it will inject code that will enforce this behavior at runtime.
 
 In Rust’s type theory, `enum`s are sum types, since the set of all enum values
 is the sum of all the values of each set within it.

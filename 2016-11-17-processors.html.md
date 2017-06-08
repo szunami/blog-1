@@ -461,7 +461,8 @@ Inductively:
 ~(number-in-2s-complement) + 1 = -number
 ~~~
 
-This works for all `n`-bit numbers, which can represent integers from $$-2^{n-1}$$ to $$+2^{n-1} - 1$$.
+This works for all `n`-bit numbers, which can represent integers from
+$$-2^{n-1}$$ to $$+2^{n-1} - 1$$.
 
 So to implement subtraction, we use the exact same hardware, but stick a `NOT`
 gate in front of `B` and force the carry input high. Since we can use the same
