@@ -7,7 +7,8 @@ tags:
 - computing theory
 - rust
 - software design
-category: misc
+category: type theory
+number: 2
 ---
 
 1. ToC
