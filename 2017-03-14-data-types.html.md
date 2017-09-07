@@ -66,8 +66,8 @@ circle. Cell 3 is the intersection, filled with elements that are both `A` and
 
 The group of cells 1, 2, and 3 holds all elements that are in either `A` or `B`,
 and relates to Boolean OR. In mathematics, this is called the union operator:
-$$A \cup B$$. Cells 1 and 2 hold elements that are `A` or `B` but not both, and
-relate to Boolean XOR. This is called the disjoint union or symmetric union:
+$$A \cup B$$. Cells 1 and 2 hold elements that are `A` or `B` but not in both,
+and relate to Boolean XOR. This is called the disjoint union or symmetric union:
 $$A \Delta B$$. Cell 3 alone is composed of items that are both `A` and `B`, and
 relates to Boolean AND. This is also called the intersection: $$A \cap B$$.
 </aside>
@@ -118,9 +118,9 @@ discuss here.
 
 Let us imagine a 32-bit integer in C. The exact value doesn’t matter, so we’ll
 say it is `0x12345678`. This could be an integer (sign doesn't matter; it's
-positive in both), four ASCII letters `" 4Vx"` (the first byte, `0x12`, is the
-control character DC2 and does not have a visible form), a memory address, or
-anything else. Merely by looking at the memory, we don't know, because C uses
+positive in both), four ASCII letters `"␒4Vx"` (the first byte, `0x12`, is the
+control character DC2 and does not have a true visible form), a memory address,
+or anything else. Merely by looking at the memory, we don't know, because C uses
 static typing and doesn't encode type information into data. In C, types are
 stored in the source code and evaporate during compilation.
 
@@ -133,7 +133,7 @@ printf("%i", i);
 Now we know that the data value is an integer.
 
 ~~~c
-int * pv = i;
+int* pv = i;
 printf("%p", pv);
 //  0x12345678
 printf("%i", *i);
@@ -292,7 +292,7 @@ a real pointer, and so in C, they are the same type.
 
 Rust has a different opinion. In Rust, values that exist are not members of the
 set of things that do not exist, and `NULL` is the sole member of the set of
-nonexistent items and in **not** a member of the set of existing items.
+nonexistent items and is **not** a member of the set of existing items.
 
 
 Rust solves this by using *sum types*: types which are the sum of the component

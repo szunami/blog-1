@@ -153,7 +153,7 @@ struct StringImmediate {
 ~~~
 
 but now the `struct StringImmediate` type is *unsized*, and the compiler will
-assume that it’s two words long and if we want to access memory beyond it, that
+assume that it’s one word long and if we want to access memory beyond it, that
 is entirely our call but don’t blame it when we break things.
 </aside>
 
@@ -479,10 +479,13 @@ decomposing.
 
 <aside markdown="block">
 ~~~rust
+//  declare a new struct type
 struct  Foo { foo: i32, bar: i32, baz: i32, }
+//  build an instance
 let f = Foo { foo: 1, bar: 2, baz: 3, };
-let f = Foo { foo: -1, .. f };
-// f is Foo { foo: -1, bar: 2, baz: 3, }
+//  build another instance, using f as a base
+let g = Foo { foo: -1, .. f };
+// g is Foo { foo: -1, bar: 2, baz: 3, }
 ~~~
 </aside>
 
@@ -501,12 +504,11 @@ and some reference `c: &Child` that we have reason to believe refers to a
 to an `&Parent` reference via the following syntax:
 
 ~~~rust
+//  build the parent and child structs
 let p: Parent = Parent { c: Child { /* ... */ }, /* ... */ };
 //  later
 let rc: &Child = &p.c;
-unsafe {
-    let rp: &Parent = &Parent { c: *rc, .. };
-}
+let rp: &Parent = unsafe { &Parent { c: *rc, .. } };
 ~~~
 
 The final line is a programmatic statement of the following logic:
@@ -575,16 +577,16 @@ pub struct Foo {
     bar2: Bar,
 }
 extern {
+    #[ref_send(Foo)]
     fn register_bar(&Bar);
+    #[ref_send(Foo)]
     fn register_bar2(&Bar);
 }
 
 static foos: [Foo; 16];
 
 for foo in &foos {
-    #[ref_send(Foo)]
     register_bar(&foo.bar);
-    #[ref_send(Foo)]
     register_bar2(&foo.bar2);
 }
 
@@ -605,7 +607,7 @@ check of the functions indicates that they send out references to child types,
 those references are statically known to refer to objects embedded in a larger
 type.
 
-The `#[ref_recv(Type)]` marker informs the compiler that while the base type
+The `#[ref_recv(Type)]` markers inform the compiler that while the base type
 check of the function indicates that they receive a reference to some child
 type, that reference is statically known (presuming correctness in the travel
 path) to refer to objects embedded in a larger type.

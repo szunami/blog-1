@@ -431,13 +431,19 @@ the compiler is able to generate code that will handle all this correctly,
 safely, and completely transparently to the programmer.
 
 <aside markdown="block">
+<del>
 For the sake of brevity, we will briefly pretend that there exists a Rust trait
 that defines `from_be` and `to_be` methods that flip bytes around as
 appropriate, and I implemented it on this type to flip each field between
 network (big) and native (little) endianness. The devil’s in the details.
+</del>
 
+<del>
 These methods exist on primitives, but not as a trait that can be implemented on
 structs.
+</del>
+
+<ins>I wrote [Lilliput](/lilliput) to solve exactly this problem.</ins>
 </aside>
 
 ## Handling Concrete-Type Explosions
@@ -552,6 +558,8 @@ that I’m not sure I’ve yet seen, so I’m treating it as a separate offshoot
 
 ## Magic Constants
 
+<ins>UPDATE: Struct constants landed in Rust 1.20</ins>
+
 I’m going to redefine BPFT yet again, getting even further from valid Rust.
 
 ~~~rust
@@ -562,13 +570,13 @@ with N >= 23,
 {
     len: N,
     //  Keep this flip in mind
-    opcode: u16 = 0xCDAB,
+    const opcode: u16 = 0xCDAB,
     gpsw: u16,
     gpsm: u32,
     frt: u64,
     reset_count: u16,
     net_logical_address: u8,
-    protocol_id: u8 = 0x42,
+    const protocol_id: u8 = 0x42,
     ascii_data: [u8; N - 23],
     net_crc: u8,
 }
@@ -599,11 +607,11 @@ in the manner I just described. We could then, possibly, extend that as follows
 for deserialization:
 
 ~~~rust
-fn deser<O, const N>(src: [u8; N]) -> O
+fn deser<O, const N>(src: [u8; N]) -> Box<O>
 where N: usize, O: As<[u8; N]>
 {
     match src {
-        bpft @ BlogPost_FooTlm<N> { .. } => bpft.from_be(),
+        bpft @ BlogPost_FooTlm<N> { .. } => box bpft.from_be(),
         _ => panic!(),
     }
 }
