@@ -158,7 +158,7 @@ You take a 2:1 mux, and have each of its inputs be… another mux! This is a
 
 It looks something like this:
 
-~~~
+~~~text
      ┌─────┐             |
 ══A══╡     │          S[1:0]
      │ mux ╞══Y0══╗      │
@@ -311,7 +311,7 @@ Binary addition works the exact same way, except it only has two digits, so we
 have the digits 01 and $$1 + 1 == 10$$, which means that the bitwise-addition
 emits a 0 as its bit output and sends a carry to the next column over.
 
-~~~
+~~~text
   1010
   1100
 +_____
@@ -331,7 +331,7 @@ carry plus a one plus a one is 1 and a carry, so the carries can never build up.
 
 Let’s take a look!
 
-~~~
+~~~text
 A B                                        Cin
 ║ ║                                         │
 ║ ╚═══╤════╤════╤════╤════╤════╤════╤════╕  │
@@ -348,7 +348,9 @@ Cout
 
 Our interface is this: two 8-bit inputs, `A` and `B`, and one 1-bit input `Cin`,
 which is our carry-input; one 8-bit output `Y`, and one 1-bit output `Cout`,
-which is our carry-output.
+which is our carry-output. Internally, the carry-out of each adder is attached
+directly to the carry-in of its next higher neighbor (the pipe running from
+`Cin` horizontally left to `Cout`).
 
 There are two reasons to have a carry-input: wider addition gets broken down
 into smaller chunks, so 16-bit addition on this machine is addition of the low
@@ -361,34 +363,34 @@ sum, the 9<sup>th</sup> bit goes on carry-out.
 Let’s take a minute to think about the algorithm this implements.
 
 1. The `A`, `B`, and `Cin` inputs arrive at the module and fill the input
-transistors.
+    transistors.
 
-2. All eight 1-bit adder elements compute their sum and write it to `Y` and
-`Cout`.
+1. All eight 1-bit adder elements compute their sum and write it to `Y` and
+    `Cout`.
 
     Pause, ask yourself if we’re done at this point, and why you picked your
     answer.
 
-3. The zeroth adder computes its carry output, and pipes it to the first adder.
+1. The zeroth adder computes its carry output, and pipes it to the first adder.
 
-4. The first adder, whose inputs just changed, recomputes its sum, writing to
-`Y` and *its* carry-out.
+1. The first adder, whose inputs just changed, recomputes its sum, writing to
+    `Y` and *its* carry-out.
 
-5. The second adder recomputes and passes the carry.
+1. The second adder recomputes and passes the carry.
 
-6. The third adder recomputes and passes the carry.
+1. The third adder recomputes and passes the carry.
 
-7. The fourth adder recomputes and passes the carry.
+1. The fourth adder recomputes and passes the carry.
 
-8. The fifth adder recomputes and passes the carry.
+1. The fifth adder recomputes and passes the carry.
 
-9. The sixth adder recomputes and passes the carry.
+1. The sixth adder recomputes and passes the carry.
 
-10. The seventh adder recomputes and sets carry-out.
+1. The seventh adder recomputes and sets carry-out.
 
-11. The outputs `Y` and `Cout` are now stable and ready to be read.
+1. The outputs `Y` and `Cout` are now stable and ready to be read.
 
-Think about it; we have to pass the intermediate carry computation between each
+Think about it: we have to pass the intermediate carry computation between each
 adder, so the length of time required to wait before the outputs are guaranteed
 stable is directly proportional to the number of bits being added.
 
@@ -441,7 +443,7 @@ to bits, means that in bit representation, `A - B` is actually `A + ¬B + 1`.
 
 Let me prove I’m not making this up:
 
-~~~
+~~~text
 let minus_one = 0b1111_1111;
 let plus_one  = 0b0000_0001;
 
@@ -530,7 +532,7 @@ instead of 20, and look like something like this: `SSSCAAAAABBBBBYYYYY`.
 
 Our CPU now looks like this:
 
-~~~
+~~~text
 SCABY      Register File      ╔════Data access
 │││││┌──┬──┬──┬──┬──┬──┬──┬──┐║
 ││││└┤  │  │  │  │  │  │  │  ╞╝

@@ -5,7 +5,6 @@ category: type theory
 number: 3
 tags:
 - c
-- programming
 - rust
 - software design
 ---
