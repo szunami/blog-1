@@ -7,6 +7,8 @@ tags:
 - digital design
 category: How Computers Work
 number: 3
+summary: >
+  A continued exploration of computer processors and memory.
 ---
 
 Unlike the previous two posts, I am going to massively skim, abridge, and

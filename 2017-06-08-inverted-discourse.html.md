@@ -4,6 +4,9 @@ date: 2017-06-08
 tags:
 - social media
 category: misc
+summary: >
+  I wrote about an event I observed on Twitter and how it pertains to popularity
+  effects I’ve seen in real life and especially amplified on social media.
 ---
 
 On Twitter, I follow several accounts which are rather inter-connected in their

@@ -5,8 +5,11 @@ tags:
 - computers
 - computing theory
 - software design
-category: type theory
+category: Type Theory
 number: 1
+summary: >
+  An exploration of how programs assign meaning to patterns of data, and the
+  theories behind that behavior.
 ---
 
 1. ToC

@@ -5,6 +5,9 @@ tags:
 - computers
 - language
 category: misc
+summary: >
+  An article about a small, small subset of problems with using software tools
+  that have ASCII- and/or English- only syntax elements.
 ---
 
 If you’re reading this, I presume you know what [ASCII][1] is, but if not, it’s

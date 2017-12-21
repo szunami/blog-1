@@ -5,6 +5,8 @@ tags:
 - personal
 - politics
 category: misc
+summary: >
+  I have some strong thoughts about immigration and social attitudes.
 ---
 
 [![Bear River Mountains, Utah][1]{:.right}][2]

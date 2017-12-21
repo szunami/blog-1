@@ -7,6 +7,10 @@ tags:
 - digital design
 category: How Computers Work
 number: 2
+summary: >
+  This is a very long piece which I should probably split apart, that covers the
+  assembly of logic elements into decision evaluators, arithmetic operators, and
+  eventually a primitive processor.
 ---
 
 In the previous post, I talked about how transistors work and how Boolean

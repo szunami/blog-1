@@ -7,8 +7,15 @@ tags:
 - computing theory
 - rust
 - software design
-category: type theory
+category: Type Theory
 number: 2
+summary: >
+  Complex data records are often only used as subsets of themselves. In
+  languages such as C++, Java, and C♯, the class and interface systems are built
+  in a way to allow this polymorphism using compile- or run- time typing
+  systems, but this is often expensive or siloed within an artifact or language.
+  This article talks about record composition and destructuring, and ways a
+  language might aid the use of parts of a record in place of the whole.
 ---
 
 1. ToC

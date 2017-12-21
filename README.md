@@ -1,5 +1,5 @@
-This is a collection of essays, rants, and observations that makes up my version
-of a blog.
+This is a collection of essays, monologues, and observations that makes up my
+idea of a blog.
 
 I am licensing the texts in this repository as CC-BY-NC-ND. Unlike my software
 projects, which are permissively MIT licensed, or my TES writings, for which I

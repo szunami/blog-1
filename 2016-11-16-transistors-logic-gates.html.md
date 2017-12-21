@@ -6,6 +6,9 @@ tags:
 - electronics
 category: How Computers Work
 number: 1
+summary: >
+  An overview of how transistors work and how they can be assembled into Boolean
+  logic elements.
 ---
 
 1. ToC

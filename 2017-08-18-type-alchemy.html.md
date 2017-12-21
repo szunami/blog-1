@@ -1,12 +1,18 @@
 ---
 title: Type Alchemy
 date: 2017-08-18
-category: type theory
+category: Type Theory
 number: 3
 tags:
 - c
 - rust
 - software design
+summary: >
+  We regularly work with data whose size is not fixed or known ahead-of-time –
+  text, especially C strings, are a prominent example of this – and manipulating
+  it safely requires effort. Part of my work involves using streams of
+  structured, unsized, data, with as little indirection and discontinuity as
+  possible.
 ---
 
 1. ToC

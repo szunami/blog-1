@@ -5,6 +5,9 @@ tags:
 - computers
 - personal
 category: misc
+summary: >
+  A brief, evergreen note about why sometimes you can’t read my website. Posting
+  it on that website was, perhaps, foolish.
 ---
 
 For as long as I can remember, I’ve had a penchant for doing things myself where

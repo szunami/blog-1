@@ -5,6 +5,9 @@ tags:
 - physics
 - eclipse
 category: misc
+summary: >
+  Far too much information about why the moon’s shadow does what it does in an
+  eclipse.
 ---
 
 1. ToC

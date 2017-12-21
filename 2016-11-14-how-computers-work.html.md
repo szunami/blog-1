@@ -6,6 +6,9 @@ tags:
 - computing theory
 category: How Computers Work
 number: 0
+summary: >
+  A general introduction to computing and the topics I intend to cover in more
+  depth in following posts.
 ---
 
 1. ToC
