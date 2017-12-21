@@ -203,7 +203,7 @@ This is an excellent shorthand for what the `struct Person` actually looks like
 in memory:
 
 ~~~c
-struct PersonExploded {
+struct PersonExpanded {
     size_t name_len; // 4 or 8 bytes, depending on system
     char* name_text; // 4 or 8 bytes
     int birthday; // almost always 4 bytes anymore
@@ -384,7 +384,7 @@ prior members and any padding.
 
 ~~~c
 struct DevHdr* pdh; // from kernel
-struct Device* pdev = (void*)pdh - offsetof(Device, info);
+struct Device* pdev = (void*)pdh - offsetof(struct Device, info);
 ~~~
 
 But it works. I can take a pointer aimed inside a larger structure and rewind it
@@ -527,13 +527,13 @@ The final line is a programmatic statement of the following logic:
 > must flag it as `unsafe` and take responsibility for memory safety ourselves.
 
 This leans on Rust’s proclivity for pattern-based type checking. We need perform
-no pointer arithmetic to backtrack from the child reference to reach the parent
-reference, as we do not have the information required to do so. Furthermore,
-this enables the compiler to assist us by asserting that the new reference is of
-a valid type (we can’t build a parent reference by starting from something that
-isn’t a child type) and potentially to add compile- or run- time checks that the
-child referent does exist inside the parent referent and that all the lifetimes
-and validity work out.
+no pointer arithmetic in source code to backtrack from the child reference to
+reach the parent reference, as we do not have the information required to do so.
+Furthermore, this enables the compiler to assist us by asserting that the new
+reference is of a valid type (we can’t build a parent reference by starting from
+something that isn’t a child type) and potentially to add compile- or run- time
+checks that the child referent does exist inside the parent referent and that
+all the lifetimes and validity work out.
 
 This may not always be possible for the compiler to prove (especially in my
 example usage, where the child reference arrives from a foreign function and
@@ -560,9 +560,9 @@ The syntax I described above has the additional advantages of being type-sound
 and partially verified at compile time, and decouples the source code from the
 exact memory model of the record types. This is only partially accomplished in C
 – multiple preceding members and surprise padding can both introduce edge cases
-in the C method of structure punning – whereas the Rust version uses semantic
-patterns and permits the compiler free reign to arrange `struct` memory layouts
-as it sees fit for best usage.
+in the C method of structure punning – whereas my hypothetical Rust version uses
+semantic patterns and permits the compiler free reign to arrange `struct` memory
+layouts as it sees fit for best usage.
 
 Furthermore, the Rust syntax has the advantage that hints can be provided for
 the compiler to indicate reference validity. For example, if this is being done
@@ -612,7 +612,8 @@ fn do_other_thing(rbar: &Bar) {
 The `#[ref_send(Type)]` markers inform the compiler that while the base type
 check of the functions indicates that they send out references to child types,
 those references are statically known to refer to objects embedded in a larger
-type.
+type. It is therefore an error to invoke these functions with an `&Bar`
+reference that the compiler can show is not embedded in a `Foo` instance.
 
 The `#[ref_recv(Type)]` markers inform the compiler that while the base type
 check of the function indicates that they receive a reference to some child
@@ -649,7 +650,7 @@ working with the zeroth element in C types due to C’s fixed memory model.
 
 Such behavior is highly dangerous and brittle, however necessary it may be. In
 Rust’s mission to add safety to systems programming and to tread cautiously in
-all places where C has rushed in, Rust will need to support this kind of
+all places where C has rushed in, Rust will likely need to support this kind of
 upcasting from a child reference to a parent reference.
 
 Rust already has the foundations laid in both its syntax and its compiler

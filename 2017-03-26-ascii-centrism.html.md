@@ -46,7 +46,7 @@ grouping characters – `()`, `[]`, `{}`, `<>`, `'`, `"` – for different seman
 meanings that have continued essentially unchanged in C’s descendants today.
 
 This is good; using words such as `begin/end` to denote blocks instead of `{}`
-is a recipe for disaster and it permits complex arrangements to be made with
+is a recipe for disaster, and it permits complex arrangements to be made with
 minimal line noise.
 
 <aside markdown="block">
@@ -56,10 +56,10 @@ Fun example using all of them:
 fn foo<T: Show>(bar: [T; 5]) { println!("Bar: '{}'", bar); }
 ~~~
 
-Good luck doing that with words instead of punctuation.
+Good luck doing that with words instead of punctuation glyphs.
 </aside>
 
-This is all well and good, until we look at strings. I take many, many issuse
+This is all well and good, until we look at strings. I take many, many issues
 with C strings and will complain at length about them some other time; for now I
 just want to talk about how text is placed in a source file.
 
@@ -97,7 +97,7 @@ wrap text in `'` and `"`. Non-English Latin languages use accented characters,
 which are only recently not compiler errors; non-Western scripts such as Arabic
 or Chinese are even less supported: consider the language [Qalb][6], which
 contains no English text in its grammar, has the GitHub URL
-<a href="https://github.com/nasser/---">https://github.com/nasser/---</a>, and
+<a href="https://github.com/nasser/---">`https://github.com/nasser/---`</a>, and
 still uses ASCII quotes for string literals.
 
 English isn’t the only language with quotation marks that aren’t valid syntax,

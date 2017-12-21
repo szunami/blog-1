@@ -89,12 +89,12 @@ It depends on context.
 
 If we are treating it as an unsigned integer, it is a representation of the
 number 165. If we are treating it as a signed integer, it is a representation of
-the number -91. If we assume it is a piece of text, it gets even stranger. It's
+the number -91. If we assume it is a piece of text, it gets even stranger. It’s
 not valid ASCII, and in UTF-8 it is a continuation byte of a longer character
 sequence. It could also be an index into memory that informs us where the data
 we *really* seek can be found.
 
-It's impossible to tell purely by inspection, because bits are bits and carry no
+It’s impossible to tell purely by inspection, because bits are bits and carry no
 meta information. To describe bits, we encode that information in yet more bits,
 and anyone looking at the system has to agree to abide by arbitrary rules about
 interpreting meaning. Some examples of these arbitrary rules are text encodings
@@ -115,16 +115,16 @@ as to not need it.
 Scripting languages such as Python and Ruby are often dynamically typed, where
 the type of data is stored alongside the data, while compiled languages such as
 C and Rust are more often statically typed, where data types are tied to points
-in the instruction stream, and data that doesn't match expectations causes
+in the instruction stream, and data that doesn’t match expectations causes
 problems to arise. Both methods have pros and cons, which I do not plan to
 discuss here.
 
 Let us imagine a 32-bit integer in C. The exact value doesn’t matter, so we’ll
-say it is `0x12345678`. This could be an integer (sign doesn't matter; it's
+say it is `0x12345678`. This could be an integer (sign doesn’t matter; it’s
 positive in both), four ASCII letters `"␒4Vx"` (the first byte, `0x12`, is the
 control character DC2 and does not have a true visible form), a memory address,
-or anything else. Merely by looking at the memory, we don't know, because C uses
-static typing and doesn't encode type information into data. In C, types are
+or anything else. Merely by looking at the memory, we don’t know, because C uses
+static typing and doesn’t encode type information into data. In C, types are
 stored in the source code and evaporate during compilation.
 
 ~~~c
@@ -166,7 +166,7 @@ printf(
 //  '78 56 34 12' (little endian)
 ~~~
 
-This is fine: C's type system is very permissive, and as long as we guarantee
+This is fine: C’s type system is very permissive, and as long as we guarantee
 that the sizes of everything we’re throwing around are sufficient, it won’t
 cause catastrophes merely by writing data to memory locations.
 
@@ -297,9 +297,8 @@ Rust has a different opinion. In Rust, values that exist are not members of the
 set of things that do not exist, and `NULL` is the sole member of the set of
 nonexistent items and is **not** a member of the set of existing items.
 
-
 Rust solves this by using *sum types*: types which are the sum of the component
-types.
+elements.
 
 ~~~rust
 enum Option<T> {
@@ -308,9 +307,9 @@ enum Option<T> {
 }
 ~~~
 
-This declares two types: `Some`, which can have anything as a contained value,
-and `None`, which is empty. `Some` is essentially a nearly infinite set, of
-which many things are elements, but `None` is not.
+This first declares two types: `Some`, which can have anything as a contained
+value, and `None`, which is empty. `Some` is essentially a nearly infinite set,
+of which many things are elements, but `None` is not.
 
 `Option` is a type which includes `Some` and `None` both. All `Some`s are
 `Options`, and all `None`s are `Option`s, and all `Option`s are either a `Some`
@@ -332,13 +331,28 @@ is unique and will never be the memory value of a `Some`, so it makes that
 special value the *discriminant*.
 
 C pointers use the `NULL` value to indicate invalidity. This value is often
-presumed to be 0, but might not be, depending on the hardware. In Rust, the
-exact value is hidden from us, but for `Option<Pointer>`, the `None` variant is
-just the platform’s `NULL` value, and the `Some(Pointer)` variant is anything
-else. This permits memory that looks in Rust to be identical to C, but is
-treated by the code as being two completely different types. The compiler will
-refuse to treat a `None` as a `Some`, and if it can’t prove it at compile time,
-it will inject code that will enforce this behavior at runtime.
+presumed to be 0, but might not be, depending on the hardware.
+
+<aside markdown="block">
+Furthermore, address number `0` is not required to be invalid to access, and on
+many architectures, is a perfectly serviceable address to use. I work on a
+processor whose memory map includes `0`, but our C compiler has not been patched
+to use a non-zero `NULL` value, and so I am unable to access that word in a
+program.
+
+The AVR microcontroller architecture is another example of an address space in
+which `0` is valid; however, in AVR, address zero is not a memory cell, but a
+CPU register.
+
+This is educational, but also allows for horrifyingly unsafe program behavior.
+</aside>
+
+In Rust, the exact value is hidden from us, but for `Option<Pointer>`, the `None`
+variant is just the platform’s `NULL` value, and the `Some(Pointer)` variant is
+anything else. This permits memory that looks in Rust to be identical to C, but
+is treated by the code as being two completely different types. The compiler
+will refuse to treat a `None` as a `Some`, and if it can’t prove it at compile
+time, it will inject code that will enforce this behavior at runtime.
 
 In Rust’s type theory, `enum`s are sum types, since the set of all enum values
 is the sum of all the values of each set within it.

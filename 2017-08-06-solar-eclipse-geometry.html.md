@@ -368,7 +368,7 @@ These two are the only major things I’ve seen so far that I’m in a position 
 attempt to answer. If I come across anything else between now and 2017 Aug 21,
 I’ll update this.
 
-Astrodynamics is complex
+Astrodynamics is complex.
 
 [1]: http://www.eclipse2017.org/2017/maps/whole-us.jpg
 [2]: http://www.wolframalpha.com/input/?i=rotation+period+of+earth

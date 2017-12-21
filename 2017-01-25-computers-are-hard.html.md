@@ -48,8 +48,8 @@ past, I’ve used my parents as on-site support, but from what I saw going wrong
 before I lost contact, I don’t think I’ll be able to do that this time.
 
 I tried to continue self-hosting, from my apartment in Utah, but Comcast’s
-routers are significantly less friendly to this than AT&amp;T’s are. I struggled
-for a few days, gave up, and am now violating my principles and renting a small
+routers are significantly less friendly to this than AT&T’s are. I struggled for
+a few days, gave up, and am now violating my principles and renting a small
 server instance from DigitalOcean.
 
 I don’t get very much traffic other than robots, but from watching the server
