@@ -82,9 +82,10 @@ else {
 ```
 
 There are two solutions to these problems: permit use of the `!=` operator in
-the test (a case I consider to be a non-starter, as it further blurs the line
-between assignment and equivalence), or to use negative keywords in the syntax:
-`if true` receives `unless false`, and `while true` receives `until false`.
+the test (a case the author considers to be a non-starter, as it further blurs
+the line between assignment and equivalence), or to use negative keywords in the
+syntax: `if true` receives `unless false`, and `while true` receives
+`until false`.
 
 # Guide-level explanation
 [guide-level-explanation]: #guide-level-explanation
@@ -288,96 +289,98 @@ until let Roll::CritMiss = roll() {
 
 The technical implementation of these two keywords should be fairly
 straightforward. Syntactically, they are paired with `if` and `while`, and have
-identical rules for placement in the syntax.
+identical rules for placement in the syntax. These keywords are essentially
+sugar for altering the control flow layout, and do not need to alter the
+condition under test, as demonstrated below:
 
 - `unless` branch without `else` branch:
 
-```rust
-unless COND { BODY }
-```
+    ```rust
+    unless COND { BODY }
+    ```
 
-is equivalent to
+    is equivalent to
 
-```rust
-if COND {} else { BODY }
-```
+    ```rust
+    if COND {} else { BODY }
+    ```
 
 - `unless` branch with `else` branch:
 
-```rust
-unless COND { ONE } else { TWO }
-```
+    ```rust
+    unless COND { ONE } else { TWO }
+    ```
 
-is equivalent to
+    is equivalent to
 
-```rust
-if COND { TWO } else { ONE }
-```
+    ```rust
+    if COND { TWO } else { ONE }
+    ```
 
 - `until` loop:
 
-```rust
-until COND { BODY }
-```
+    ```rust
+    until COND { BODY }
+    ```
 
-is equivalent to
+    is equivalent to
 
-```rust
-loop { if COND { break; } BODY }
-```
+    ```rust
+    loop { if COND { break; } BODY }
+    ```
 
 - `unless let` branch without `else` branch:
 
-```rust
-unless let PAT = EXPR { BODY }
-```
+    ```rust
+    unless let PAT = EXPR { BODY }
+    ```
 
-is equivalent to
+    is equivalent to
 
-```rust
-if let PAT = EXPR {} else { BODY }
-```
+    ```rust
+    if let PAT = EXPR {} else { BODY }
+    ```
 
 - `unless let` branch with `else` branch:
 
-```rust
-unless let PAT = EXPR { ONE } else { TWO }
-```
+    ```rust
+    unless let PAT = EXPR { ONE } else { TWO }
+    ```
 
-is equivalent to
+    is equivalent to
 
-```rust
-if let PAT = EXPR { TWO } else { ONE }
-```
+    ```rust
+    if let PAT = EXPR { TWO } else { ONE }
+    ```
 
 - `until let` loop:
 
-```rust
-until let PAT = EXPR { BODY }
-```
+    ```rust
+    until let PAT = EXPR { BODY }
+    ```
 
-is equivalent to
+    is equivalent to
 
-```rust
-loop { if let PAT = EXPR { break; } BODY }
-```
+    ```rust
+    loop { if let PAT = EXPR { break; } BODY }
+    ```
 
 - `match` arm guard clauses:
 
-```rust
-match EXPR {
-    PATTERN unless CONDITION => BODY,
-}
-```
+    ```rust
+    match EXPR {
+        PATTERN unless CONDITION => BODY,
+    }
+    ```
 
-is *semantically*, but not necessarily *mechanically*, equivalent to
+    is *semantically*, but not necessarily *mechanically*, equivalent to
 
-```rust
-match EXPR {
-    PATTERN if CONDITION => {},
-    PATTERN => BODY,
-}
-```
+    ```rust
+    match EXPR {
+        PATTERN if CONDITION => {},
+        PATTERN => BODY,
+    }
+    ```
 
 Note that this, unlike the previous cases, is likely not representable as a
 simple source-to-source transform due to move semantics in `match` arm
@@ -404,7 +407,8 @@ scope of this RFC.
 [drawbacks]: #drawbacks
 
 - These keywords were not previously reserved, and so reserving them may break
-    existing code.
+    existing code. This RFC would have to be implemented as weak keywords or in
+    the next epoch.
 
 - Expanding the surface area of control flow structures
 
@@ -423,70 +427,112 @@ scope of this RFC.
 
     When an `unless let` or `until let` pattern matches, the branch governed by
     it is **not** taken. As such, any bindings in the pattern would only be
-    accessible in flow when they are *not in scope*.
+    accessible in blocks where they values to which they refer are *not alive*.
 
     As such, the following is invalid:
 
-```rust
-unless let Err(e) = fallible() {
-    //  e is not in scope, because fallible() is not Err
-}
-else {
-    //  e is accessible and in scope here, but it *should not be* in
-    //  scope, and NLL may later enforce this
-}
-```
+    ```rust
+    unless let Err(e) = fallible() {
+        //  e is not in scope, because fallible() is not Err
+        //  the interior fields must be _
+    }
+    else {
+        //  e is accessible and in scope here, but it *should not be* in
+        //  scope, and NLL may later enforce this
+    }
+    ```
 
-Patterns with interior data can be formed and inspected, but they cannot bind:
+    Patterns with interior data can be formed and inspected, but they cannot
+    bind:
 
-```rust
-unless let Counter(x @ 1 ... 5) = expr() {
-    //  expr() might be a Counter(x > 5), OR any other variant! Thus,
-    //  the Counter interior data cannot be in scope
-}
-else {
-    //  Control jumps here when Counter(x @ 1 ... 5) matches, but if you
-    //  need access to the x binding, you should be using `if let`
-    //  because this is now the more interesting branch
-}
-```
+    ```rust
+    unless let Counter(x @ 1 ... 5) = expr() {
+        //  expr() might be a Counter(x > 5), OR any other variant!
+        //  Thus, the Counter interior data cannot be in scope
+    }
+    else {
+        //  Control jumps here when Counter(x @ 1 ... 5) matches, but if
+        //  you need access to the x binding, you should be using
+        //  `if let` because this is now the more interesting branch
+    }
+    ```
 
-If interior bindings are desired, this is a strong indication that your code
-should be using `if let` or `while let` instead.
+    The guard clause can still be used, but without the `binding @` prefix:
+
+    ```rust
+    unless let Counter(1 ... 5) = expr {}
+    struct Foo { x: i32 }
+    let expr = Foo { x: 3 }
+    unless let Foo { x: 1 ... 5 } = expr {}
+    ```
+
+    This is compatible with existing Rust, where destructuring does not bind
+    unless an explicit `@` operator is used.
+
+    ```rust
+    if let Foo { x: 1 ... 5 } = expr {
+        //  this branch enters, because expr.x is 3, but there is no
+        //  binding to x in scope
+    }
+    ```
+
+    If interior bindings are desired, this is a strong indication that your code
+    should be using `if let` or `while let` instead.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
 
-Changing `let` bindings to have a negative operator such as `!=` is probably way
-worse, since it seems Rust is explicitly trying to differentiate between "these
-two concepts are logically equivalent" (`Eq` trait, `==` and `!=` operators) and
-"this value is shaped like that pattern" (`let`, `match`).
+    Changing `let` bindings to have a negative operator such as `!=` is probably
+    way worse, since it seems Rust is explicitly trying to differentiate between
+    "these two concepts are logically equivalent" (`Eq` trait, `==` and `!=`
+    operators) and "this value is shaped like that pattern" (`let`, `match`).
 
-- What other designs have been considered and what is the rationale for not choosing them?
+    Another concept is to introduce a *negative binding*, `!let`, which does not
+    appear to be as good a solution as discrete keywords, but discussion is
+    certainly worth having.
 
-We could expand arithmetic on pattern sets like we do on trait sets.
+    Full pattern arithmetic (OR, AND, NOT) is discussed next.
 
-Patterns already support expressing combination with `|` in `match` arms. Traits
-already support combination with `+` and negation with `!`; it is not an
-impossible leap to suggest that, for example, `!Stop` is a valid pattern that is
-equivalent to `Start | Continue`. `unless let Stop = expr` then becomes
-`if let !Stop = expr`, which is shorter and does not require new keywords.
+- What other designs have been considered and what is the rationale for not
+    choosing them?
 
-The main reason I didn't write this as a "support `!` on patterns" RFC is
-because I, personally, don't think that this is a better choice for clarity or
-ease of reasoning when reading code, but I'm not vehemently opposed.
+    We could expand arithmetic on pattern sets like we do on trait sets. This is
+    something that is occasionally brought up as an idea, and does not often get
+    significant traction.
 
-> Edit: Manish Goregaokar informs me that `let` patterns may potentially grow
-> `&&` operators, which would tip the balance towards adding a `!` operator
-> rather than new keywords.
+    Patterns already support expressing combination with `|` in `match` arms.
+    Ideas get raised periodically to add `&&` combinators to `let` bindings,
+    such as `let PAT_A = expr_a && PAT_B = expr_b`, which if implemented would
+    give patterns two of the three logical arithmetic operations; the last
+    remaining operation is negation, `!`.
 
+    Adding full logical arithmetic to patterns would likely be worth pursuing in
+    the long run, but is also likely to require significantly more complex work
+    in the compiler to support, and may be more complex to teach.
+
+    [RFC #2175][rfc_2175] adds `|` to `if let` and `while let` constructs (which
+    desugar to match anyway, just as `unless let` and `until let` would). That
+    RFC is logically equivalent to this RFC, courtesy of DeMorgan's Law -- for
+    any closed set `F` with members `A`, `B`, `C`, the expression `!A` is
+    equivalent to `B | C`. As such, the implementation of #2175 may well be
+    grounds for rejecting this RFC. The author belives that the prevalence of
+    pre-existing sugar, including additional keywords, in the Rust language
+    indicates a preference for semantically clear keywords and structures in
+    addition to, if not in favor over, the equivalent structures with less
+    semantic or syntactic clarity.
+
+    The `until` and `unless` keywords can, with one exception, be implemented as
+    a desugaring pass similar to the mechanism that desugars `for` loops into
+    `while` loops. The exception (`PAT unless GUARD`) is likely able to be
+    expressed in current Rust compiler logic, but the author does not know how
+    at this time.
 
 - What is the impact of not doing this?
 
-Paper cuts on a few instances that cannot be represented in current flow
-constructs.
+    Paper cuts on a few instances that cannot be represented in current flow
+    constructs.
 
 # Prior art
 [prior-art]: #prior-art
@@ -509,24 +555,32 @@ constructs.
 - [Ruby][ruby_until]
 
 [Ruby style guides](https://github.com/bbatsov/ruby-style-guide/issues/329) have
-encountered the matter before, and this issue nicely summarizes what I believe
-to be an acceptable guideline for `unless` versus `if not`.
+encountered the matter before, and this issue nicely summarizes what the author
+believes to be an acceptable guideline for `unless` versus `if not`.
+
+## Pattern Arithmetic
+
+[RFC #2175][rfc_2175], discussed above.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
+- What parts of the design do you expect to resolve through the RFC process
+    before this gets merged?
 
-Do we want two more keywords? Would it be better to have negatable patterns?
+    Do we want two more keywords? Would it be better to have negatable patterns?
 
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+- What related issues do you consider out of scope for this RFC that could be
+    addressed in the future independently of the solution that comes out of this
+    RFC?
 
-Increasingly expressive pattern syntax.
+    Increasingly expressive pattern syntax.
 
 [autoit]: https://www.autoitscript.com/autoit3/docs/keywords/Do.htm
 [bash]: http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-7.html#ss7.4
 [ibm]: https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.asmk200/asmtug2128.htm
 [perl_unless]: https://www.tutorialspoint.com/perl/perl_unless_statement.htm
 [perl_until]: https://www.tutorialspoint.com/perl/perl_until_loop.htm
+[rfc_2175]: https://github.com/rust-lang/rfcs/blob/master/text/2175-if-while-or-patterns.md
 [ruby_unless]: https://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Control_Structures#unless_expression
 [ruby_until]: https://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Control_Structures#until
