@@ -50,7 +50,7 @@ rather than the *entry*, it is advantageous to have a means of inverting the
 condition. For example: executing a loop body forever until a specific status is
 met, while permitting any number of non-terminal statuses to be accepted:
 
-~~~rust
+```rust
 enum FsmState {
     Start,
     Continue,
@@ -62,7 +62,7 @@ loop {
     }
     //  continue looping for FsmState::Start or FsmState::Continue
 }
-~~~
+```
 
 This cannot be refactored into a `while let` structure, because there is no way
 to indicate "continue the loop while the condition is either `Start` or
@@ -72,14 +72,14 @@ fully incorrect.
 Similarly, single-run control branches of `if let` are unpleasant to trigger
 negatively:
 
-~~~rust
+```rust
 if let FsmState::Stop = execute_machine() {
     //  do nothing
 }
 else {
     //  do significant work on the positive execution
 }
-~~~
+```
 
 There are two solutions to these problems: permit use of the `!=` operator in
 the test (a case I consider to be a non-starter, as it further blurs the line
@@ -126,101 +126,101 @@ when `iter.next()` returns `Some(thing)`, and false when it returns `None`. This
 can be made highly specific by increasing the specificity of the pattern, but
 there is no way to negate the condition like there is with Boolean arithmetic!
 
-~~~rust
+```rust
 if let PAT = expr {
     true_case();
 }
 else {
     false_case();
 }
-~~~
+```
 
 is possible, but this is not possible on `while let` loops.
 
 As such, in any instance where you want to make your program act on the
 *opposite* of a test pattern, you can use the `unless` or `until` keywords.
 
-~~~rust
+```rust
 unless COND {
     cond_is_false();
 }
 else {
     cond_is_true();
 }
-~~~
+```
 
 evaluates the conditional `COND`, running the first body if the test failed and
 the second (optional) body if the test succeeded. It is exactly equivalent to
 
-~~~rust
+```rust
 if !COND {
     cond_is_false();
 }
 else {
     cond_is_true();
 }
-~~~
+```
 
 For loops,
 
-~~~rust
+```rust
 until COND {
     cond_is_false();
 }
-~~~
+```
 
 evalueates the conditional `COND`, executing the loop if the test failed and
 moving forward if the test succeeded. It is exactly equivalent to
 
-~~~rust
+```rust
 while !COND {
     cond_is_false();
 }
-~~~
+```
 
 For pattern-matching cases, there is no `!` operator. When you want to test a
 condition and have the positive case be anything other than what you examine,
 you can write
 
-~~~rust
+```rust
 unless let PAT = expr {
     pat_does_not_match();
 }
 else {
     pat_does_match();
 }
-~~~
+```
 
 to be equivalent to
 
-~~~rust
+```rust
 if let PAT = expr {
     pat_does_match();
 }
 else {
     pat_does_not_match();
 }
-~~~
+```
 
 You can also write
 
-~~~rust
+```rust
 until let PAT = expr {
     pat_does_not_match();
 }
-~~~
+```
 
 to execute the loop body until the expression matches the pattern. This does not
 have any simple equivalent in Rust: the closest you can get is with
 
-~~~rust
+```rust
 loop {
     if let PAT = expr {
         break;
     }
     pat_does_not_match();
 }
-~~~
+```
 
 This is not nearly as nice to write!
 
@@ -233,21 +233,21 @@ narrow case (for instance, rolling a d20 and getting a 20) should be the
 interesting path, and the wide case (rolling a d20 and getting anything else)
 should be the boring path.
 
-~~~rust
+```rust
 if 20 == d20() {
     interesting();
 }
 else {
     boring();
 }
-~~~
+```
 
 But in cases where the specific case is boring, and the general case is
 interesting (for example: rolling a d20 and getting a 1), then one of the two
 ideals breaks down. Either the condition becomes wide, or the interesting part
 goes last.
 
-~~~rust
+```rust
 if 1 != d20() { // 19 of 20 matches happen here! That's very wide :(
     interesting();
 }
@@ -261,14 +261,14 @@ if 1 == d20() { // 1 of 20 matches happen here! That's what we want :)
 else {
     interesting();
 }
-~~~
+```
 
 The `unless` and `until` keywords let us keep all our good ideas: the
 interesting logic is given higher placement than the boring logic, the condition
 being tested stays narrow and specific, *and* there are no convoluted
 incantations needed to make the test you actually want.
 
-~~~rust
+```rust
 // if let Roll::CritMiss = roll() {
 // }
 // else {
@@ -281,7 +281,7 @@ unless let Roll::CritMiss = roll() {
 until let Roll::CritMiss = roll() {
     play_the_game();
 }
-~~~
+```
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -292,92 +292,92 @@ identical rules for placement in the syntax.
 
 - `unless` branch without `else` branch:
 
-~~~rust
+```rust
 unless COND { BODY }
-~~~
+```
 
 is equivalent to
 
-~~~rust
+```rust
 if COND {} else { BODY }
-~~~
+```
 
 - `unless` branch with `else` branch:
 
-~~~rust
+```rust
 unless COND { ONE } else { TWO }
-~~~
+```
 
 is equivalent to
 
-~~~rust
+```rust
 if COND { TWO } else { ONE }
-~~~
+```
 
 - `until` loop:
 
-~~~rust
+```rust
 until COND { BODY }
-~~~
+```
 
 is equivalent to
 
-~~~rust
+```rust
 loop { if COND { break; } BODY }
-~~~
+```
 
 - `unless let` branch without `else` branch:
 
-~~~rust
+```rust
 unless let PAT = EXPR { BODY }
-~~~
+```
 
 is equivalent to
 
-~~~rust
+```rust
 if let PAT = EXPR {} else { BODY }
-~~~
+```
 
 - `unless let` branch with `else` branch:
 
-~~~rust
+```rust
 unless let PAT = EXPR { ONE } else { TWO }
-~~~
+```
 
 is equivalent to
 
-~~~rust
+```rust
 if let PAT = EXPR { TWO } else { ONE }
-~~~
+```
 
 - `until let` loop:
 
-~~~rust
+```rust
 until let PAT = EXPR { BODY }
-~~~
+```
 
 is equivalent to
 
-~~~rust
+```rust
 loop { if let PAT = EXPR { break; } BODY }
-~~~
+```
 
 - `match` arm guard clauses:
 
-~~~rust
+```rust
 match EXPR {
     PATTERN unless CONDITION => BODY,
 }
-~~~
+```
 
 is *semantically*, but not necessarily *mechanically*, equivalent to
 
-~~~rust
+```rust
 match EXPR {
     PATTERN if CONDITION => {},
     PATTERN => BODY,
 }
-~~~
+```
 
 Note that this, unlike the previous cases, is likely not representable as a
 simple source-to-source transform due to move semantics in `match` arm
@@ -390,6 +390,15 @@ source-code-level expansion that simplifies representation of specific branch
 cases. This is a strict expansion of the set of possible branches representable
 in source code, and does not affect existing code in any way beyond the
 reservation of `until` and `unless` as keywords.
+
+Rust flow-control constructs are value-producing expressions from the interior
+block. These keywords would not change this behavior. `unless` branches produce
+the value of the path that was executed, and `until` loops produce `()` just as
+`while` loops do.
+
+Rust may eventually choose to have `while` (and thus, if accepted, `until`)
+loops evaluate to be the most recent value of the loop body; this is outside the
+scope of this RFC.
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -409,6 +418,41 @@ reservation of `until` and `unless` as keywords.
 
     The negative words may lead casual readers to form improper assumptions
     about control flow, inducing confusion or stutter when reading in more depth
+
+- Patterns *cannot* have interior bindings
+
+    When an `unless let` or `until let` pattern matches, the branch governed by
+    it is **not** taken. As such, any bindings in the pattern would only be
+    accessible in flow when they are *not in scope*.
+
+    As such, the following is invalid:
+
+```rust
+unless let Err(e) = fallible() {
+    //  e is not in scope, because fallible() is not Err
+}
+else {
+    //  e is accessible and in scope here, but it *should not be* in
+    //  scope, and NLL may later enforce this
+}
+```
+
+Patterns with interior data can be formed and inspected, but they cannot bind:
+
+```rust
+unless let Counter(x @ 1 ... 5) = expr() {
+    //  expr() might be a Counter(x > 5), OR any other variant! Thus,
+    //  the Counter interior data cannot be in scope
+}
+else {
+    //  Control jumps here when Counter(x @ 1 ... 5) matches, but if you
+    //  need access to the x binding, you should be using `if let`
+    //  because this is now the more interesting branch
+}
+```
+
+If interior bindings are desired, this is a strong indication that your code
+should be using `if let` or `while let` instead.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
@@ -434,6 +478,11 @@ The main reason I didn't write this as a "support `!` on patterns" RFC is
 because I, personally, don't think that this is a better choice for clarity or
 ease of reasoning when reading code, but I'm not vehemently opposed.
 
+> Edit: Manish Goregaokar informs me that `let` patterns may potentially grow
+> `&&` operators, which would tip the balance towards adding a `!` operator
+> rather than new keywords.
+
+
 - What is the impact of not doing this?
 
 Paper cuts on a few instances that cannot be represented in current flow
@@ -455,6 +504,7 @@ constructs.
 
 - [IBM HLASM][ibm]
 - [Autoit][autoit]
+- [Bash][bash]
 - [Perl][perl_until]
 - [Ruby][ruby_until]
 
@@ -474,6 +524,7 @@ Do we want two more keywords? Would it be better to have negatable patterns?
 Increasingly expressive pattern syntax.
 
 [autoit]: https://www.autoitscript.com/autoit3/docs/keywords/Do.htm
+[bash]: http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-7.html#ss7.4
 [ibm]: https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.asmk200/asmtug2128.htm
 [perl_unless]: https://www.tutorialspoint.com/perl/perl_unless_statement.htm
 [perl_until]: https://www.tutorialspoint.com/perl/perl_until_loop.htm

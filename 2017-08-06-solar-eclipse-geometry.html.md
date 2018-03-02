@@ -135,13 +135,13 @@ So, the Sol-Terra-Luna system will look like this, both when viewed from far
 Northward or Southward, and when viewed from in the ecliptic, far prograde or
 retrograde.
 
-~~~text
+```text
   .-.
  /   \
 ( Sol )                       L      (T)
  \   /                        ^ Luna  ^ Terra
   `-'
-~~~
+```
 
 At some point I’m going to have to figure out how to do better diagrams than
 this. I’m nowhere near good enough on paper to draw these out and insert photos.
@@ -157,33 +157,33 @@ For Sol, as Terra rotates, a point on its surface is moving counterclockwise
 
 Midnight:
 
-~~~text
+```text
                                        E
 S                                   (T)-  <--observer
                                        W
-~~~
+```
 
 Dawn:
 
-~~~text
+```text
                                     E|W
 S                                   (T)
-~~~
+```
 
 Noon:
 
-~~~text
+```text
                                    W
 S                                  -(T)
                                    E
-~~~
+```
 
 Dusk:
 
-~~~text
+```text
 S                                   (T)
                                     W|E
-~~~
+```
 
 As these terrible ASCII diagrams show, as a fixed observer on Terra’s surface
 rotates, Eastward will cross from nightside to dayside first (Sol rising in the

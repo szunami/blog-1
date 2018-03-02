@@ -52,14 +52,14 @@ intersecting circles in a universe is equivalent to the [Karnaugh Map][2] of two
 binary variables. The diagram below has a K-map on the left and a Venn diagram
 (which is harder to draw in text than one might think) on the right.
 
-~~~text
+```text
    ┌─┬─┐    ┌─────────────────┐
  A │1│3│    │   ┌───┮━━━┭───┐ │
    ├─┼─┤    │ 0 │ 1 │ 3 │ 2 │ │
 ¬A │0│2│    │   └───┶━━━┵───┘ │
    └─┴─┘    └─────────────────┘
    ¬B B
-~~~
+```
 
 Cell 0 is full of elements which are neither `A` nor `B`, but are in the
 universe `U`. Cell 1 is full of elements which are `A` but are not `B`: the
@@ -127,22 +127,22 @@ or anything else. Merely by looking at the memory, we don’t know, because C us
 static typing and doesn’t encode type information into data. In C, types are
 stored in the source code and evaporate during compilation.
 
-~~~c
+```c
 int i = 0x12345678;
 printf("%i", i);
 //  305419896
-~~~
+```
 
 Now we know that the data value is an integer.
 
-~~~c
+```c
 int* pv = i;
 printf("%p", pv);
 //  0x12345678
 printf("%i", *i);
 //  Prints ... whatever currently lives
 //  at that address. Could be anything.
-~~~
+```
 
 This is perfectly legal (on a 32-bit system, pointers are 32-bits wide; on a
 64-bit system, it is assumed that the missing digits are all zero), because C’s
@@ -152,7 +152,7 @@ memory location where some other variable (here, also an int) is stored.
 
 We can also do stranger things, like this:
 
-~~~c
+```c
 char bytes[4];
 *(int*)bytes = i;
 printf(
@@ -164,7 +164,7 @@ printf(
 );
 //  '12 34 56 78' (big endian) or
 //  '78 56 34 12' (little endian)
-~~~
+```
 
 This is fine: C’s type system is very permissive, and as long as we guarantee
 that the sizes of everything we’re throwing around are sufficient, it won’t
@@ -193,7 +193,7 @@ were feeling left out.
 
 C also lets us build complex data structures, like so:
 
-~~~c
+```c
 //  Make a struct Foo that takes up four bytes
 struct Foo {
     short s;
@@ -207,7 +207,7 @@ struct Foo {
 printf("%i, %i, %i", foo.s, foo.c1, foo.c2);
 //  4660 86 120 (big endian) or
 //  30806 52 18 (little endian)
-~~~
+```
 
 In every single case above, the data value found in memory is exactly the same.
 What changes is how that run of data is interpreted.
@@ -252,21 +252,21 @@ possible, but enforces type soundness by refusing to compile programs that are
 perfectly valid in C, do not break memory, but merely irk the abstract
 mathematics powering the type system.
 
-~~~rust
+```rust
 struct Foo(i32);
 struct Bar(i32);
 
 let foo = Foo(0x12345678);
 let bar = Bar(0x12345678);
-~~~
+```
 
 If we hook a debugger to this code and inspect the memory, we will see two
 identical 32-bit integers. There is no difference, whatsoever, between them, and
 certainly no trace of the `Foo` or `Bar` wrapper types.
 
-~~~rust
+```rust
 if foo == bar { do_something(); }
-~~~
+```
 
 This will cause a compilation failure. I have informed the compiler that the
 variable `foo` is of `Foo` type, and `bar` is of `Bar` type, and the compiler
@@ -300,12 +300,12 @@ nonexistent items and is **not** a member of the set of existing items.
 Rust solves this by using *sum types*: types which are the sum of the component
 elements.
 
-~~~rust
+```rust
 enum Option<T> {
     Some(T),
     None,
 }
-~~~
+```
 
 This first declares two types: `Some`, which can have anything as a contained
 value, and `None`, which is empty. `Some` is essentially a nearly infinite set,
@@ -366,12 +366,12 @@ the set of all `Foo` values is $$1 \times \{ i32 \}$$. This is also true for
 
 A more complex structure has many more possible values.
 
-~~~rust
+```rust
 struct Baz {
     a: i32,
     b: Option<i32>,
 }
-~~~
+```
 
 There exists a `Baz` struct for every value of `a` and for every value of `b`,
 but multiplied rather than added.

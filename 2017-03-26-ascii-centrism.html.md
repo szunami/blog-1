@@ -52,9 +52,9 @@ minimal line noise.
 <aside markdown="block">
 Fun example using all of them:
 
-~~~rust
+```rust
 fn foo<T: Show>(bar: [T; 5]) { println!("Bar: '{}'", bar); }
-~~~
+```
 
 Good luck doing that with words instead of punctuation glyphs.
 </aside>

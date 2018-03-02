@@ -53,7 +53,7 @@ C’s limitations) and memmove and cast pointers.
 
 Here is an example COSMOS block, taken (and scrubbed) from my current project.
 
-~~~text
+```text
 TELEMETRY BLOG_POST FOO_TLM BIG_ENDIAN "I stripped the real names, obviously."
   APPEND_ITEM    LEN              16 UINT        "Packet Length"
   # This is a magic number that is used for type-match. I'll cover it later.
@@ -67,7 +67,7 @@ TELEMETRY BLOG_POST FOO_TLM BIG_ENDIAN "I stripped the real names, obviously."
   APPEND_ID_ITEM ProtocolId        8 UINT 0x42   "Network Protocol ID"
   APPEND_ITEM    AsciiData        -8 STRING      "Payload text buffer"
   ITEM           NetCrc         -8 8 UINT        "CRC"
-~~~
+```
 
 The above block means “for a sequence of bytes with magic numbers in cells 2, 3,
 and 21, interpret the first 22 bytes as these fields, the last bytes as this
@@ -105,7 +105,7 @@ Let’s get some basic C types down that we’ll then build on. We need an enum 
 all messages in the project and a tagged-union to contain them, as well as a
 struct definition of the BPFT type.
 
-~~~c
+```c
 enum Message {
     /* others */
     BPFT,
@@ -130,7 +130,7 @@ struct BlogPost_FooTlm {
     unsigned char net_logical_address;
     unsigned char net_crc;
 }
-~~~
+```
 
 <aside markdown="block">
 Notice that the two fields `OPCODE` and `ProtocolId` aren’t in the C struct?
@@ -144,7 +144,7 @@ which makes first-level detection easier. Let’s see what a BPFT-specific
 deserializer looks like, and a general function that reads from the network and
 returns *some* deserialized message.
 
-~~~c
+```c
 int deser_bpft(unsigned char* pkt, BlogPost_FooTlm* out) {
     out->len = ntoh(*(unsigned short*)pkt);
     out->gpsw = ntoh(*(unsigned short*)&pkt[4]);
@@ -189,7 +189,7 @@ TypedMessage deser(unsigned char* pkt, int len) {
         .ty = NONE,
     };
 }
-~~~
+```
 
 Is this error-prone C code? Absolutely. If I were writing this for production
 use, I’d clean it up rather than type `goto fail;` and then collect unemployment
@@ -259,12 +259,12 @@ groundwork laid to do so.
 At present, Rust *kind of* has fields integrated into type knowledge; for
 example, its slice type is a <dfn>fat pointer</dfn> that looks like this:
 
-~~~rust
+```rust
 pub struct SliceRef<T> {
     ptr: *const T,
     len: usize,
 }
-~~~
+```
 
 and anytime a slice is generated from a collection, the `len` parameter is
 bound to the instance and the compiler is able to make intelligent optimizations
@@ -325,7 +325,7 @@ currently do.
 
 ## Generically-Sized Types
 
-~~~rust
+```rust
 pub struct BlogPost_FooTlm<const N>
 where N: u16,
 //  the proposed `with` keyword is
@@ -342,7 +342,7 @@ with N >= 23,
     net_logical_address: u8,
     net_crc: u8,
 }
-~~~
+```
 
 In this declaration, I specify that the type family `BlogPost_FooTlm` is
 generic over possible values of a constant called `N`, and then specify that `N`
@@ -379,7 +379,7 @@ In the future, my team should design the message layouts such that the pitfalls
 of fully packed structs are not a worry.
 </aside>
 
-~~~rust
+```rust
 #[repr(packed)]
 pub struct BlogPost_FooTlm<const N>
 where N: u16,
@@ -396,7 +396,7 @@ with N >= 23,
     ascii_data: [u8; N - 23],
     net_crc: u8,
 }
-~~~
+```
 
 We now have a family of BPFT structures that exactly mirror the BPFT description
 text. Note that the `OPCODE` and `ProtocolId` fields have made a comeback.
@@ -404,7 +404,7 @@ text. Note that the `OPCODE` and `ProtocolId` fields have made a comeback.
 The end result of all this work in Rust’s type system is that we can go back to
 using C-style programming, but safely:
 
-~~~rust
+```rust
 use std::convert::{From,Into};
 
 impl From<[u8; N as usize]> for BlogPost_FooTlm<N>
@@ -427,7 +427,7 @@ with N >= 23,
         unsafe { ::std::mem::transmute(self) }
     }
 }
-~~~
+```
 
 That’s it. The only thing these functions do is inform the type checker that
 the byte sequence in memory that used to be one type, are now another type, and
@@ -470,7 +470,7 @@ with individual variants of the type family, Rust will simply state that types
 are a member of the BPFT or other family, and rely on its deep knowledge of how
 BPFT and similar types are constructed to handle runtime-only behavior.
 
-~~~rust
+```rust
 impl<const N> BlogPost_FooTlm<N>
 where N: u16,
 with N >= 23,
@@ -479,7 +479,7 @@ with N >= 23,
         self.ascii_data
     }
 }
-~~~
+```
 
 Rust does not need to construct a slew of these functions and choose between
 them based on inspection of `self.len` at runtime; it will instead rewrite this
@@ -509,7 +509,7 @@ sequence represents a valid instance of a declared type.
 Rust has good support for matching patterns based on what data “looks like” when
 matching on values already of a known good type, like this:
 
-~~~rust
+```rust
 #[derive(Debug)]
 struct Foobar {
     a: i32,
@@ -522,7 +522,7 @@ match f {
     Foobar { a: 1, b } => println!("Found a Foobar with a/1 and b/{}", b),
     m @ Foobar { .. } => println!("Found a {:?}", m),
 }
-~~~
+```
 
 This code will run the middle arm, as `f` matches the pattern given (a `Foobar`
 with its `a` field equal to `1`).
@@ -535,7 +535,7 @@ streams for the type into which they should be deserialized. Rust currently does
 not offer a way to accomplish this in the type system; it must be done like we
 did in C: read from a known location in the stream and match on it:
 
-~~~rust
+```rust
 enum Message {
     BPFT(Box<BlogPost_FooTlm>),
     None,
@@ -554,7 +554,7 @@ fn deser(pkt: &[u8]) -> Message {
         _ => None,
     }
 }
-~~~
+```
 
 What if, since we defined our message struct types to be byte-equivalent to the
 `[u8]` byte streams that are their serialized form, we could just test if the
@@ -567,7 +567,7 @@ that I’m not sure I’ve yet seen, so I’m treating it as a separate offshoot
 
 I’m going to redefine BPFT yet again, getting even further from valid Rust.
 
-~~~rust
+```rust
 #[repr(packed)]
 pub struct BlogPost_FooTlm<N>
 where N: u16,
@@ -585,19 +585,19 @@ with N >= 23,
     ascii_data: [u8; N - 23],
     net_crc: u8,
 }
-~~~
+```
 
 This declares that not only is there a type family of BPFT structures dependent
 on values of `len`, but that it is *illegal* for BPFT instances to exist whose
 `opcode` and `protocol_id` fields are anything but the stated values. This could
 have been done by adding additional type parameters
 
-~~~rust
+```rust
 pub struct BlogPost_FooTlm_Extra<N, O, P>
 where N: u16, O: u16, P: u8,
 with N >= 23, O == 0xABCD, P == 0x42,
 { .. }
-~~~
+```
 
 but, in my opinion, that adds lots of extraneous syntax noise and ugliness.
 Besides, I’m of the opinion that these magic constants are describing a pattern
@@ -611,7 +611,7 @@ So suppose we had Rust syntax that supported assigning magic constants to fields
 in the manner I just described. We could then, possibly, extend that as follows
 for deserialization:
 
-~~~rust
+```rust
 fn deser<O, const N>(src: [u8; N]) -> Box<O>
 where N: usize, O: As<[u8; N]>
 {
@@ -620,7 +620,7 @@ where N: usize, O: As<[u8; N]>
         _ => panic!(),
     }
 }
-~~~
+```
 
 This dummy example assumes a currently non-existent trait called `As` that is
 simply a marker for “calling `std::mem::transmute` between these two types is

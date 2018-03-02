@@ -49,7 +49,7 @@ law, but it is at times necessary.
 One of the more famous and egregious instances of type punning is the [Quake
 FISR hack][2], reproduced below in condensed form:
 
-~~~c
+```c
 float orig; // 32 bits
 long i; // probably 32 bits on the original target
 
@@ -71,7 +71,7 @@ i = 0x5F3759DF - (i >> 1);
 // This is the end of the type pun:
 // reverse the above process
 orig = * (float*) &i;
-~~~
+```
 
 The actual function does more work, but this is the interesting part for this
 article.
@@ -92,13 +92,13 @@ our way past the compiler like this. But this is C, and nothing is truly
 forbidden. So we use a `union`, which lets us bypass silly things like alias
 restrictions and interpret a bit pattern however we so please.
 
-~~~c
+```c
 float orig;
 union { float f; long l; } u;
 u.f = orig;
 u.l = 0x5F3759DF - (u.l >> 1);
 return u.f;
-~~~
+```
 
 This was pointed out to me by some kind redditors and so I updated this post
 with the *proper* way to break the rules.
@@ -129,19 +129,19 @@ The base usage of a `struct` is to bundle related variables together. Suppose I
 am implementing strings *correctly*: I have a length and a run of data. I can
 tie them together like this:
 
-~~~c
+```c
 struct String {
     size_t len;
     char* text;
 }
-~~~
+```
 
 The `struct String` is a single object, two words long. If we have an instance
 of it,
 
-~~~c
+```c
 struct String str;
-~~~
+```
 
 then all elements in `str` stay together at all times. We’e just composed two
 data primitives, an unsigned word integer and a pointer to bytes, together.
@@ -152,12 +152,12 @@ else”, probably the heap, but we don’t really care here.
 
 It’s also possible to store the text inline, by doing
 
-~~~c
+```c
 struct StringImmediate {
     size_t len;
     char text[];
 }
-~~~
+```
 
 but now the `struct StringImmediate` type is *unsized*, and the compiler will
 assume that it’s one word long and if we want to access memory beyond it, that
@@ -167,7 +167,7 @@ is entirely our call but don’t blame it when we break things.
 Suppose we want to define some other object, say, a mailing address. This is
 made up of a few different pieces of text. We might do this:
 
-~~~c
+```c
 enum UsState {
     Alabama,
     /* ... */
@@ -179,7 +179,7 @@ struct MailingAddr {
     UsState state;
     int zipcode;
 }
-~~~
+```
 
 I used an `enum` for the states because we don’t actually need to store the
 textual names of all fifty states in every single address; we just need a common
@@ -190,19 +190,19 @@ shorthand for the full name and any assoociated data.
 Now let’s suppose we might want to describe a person. People have names and
 addresses, so we can build a person like this:
 
-~~~c
+```c
 struct Person {
     struct String name;
     int birthday;
     struct MailingAddr addr;
     /* maybe more data */
 }
-~~~
+```
 
 This is an excellent shorthand for what the `struct Person` actually looks like
 in memory:
 
-~~~c
+```c
 struct PersonExpanded {
     size_t name_len; // 4 or 8 bytes, depending on system
     char* name_text; // 4 or 8 bytes
@@ -216,7 +216,7 @@ struct PersonExpanded {
     int addr_zipcode; // 4 bytes
     /* maybe more data */
 } // at least 36 or 60 bytes, maybe more with padding
-~~~
+```
 
 I for one am glad data composition exists in C. Writing that all out by hand is
 a recipe for bugs and disaster.
@@ -231,7 +231,7 @@ element within that structure or array also has the same address `A`.
 This is why C arrays start from 0. The array member syntax `arr[idx]` is syntax
 sugar for `*(arr + (idx * size))`.
 
-~~~c
+```c
 int arr[4]; // 16 bytes of memory
 printf("%p", arr); // some address A
 printf("%p", &arr[0]); // the same address A
@@ -239,15 +239,15 @@ printf("%p", &arr[1]); // A + 4
 
 char* pa = arr;
 bool t = (pa + (2 * 4)) == &arr[2]; // true
-~~~
+```
 
 The C compiler secretly multiplies offset by width for you when working with
 pointers, so `arr + 1` where `1` counts `int`s, is actually `arr + 4` where `4`
 counts bytes.
 
-~~~c
+```c
 bool t2 = &arr[3] == arr + 3; // true
-~~~
+```
 
 <aside markdown="block">
 Addition is commutative. $$a + b$$ is identical to $$b + a$$. So the C arithmetic
@@ -256,10 +256,10 @@ Addition is commutative. $$a + b$$ is identical to $$b + a$$. So the C arithmeti
 You may be ahead of me. If not, remember that in C, `*(base + offset)` is also
 written as `base[offset]`.
 
-~~~c
+```c
 int d = 3[arr];
 //  fetches arr[3]
-~~~
+```
 
 This is totally valid C.
 </aside>
@@ -268,10 +268,10 @@ This is totally valid C.
 Say we have a `struct Person` and a function that only needs a `struct String`.
 A person struct can become their name struct very easily:
 
-~~~c
+```c
 struct Person p;
 struct String* pname = &p;
-~~~
+```
 
 This works because the address of `struct Person p` is also the address of
 `struct String p.name`.
@@ -280,13 +280,13 @@ Similarly, if we have a pointer to a `struct String` that we are *absolutely*
 *sure* is pointing at the `name` field of a `struct Person`, we can cast the
 type and voila, a `struct Person*` appears!
 
-~~~c
+```c
 pname->birthday;
 // ERROR: struct String has no field `birthday`
 struct Person* pperson = pname;
 pperson->birthday;
 //  Just fine.
-~~~
+```
 
 Even though the *value in memory* of the pointer didn’t change, our expectations
 and behavior did (this is a direct sequel to my last post; if you haven’t, go
@@ -325,7 +325,7 @@ controlled environment, safe. (For certain, not-100%, values of safe.)
 I write device drivers for an operating system. These drivers require lots of
 aggregate information. It looks something like this:
 
-~~~c
+```c
 struct DevFuncs {
     /* seven function pointers */
 }
@@ -340,7 +340,7 @@ struct Device {
 }
 
 struct Device devices[16];
-~~~
+```
 
 The OS requires that I register my devices with it, but it only knows about
 function tables and device headers. It neither knows nor cares what else I
@@ -367,10 +367,10 @@ I do, however, know what the layout of a `struct Device` is, so I know that if I
 have a pointer to a `struct DevHdr`, then a `struct Device` begins a fixed
 number of bytes before it.
 
-~~~c
+```c
 struct DevHdr* pdh; // given to us by the kernel
 struct Device* pdev = (void*)pdh - sizeof(struct DevFuncs);
-~~~
+```
 
 This is a seriously risky hack that only works because the C standard mandates
 that structures are as packed as can be. This isn’t perfect: If, for some
@@ -382,10 +382,10 @@ compiler builtin. The `offsetof` builtin takes a struct type and a struct field,
 and finds the offset of the field within that struct, summing the widths of all
 prior members and any padding.
 
-~~~c
+```c
 struct DevHdr* pdh; // from kernel
 struct Device* pdev = (void*)pdh - offsetof(struct Device, info);
-~~~
+```
 
 But it works. I can take a pointer aimed inside a larger structure and rewind it
 to point at the entirety of the larger structure rather than one component.
@@ -421,7 +421,7 @@ viability.
 
 Let us envision the structure described above in Rust:
 
-~~~rust
+```rust
 #[repr(C)]
 pub struct DevFuncs {
     /* function pointers */
@@ -438,18 +438,18 @@ pub struct Device {
 }
 
 static devices: [Device; 16];
-~~~
+```
 
 When we register the `Device`s with the operating system, it can only accept the
 function table and the device header, so we simply destructure the `Device`
 instance just enough to obtain interior references, like so:
 
-~~~rust
+```rust
 for dev in &devices {
     let num = osRegisterDrivers(&dev.vtab as *const c_void);
     osRegisterDevice(num, &dev.info as *const DevHdr);
 }
-~~~
+```
 
 We give the OS functions pointers to our struct sub-members. Due to Rust’s
 memory model not yet being finalized, we do not **know** that the pointer to the
@@ -485,7 +485,7 @@ Therefore, I propose a syntax similar to Rust’s pre-existing syntax for struct
 decomposing.
 
 <aside markdown="block">
-~~~rust
+```rust
 //  declare a new struct type
 struct  Foo { foo: i32, bar: i32, baz: i32, }
 //  build an instance
@@ -493,30 +493,30 @@ let f = Foo { foo: 1, bar: 2, baz: 3, };
 //  build another instance, using f as a base
 let g = Foo { foo: -1, .. f };
 // g is Foo { foo: -1, bar: 2, baz: 3, }
-~~~
+```
 </aside>
 
 If we have two types `Parent` and `Child` defined such that
 
-~~~rust
+```rust
 struct Parent {
     /* ... */
     c: Child,
     /* ... */
 }
-~~~
+```
 
 and some reference `c: &Child` that we have reason to believe refers to a
 `Child` embedded within a `Parent`, then we can translate the `&Child` reference
 to an `&Parent` reference via the following syntax:
 
-~~~rust
+```rust
 //  build the parent and child structs
 let p: Parent = Parent { c: Child { /* ... */ }, /* ... */ };
 //  later
 let rc: &Child = &p.c;
 let rp: &Parent = unsafe { &Parent { c: *rc, .. } };
-~~~
+```
 
 The final line is a programmatic statement of the following logic:
 
@@ -575,7 +575,7 @@ handed out and that it can link them for checking type and lifetime validity.
 
 Example syntax:
 
-~~~rust
+```rust
 struct Bar { /* ... */ }
 pub struct Foo {
     name: String,
@@ -607,7 +607,7 @@ fn do_thing(rbar: &Bar) {
 fn do_other_thing(rbar: &Bar) {
     let rfoo: &Foo = &Foo { bar2: *rbar, .. };
 }
-~~~
+```
 
 The `#[ref_send(Type)]` markers inform the compiler that while the base type
 check of the functions indicates that they send out references to child types,

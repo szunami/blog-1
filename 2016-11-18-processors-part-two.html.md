@@ -42,33 +42,44 @@ the following purposes and names. Only register zero has hardware alterations �
 it always emits the number 0 when read, and drops writes.
 
 - `$0` (`$zero`) – drops writes, reads 0
+
 - `$1` (`$at`) – temporary register used by the assembler
+
 - `$2` and `$3` (`$v0`, `$v1`) – return values from function calls or expression
-evaluation go here, and then get moved if they are to be preserved
+    evaluation go here, and then get moved if they are to be preserved
+
 - `$4` through `$7` (`$a0` to `$a3`) – arguments for function calls. If a
-function takes more than four arguments, the rest go on the *stack* (I’ll get to
-that later).
+    function takes more than four arguments, the rest go on the *stack* (I’ll
+    get to that later).
+
 - `$8` through `$15` (`$t0` to `$t7`) – temporary registers for the currently
-executing function. These registers are considered to always be fair game to use
-and overwrite.
+    executing function. These registers are considered to always be fair game to
+    use and overwrite.
+
 - `$16` through `$23` (`$s0` to `$s7`) – saved registers for the previously
-executing function. If a function wants to use them, it *must* push their old
-values to the stack when the function starts, and then restore them from the
-stack to those registers before it exits.
+    executing function. If a function wants to use them, it *must* push their
+    old values to the stack when the function starts, and then restore them from
+    the stack to those registers before it exits.
+
 - `$24` and `$25` (`$t8` and `$t9`) – more temporary registers like `$t0` to
-`$t7`.
+    `$t7`.
+
 - `$26` and `$27` (`$k0` and `$k1`) – these registers are only for the kernel.
-Some CPUs will only permit access to these registers when the CPU thinks it is
-being run in “kernel mode”; others use the honor system.
+    Some CPUs will only permit access to these registers when the CPU thinks it
+    is being run in “kernel mode”; others use the honor system.
+
 - `$28` (`$gp`) – a global pointer into main memory. This is like a bookmark.
+
 - `$29` (`$sp`) – the stack pointer. This is also a bookmark, but has *very*
-strict usage semantics. I will talk about stacks later.
+    strict usage semantics. I will talk about stacks later.
+
 - `$30` (`$fp`) – the frame pointer. This also points to “the stack”, and has a
-different meaning. I will talk about it in the stack article.
+    different meaning. I will talk about it in the stack article.
+
 - `$31` (`$ra`) – This register stores the *return address*; when the currently
-executing function ends, it loads the return address value into the program
-counter, causing the computer to jump to a different part of the instruction
-sequence.
+    executing function ends, it loads the return address value into the program
+    counter, causing the computer to jump to a different part of the instruction
+    sequence.
 
 CPUs also define a special “status register” which contains, instead of a single
 `n`bit value, `n` 1-bit “flag” values indicating the state of the CPU. This
@@ -351,11 +362,13 @@ or -16.
 These are commonly denoted by using an `0<tag>` prefix.
 
 - Binary (base 2) is denoted by `0b` and uses the digits `01`, like `0b1010`.
+
 - Octal (base 8) is denoted by `0o` or `\` and uses the digits `01234567`. It
     can be written `0o012` or `\012`. The latter form is a quirk from early C
     compilers, and is often preferred to the former because `0` and `o` look
     very similar. A disadvantage of octal is that because each digit is three
     bits wide, octal digits do not cleanly divide bytes.
+
 - Hexadecimal (base 16) is denoted by `0x` and uses the digits
     `0123456789ABCDEF`. Hexadecimal digits are four bits wide, and so a byte is
     cleanly represented by a pair. This makes hexadecimal the most common
@@ -368,7 +381,7 @@ occasions. I am not using it in the table below to save space, and because it is
 obvious that the numbers are hexadecimal.
 </aside>
 
-~~~
+```text
 Main bits            Last 4 bits
 64       32       │               │
                   ├─┼─┼─┼─┼─┼─┼─┼─┤
@@ -388,7 +401,7 @@ Main bits            Last 4 bits
                   ├─┼─┼─┼─┼─┼─┼─┼─┤
 00000000_0000000  │0│1│2│3│4│5│6│7│
                   └─┴─┴─┴─┴─┴─┴─┴─┘
-~~~
+```
 
 Modern RAM and motherboards are built for 64-bit words, and so no matter what
 byte address is requested by the CPU, the RAM controller will ship the entire

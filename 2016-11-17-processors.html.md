@@ -162,7 +162,7 @@ You take a 2:1 mux, and have each of its inputs be… another mux! This is a
 
 It looks something like this:
 
-~~~text
+```text
      ┌─────┐             |
 ══A══╡     │          S[1:0]
      │ mux ╞══Y0══╗      │
@@ -176,7 +176,7 @@ It looks something like this:
      │ mux ╞══Y1══╝
 ══D══╡     │
      └─────┘
-~~~
+```
 
 As you can see, every doubling of input buses only requires one more selector
 line. The new selector line controls where the end mux looks, while the old
@@ -229,7 +229,7 @@ swapped out on the fly.
 
 ##### Braced ALU Core
 
-~~~
+```
      ┌─────┐     ┌─────┐
      │ 1:2 ╞══A══╡ AND │
      │  d  ╞══B══╡     ╞══Ya══╗   ┌─────┐
@@ -239,7 +239,7 @@ swapped out on the fly.
      │  x  ╞══B══╡  R  │             │
      └──┬──┘     └─────┘             │
 ──S─────┴────────────────────────────┘
-~~~
+```
 
 <aside markdown="block" class="terminology">
 The usage of early-alphabet letters starting from A as input, the S for select,
@@ -315,12 +315,12 @@ Binary addition works the exact same way, except it only has two digits, so we
 have the digits 01 and $$1 + 1 == 10$$, which means that the bitwise-addition
 emits a 0 as its bit output and sends a carry to the next column over.
 
-~~~text
+```text
   1010
   1100
 +_____
  10110
-~~~
+```
 
 The left-most column of the addends generates a carry, which rolls to the next
 column left. In 4-bit addition, the result is also 4-bits, so the carry output
@@ -335,7 +335,7 @@ carry plus a one plus a one is 1 and a carry, so the carries can never build up.
 
 Let’s take a look!
 
-~~~text
+```text
 A B                                        Cin
 ║ ║                                         │
 ║ ╚═══╤════╤════╤════╤════╤════╤════╤════╕  │
@@ -348,7 +348,7 @@ A B                                        Cin
 │ Y
 │
 Cout
-~~~
+```
 
 Our interface is this: two 8-bit inputs, `A` and `B`, and one 1-bit input `Cin`,
 which is our carry-input; one 8-bit output `Y`, and one 1-bit output `Cout`,
@@ -447,7 +447,7 @@ to bits, means that in bit representation, `A - B` is actually `A + ¬B + 1`.
 
 Let me prove I’m not making this up:
 
-~~~text
+```text
 let minus_one = 0b1111_1111;
 let plus_one  = 0b0000_0001;
 
@@ -465,7 +465,7 @@ Inductively:
 
 ~(number-in-2s-complement) = -number - 1
 ~(number-in-2s-complement) + 1 = -number
-~~~
+```
 
 This works for all `n`-bit numbers, which can represent integers from
 $$-2^{n-1}$$ to $$+2^{n-1} - 1$$.
@@ -536,7 +536,7 @@ instead of 20, and look like something like this: `SSSCAAAAABBBBBYYYYY`.
 
 Our CPU now looks like this:
 
-~~~text
+```text
 SCABY      Register File      ╔════Data access
 │││││┌──┬──┬──┬──┬──┬──┬──┬──┐║
 ││││└┤  │  │  │  │  │  │  │  ╞╝
@@ -557,7 +557,7 @@ SCABY      Register File      ╔════Data access
 ││   └─┬─┘  └┬─┬┘      │└─┬─┘   ║
 │└─────┼─────┼─┴───────┘  │     ╚══to memory controller
 └──────┴─────┴────────────┘
-~~~
+```
 
 The `S` bus connects to the demux and mux in the ALU, as well as going into the
 ALU block (to toggle addition/subtraction), and controls which route through the
