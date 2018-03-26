@@ -1,7 +1,7 @@
 ---
 title: Unless, Until
 date: 2018-03-01
-category: misc
+category: RFCs
 tags:
 - rust
 summary: >
@@ -410,11 +410,10 @@ scope of this RFC.
     existing code. This RFC would have to be implemented as weak keywords or in
     the next epoch.
 
-- Expanding the surface area of control flow structures
+- This expands the surface area of control flow syntax; even more ways to make
+    branches and loops is not always ideal.
 
-    More ways to make branches and loops is not always ideal
-
-- Ambiguity or confusion in choosing between `if`/`unless` or `while`/`until`
+- Ambiguity or confusion in choosing between `if`/`unless` or `while`/`until`.
 
     A 50/50 branch (such as `if n % 2 == 0`) should favor using the positive
     keywords `if` or `while` rather than the negative keywords `unless` or
@@ -423,11 +422,12 @@ scope of this RFC.
     The negative words may lead casual readers to form improper assumptions
     about control flow, inducing confusion or stutter when reading in more depth
 
-- Patterns *cannot* have interior bindings
+- Patterns *cannot* have interior bindings.
 
     When an `unless let` or `until let` pattern matches, the branch governed by
     it is **not** taken. As such, any bindings in the pattern would only be
-    accessible in blocks where they values to which they refer are *not alive*.
+    accessible in blocks where they values to which they refer are **not**
+    alive.
 
     As such, the following is invalid:
 
@@ -460,9 +460,11 @@ scope of this RFC.
     The guard clause can still be used, but without the `binding @` prefix:
 
     ```rust
+    //  unnamed fields
     unless let Counter(1 ... 5) = expr {}
+
+    //  named fields
     struct Foo { x: i32 }
-    let expr = Foo { x: 3 }
     unless let Foo { x: 1 ... 5 } = expr {}
     ```
 
@@ -470,6 +472,7 @@ scope of this RFC.
     unless an explicit `@` operator is used.
 
     ```rust
+    let expr = Foo { x: 3 }
     if let Foo { x: 1 ... 5 } = expr {
         //  this branch enters, because expr.x is 3, but there is no
         //  binding to x in scope
@@ -491,7 +494,8 @@ scope of this RFC.
 
     Another concept is to introduce a *negative binding*, `!let`, which does not
     appear to be as good a solution as discrete keywords, but discussion is
-    certainly worth having.
+    certainly worth having. The author personally favors keywords over sigils
+    for readability purposes.
 
     Full pattern arithmetic (OR, AND, NOT) is discussed next.
 
@@ -514,10 +518,10 @@ scope of this RFC.
 
     [RFC #2175][rfc_2175] adds `|` to `if let` and `while let` constructs (which
     desugar to match anyway, just as `unless let` and `until let` would). That
-    RFC is logically equivalent to this RFC, courtesy of DeMorgan's Law -- for
-    any closed set `F` with members `A`, `B`, `C`, the expression `!A` is
-    equivalent to `B | C`. As such, the implementation of #2175 may well be
-    grounds for rejecting this RFC. The author belives that the prevalence of
+    RFC is logically equivalent to this RFC, courtesy of set arithmetic — for
+    any closed set $$F = { A, B, C }$$, the expression $$\lnot A$$ is equivalent
+    to $$B \lor C$$. As such, the implementation of #2175 may well be grounds
+    for rejecting this RFC. The author belives that the prevalence of
     pre-existing sugar, including additional keywords, in the Rust language
     indicates a preference for semantically clear keywords and structures in
     addition to, if not in favor over, the equivalent structures with less
