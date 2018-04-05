@@ -8,8 +8,8 @@ summary: >
   A draft RFC for adding a `book` subcommand to Rust’s Cargo tool.
 ---
 
-- Feature Name: (cargo-book)
-- Start Date: (2018-03-12)
+- Feature Name: cargo-book
+- Start Date: 2018-03-12
 - RFC PR: (leave this empty)
 - Rust Issue: (leave this empty)
 

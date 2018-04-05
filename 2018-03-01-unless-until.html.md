@@ -8,8 +8,8 @@ summary: >
   A draft RFC for adding `unless` and `until` keywords to Rust.
 ---
 
-- Feature Name: Unless and Until
-- Start Date: 2018-03-01
+- Feature Name: unless_until
+- Start Date: 2018-04-02
 - RFC PR: (leave this empty)
 - Rust Issue: (leave this empty)
 
@@ -170,7 +170,7 @@ until COND {
 }
 ```
 
-evalueates the conditional `COND`, executing the loop if the test failed and
+evaluates the conditional `COND`, executing the loop if the test failed and
 moving forward if the test succeeded. It is exactly equivalent to
 
 ```rust
@@ -420,7 +420,13 @@ scope of this RFC.
     `until`.
 
     The negative words may lead casual readers to form improper assumptions
-    about control flow, inducing confusion or stutter when reading in more depth
+    about control flow, inducing confusion or stutter when reading in more
+    depth.
+
+    If this RFC is accepted, the compiler MAY choose to add a lint warning that
+    is raised whenever an `unless !` or `unless { a } else { b }` construct is
+    encountered, and suggest changing them to an `if` or `if { b } else { a }`,
+    respectively.
 
 - Patterns *cannot* have interior bindings.
 
