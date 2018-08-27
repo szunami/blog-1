@@ -178,7 +178,7 @@ a good choice I made in my title.
 [`cosmonaut`]: /cosmonaut
 [Arshia]: //twitter.com/arshia__
 [Manish]: //twitter.com/ManishEarth
-[manish-post]: //manishearth.github.io/2018/08/26/blogging.html
+[manish-post]: //manishearth.github.io/blog/2018/08/26/why-i-enjoy-blogging/
 
 [^1]: Title reference is the book and movie “To All the Boys I’ve Loved Before”
 
