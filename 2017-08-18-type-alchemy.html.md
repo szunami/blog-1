@@ -108,17 +108,10 @@ struct definition of the BPFT type.
 ```c
 enum Message {
     /* others */
-    BPFT,
-    NONE,
+    Message_BPFT,
+    Message_NONE,
 }
-struct TypedMessage {
-    union {
-        /* others */
-        BlogPost_FooTlm bpft,
-        void* none,
-    } msg;
-    Message ty;
-}
+/* ... other struct definitions ... */
 struct BlogPost_FooTlm {
     unsigned char* ascii_data;
     /* C integer types are terrible */
@@ -129,6 +122,19 @@ struct BlogPost_FooTlm {
     unsigned short reset_count;
     unsigned char net_logical_address;
     unsigned char net_crc;
+}
+struct TypedMessage {
+    enum Message ty;
+    union {
+        /* others */
+        struct BlogPost_FooTlm bpft,
+        void* none,
+    } msg;
+}
+/* Blanks a TypedMessage struct to a safe NONE state */
+void blank_typed_message(struct TypedMessage* self) {
+    memset(&(self->msg), 0, sizeof(self->msg));
+    self->ty = Message_NONE;
 }
 ```
 
@@ -145,56 +151,62 @@ deserializer looks like, and a general function that reads from the network and
 returns *some* deserialized message.
 
 ```c
-int deser_bpft(unsigned char* pkt, BlogPost_FooTlm* out) {
-    out->len = ntoh(*(unsigned short*)pkt);
-    out->gpsw = ntoh(*(unsigned short*)&pkt[4]);
+/* Deserialize a packet into a BPFT structure */
+int deser_bpft(unsigned char* pkt, struct BlogPost_FooTlm* out) {
+    out->len = ntohs(*(unsigned short*)pkt);
+    out->gpsw = ntohs(*(unsigned short*)&pkt[4]);
     out->gpsm = ntoh(*(unsigned int*)&pkt[6]);
-    out->frt = ntoh(*(unsigned long long*)&pkt[10]);
-    out->reset_count = ntoh(*(unsigned short*)&pkt[18]);
+    out->frt = ntohl(*(unsigned long long*)&pkt[10]);
+    out->reset_count = ntohs(*(unsigned short*)&pkt[18]);
     out->net_logical_address = ntoh(*(unsigned char*)&pkt[20]);
     out->ascii_data = malloc(out->len - 23);
+    if (out->ascii_data == NULL) {
+        return -1;
+    }
     memmove(out->ascii_data, &pkt[22], out->len - 23);
     out->net_crc = pkt[out->len - 1];
     return 0;
 }
-TypedMessage deser(unsigned char* pkt, int len) {
+/* Deserialize a packet into _some_ structure */
+struct TypedMessage deser(unsigned char* pkt, int len) {
+    /* Set up a return value */
+    struct TypedMessage out;
+    /* Early abort if needed */
     if (len < 4) {
-        return (TypedMessage) {
-            .msg = NULL,
-            .ty = NONE,
-        };
+        goto fail;
     }
-    switch ntoh(*(unsigned short*)&pkt[2]) {
+    /* Switch on the globally known identifier position */
+    switch ntohs(*(unsigned short*)&pkt[2]) {
     /* A message family */
     case 0xABCD:
         switch pkt[21] {
         /* BPFT specifically */
-        case 0x42: {
-            BlogPost_FooTlm bpft;
-            deser_bpft(pkt, &bpft);
-            return (TypedMessage) {
-                .msg = bpft,
-                .ty = BPFT,
-            };
-        }
+        case 0x42:
+            /* Deserialize as BPFT into the return structure */
+            if (deser_bpft(pkt, (void*)&(out.msg)) != 0) {
+                goto fail;
+            }
+            /* Set the type flag */
+            out.ty = Message_BPFT;
+            goto exit;
         default:
             goto fail;
         }
     default:
         goto fail;
     }
-    fail:
-    return (TypedMessage) {
-        .msg = pkt,
-        .ty = NONE,
-    };
+fail:
+    blank_typed_message(&out);
+exit:
+    return out;
 }
 ```
 
-Is this error-prone C code? Absolutely. If I were writing this for production
-use, I’d clean it up rather than type `goto fail;` and then collect unemployment
-benefits. But I’m not; I’m writing it for this blog post. Don’t ever do this in
-real life.
+This is *absolutely* error-prone C code. For one, all the dereferences as
+multi-byte types are massively undefined behavior because there’s no guarantee
+that their offsets in the packet are at valid alignments. That switch stack is
+also extremely brittle. This is for a blog post, not a deliverable; I don’t
+write like this in real life and neither should you.
 
 Let me break down what’s happening here:
 
@@ -202,11 +214,11 @@ Let me break down what’s happening here:
     layer. It has had all its transport wrappings removed, has been recombined
     if needed, and should look like one of the 74 message types declared in this
     project. This function looks at bytes 2 and 3 as a single 16-bit value and
-    comparing against known magic numbers.
+    compares against known magic numbers.
 
     <aside markdown="block">
     If you haven’t read my previous type posts, let me explain what the weird
-    `ntoh(...)` snippets are doing.
+    `ntoh(…)` snippets are doing.
 
     1. We need to get the address of the start of a field, here `LEN`. This is
         done by taking `&pkt[2]` because `LEN` starts at byte 2, counting from
@@ -218,8 +230,8 @@ Let me break down what’s happening here:
         read its contents. This is the `*` in front of everything from above.
     1. We then need to tell the computer “by the way, that unsigned short you
         just read? It is in big-endian, or network order. If you’re a
-        little-endian CPU, flip those bytes.” This is the `ntoh()` function call
-        wrapping everything.
+        little-endian CPU, flip those bytes.” This is the `ntohs()` function
+        call wrapping everything.
     </aside>
 1. If the discovered number is the magic number indicating one of a family of
     telemetry messages, we enter into another block to finish determining type.
@@ -257,7 +269,7 @@ groundwork laid to do so.
 # Rust’s Current Type System
 
 At present, Rust *kind of* has fields integrated into type knowledge; for
-example, its slice type is a <dfn>fat pointer</dfn> that looks like this:
+example, its slice type is a <dfn>wide pointer</dfn> that looks like this:
 
 ```rust
 pub struct SliceRef<T> {
@@ -461,6 +473,9 @@ functions to handle it.
 The solution to *this* problem is already partially solved with Rust’s trait
 system, and will be further solved when the [`impl Trait` RFC][4] lands.
 
+<ins>Update: `impl Trait` landed in 1.26, and has nothing to do with return
+value elision; this was incorrect speculation on my part.</ins>
+
 Rust is very good at recognizing large structures and rewriting things behind
 the scenes to use pointers instead of values, so that functions manipulating
 large types can work without having to perform lots of redundant copies and
@@ -544,7 +559,7 @@ fn deser(pkt: &[u8]) -> Message {
     use Message::*;
     let opcode = NetworkEndian::read_u16(&src[2 .. 4]);
     match opcode {
-        0xABCD => {
+        0xCDAB => {
             let proto_id = src[21];
             match proto_id {
                 case 0x42 => BPFT(box src.into()),
@@ -587,6 +602,10 @@ with N >= 23,
 }
 ```
 
+<ins>Rust 1.28 expects to make the endian conversion functions, among others,
+`const` so they can be used on literals in `const` context. When this lands,
+the above can be written as `0xABCD.to_be()`.</ins>
+
 This declares that not only is there a type family of BPFT structures dependent
 on values of `len`, but that it is *illegal* for BPFT instances to exist whose
 `opcode` and `protocol_id` fields are anything but the stated values. This could
@@ -612,12 +631,12 @@ in the manner I just described. We could then, possibly, extend that as follows
 for deserialization:
 
 ```rust
-fn deser<O, const N>(src: [u8; N]) -> Box<O>
+fn deser<O, const N>(src: [u8; N]) -> Result<Box<O>, &'static str>
 where N: usize, O: As<[u8; N]>
 {
     match src {
-        bpft @ BlogPost_FooTlm<N> { .. } => box bpft.from_be(),
-        _ => panic!(),
+        bpft @ BlogPost_FooTlm<N> { .. } => Ok(box bpft.from_be()),
+        _ => Err("Invalid byte sequence"),
     }
 }
 ```

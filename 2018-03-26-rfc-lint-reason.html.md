@@ -10,7 +10,7 @@ summary: >
 
 - Feature Name: lint_reasons
 - Start Date: 2018-04-02
-- RFC PR: (leave this empty)
+- RFC PR: [#2383](https://github.com/rust-lang/rfcs/pull/2383)
 - Rust Issue: (leave this empty)
 
 # Summary

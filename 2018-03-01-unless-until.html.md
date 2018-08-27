@@ -10,7 +10,7 @@ summary: >
 
 - Feature Name: unless_until
 - Start Date: 2018-04-02
-- RFC PR: (leave this empty)
+- RFC PR: [#2384](https://github.com/rust-lang/rfcs/pull/2384)
 - Rust Issue: (leave this empty)
 
 # Summary
