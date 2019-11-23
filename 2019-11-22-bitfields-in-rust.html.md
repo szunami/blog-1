@@ -39,7 +39,7 @@ for manipulating memory as sequences of raw bits, rather than of typed values.
 > | .NET     | [`BitArray`]                                                      |
 > | ObjC     | [`CFMutableBitVector`]                                            |
 > | Python   | [`bitstring`][bitstring_py]                                       |
-> | Ruby     | defines [`Integer#​[]`](https://ruby-doc.org/core-2.6.5/Integer.html#method-i-5B-5D) (read), but not `Integer#[]=` (write) |
+> | Ruby[^1] | defines [`Integer#​[]`](https://ruby-doc.org/core-2.6.5/Integer.html#method-i-5B-5D) (read), but not `Integer#[]=` (write) |
 >
 > The [Wikipedia article] has more information, as well.
 
@@ -56,12 +56,6 @@ bitstrings) permit users to treat an arbitrary bit region as a value location
 where you can write or read typed numeric data against it.
 
 `bitvec` can do all of the things I just said other languages can’t.
-
-> Ruby’s `Integer` class is, in fact, implemented as a hybrid between an `i31`
-> and a bit-vector so that it can have arbitrary-sized integers with minimal
-> cost.
->
-> > You are *not* tricking me into explaining what an `i31` is in this article.
 
 Enough about everyone else. Let’s talk about me.
 
@@ -86,8 +80,10 @@ let stack_bits = stack_raw.bits_mut::<BigEndian>();
 
 let mut heap = BitVec::<Local, Word>::with_capacity(64);
 
-let mut STATIC_RAW: [u32; 2] = [0; 2];
-let STATIC_BITS: &mut BitSlice<LittleEndian, _> = STATIC_RAW.bits_mut();
+static mut STATIC_RAW: [u32; 2] = [0; 2];
+let static_bits = unsafe {
+    STATIC_RAW.bits_mut::<LittleEndian>()
+};
 ```
 
 We now have 64 mutable, contiguous, bits in each of the local stack frame, the
@@ -99,11 +95,7 @@ Notice that each of those three allocations uses a different Rust fundamental:
 `u16` on the stack, `Word` on the heap, and `u32` in static. `bitvec` allows you
 to use the unsigned integer types that correspond to register widths in your CPU
 as storage types: `u8`, `u16`, `u32`, and (only on 64-bit-word processors)
-`u64`. The `Word` type aliases to your local `usize`.
-
-> For technical reasons, including but not limited to the fact that `usize` is a
-> discrete type and *not* an alias to `u32` or `u64`, `bitvec` disallows the use
-> of the `usize` type as backing storage. I might remove this restriction later.
+`u64`. The `Word` type aliases to your local `usize`[^2].
 
 You may also notice that each of the three allocations uses a different first
 type parameter. The first type parameter is an implementation of the `Cursor`
@@ -144,7 +136,7 @@ offscreen:
 - 13
 
 `bitvec` currently requires that ranges are strictly in the increasing
-direction, from lower numbers to higher[^1], which means that we are interested
+direction, from lower numbers to higher[^3], which means that we are interested
 in the memory range `[13 .. 27]`. That’s 14 bits. `bitvec` disallows storing a
 type whose bit width is smaller than a region, so we can’t store `u8` in it, but
 `u16`, `u32`, and `u64` are all fair game.
@@ -154,7 +146,7 @@ type whose bit width is smaller than a region, so we can’t store `u8` in it, b
 ```rust
 stack_bits [13 .. 27].store(0x3123u16);
 heap       [13 .. 27].store(0x0000_3456u32);
-STATIC_BITS[13 .. 27].store(0x00000000_0000_3789u64);
+static_bits[13 .. 27].store(0x00000000_0000_3789u64);
 ```
 
 That’s it. That’s the whole API.
@@ -172,7 +164,7 @@ higher would get truncated, and will not be written into the region.
 ```rust
 let s: u16 = stack_bits [13 .. 27].load().unwrap();
 let m: u32 = heap       [13 .. 27].load().unwrap();
-let l: u64 = STATIC_BITS[13 .. 27].load().unwrap();
+let l: u64 = static_bits[13 .. 27].load().unwrap();
 ```
 
 The `load` method returns an `Option`, because I elected to be calm rather than
@@ -188,9 +180,7 @@ receive them when `load`ing. `store` exits without effect, `load` returns
 `None`.
 
 I’m not going to demean myself by posting an uncompiled example here to show
-that the `s`, `m`, and `l` values all match exactly what we put in. They do.
-
-> This is, of course, checked by the [test suite].
+that the `s`, `m`, and `l` values all match exactly what we put in. They do.[^4]
 
 # More than just variable-width data storage
 
@@ -203,7 +193,7 @@ struct three_tens {
     uint16_t eins : 10;
     uint16_t zwei : 10;
     uint16_t drei : 10;
-    uint16_t _pad  : 2;
+    uint16_t _pad : 2;
 };
 ```
 
@@ -221,10 +211,7 @@ three_tens = <<
 This is the part where I remind you that C can’t store `u16`s in a byte array,
 or in a word array, only in a `u16` array. That struct is two `u16`s. Also, you
 don’t get to choose the storage order. It’s from the LSbit on little-endian
-architectures and from the MSbit on big-endian.
-
-> Matching the (bad) behavior of existing C code is the other reason I chose the
-> default behavior I described up above.
+architectures and from the MSbit on big-endian[^5].
 
 I have absolutely no idea what the backing memory of Erlang bitstrings is, or of
 any other language that has this functionality.
@@ -235,8 +222,7 @@ Declaring the layout of an I/O protocol in your type system.
 
 ## I/O Packet Destructuring
 
-Let’s pick a couple examples out of thin air, like, for instance, an
-[IPv4 packet].
+Let’s pick an example out of thin air, like, for instance, an [IPv4 packet].
 
 How would we use `BitSlice` to describe memory we know contains it?
 
@@ -256,7 +242,7 @@ the wrong numeric values.
 
 The IPv4 table explains that it is enumerated in MSB-0 order, so,
 most-significant bit on the left. This means that the packet uses the
-`<BigEndian, u8>` type parameters:
+`<BigEndian, u8>` type parameters[^6]:
 
 ```rust
 type Ipv4Pkt = BitSlice<BigEndian, u8>;
@@ -270,7 +256,7 @@ that holds a dynamic partition point between the IPv4 header and payload:
 let bytes: &[u8] = recv();
 let bits: Ipv4Pkt = bytes.bits();
 
-let ihl = bits[4 .. 8].load::<u32>() as usize;
+let ihl = bits[4 .. 8].load::<u8>() as usize;
 if ihl < 5 {
     return Err(InvalidIhl);
 }
@@ -405,8 +391,8 @@ ABI with `#[repr(C)]` and faithful transcription of the memory types.
 > would enable an API like:
 >
 > ```rust
-> let val = *bits[start .. end].span::<u16>().unwrap();
-> *bits[start .. end].span_mut::<u16>().unwrap() = 300;
+> let val = *bits[start .. end].span::<u16>();
+> *bits[start .. end].span_mut::<u16>() = 300;
 > ```
 >
 > Which, now that I write it here, looks like it’s going on the to-do list. For
@@ -446,8 +432,33 @@ based on runtime conditions of the slice, and must include code for all paths),
 the comprehension gain in the source code – clear text, automatic bounds checks,
 and idiomatic Rust patterns – is a benefit you do not want to miss.
 
-[^1]: Might change that in the future, but `std` has the same requirement, so
-      why get wild too soon?
+# Footnotes
+
+[^1]: Ruby’s `Integer` class is, in fact, implemented as a hybrid between an
+      `i31` and a bit-vector so that it can have arbitrary-sized integers with
+      minimal cost. No, you are *not* tricking me into explaining what an `i31`
+      is in this article. Footnotes don’t nest[^7].
+
+[^2]: For technical reasons, including but not limited to the fact that `usize`
+      is a discrete type and *not* an alias to `u32` or `u64`, `bitvec`
+      disallows `usize` as backing storage. I might remove this restriction
+      later.
+
+[^3]: I might change that in the future, but `std` has the same requirement, so
+      why get wild too soon? It would be pretty neat to have `[high .. low]`
+      provide reversed directionality, though.
+
+[^4]: This is, of course, checked by the [test suite].
+
+[^5]: Matching the (bad) behavior of existing C code is the other reason I chose
+      `<Local, Word>` as the default type parameter.
+
+[^6]: `<BigEndian, u8>` used to be the default parameter choice in `bitvec`
+      types, as it appears to be a very common sequence type. I changed it since
+      `<Local, Word>` gives better performance for users who don’t care about
+      layout, and users who *do* care about layout will specify it.
+
+[^7]: Or do they?
 
 [IPv4 packet]: https://en.wikipedia.org/wiki/IPv4#Packet_structure
 [Wikipedia article]: https://en.wikipedia.org/wiki/Bit_array "Wikipedia: Bit array"
