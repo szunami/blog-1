@@ -20,16 +20,15 @@ encoding used … in America.
 This was fine when 7 bits was enough for anybody and we had neither the fonts
 nor the inclination to draw more symbols than could fit on a keyboard.
 
-<aside markdown="block">
-Yes, 7 bits. ASCII defines 128 characters, from 0x00 to 0x7F. The first stage of
-ASCII extension used the upper 128 characters, but everyone made their own table
-to put there so we wound up with the concept of “code pages” and you couldn’t
-mix between them and it was awful.
-
-Also, we **still** have email programs alive today that panic when seeing text
-with the high bit set, because they were written for standard ASCII and nothing
-more.
-</aside>
+> Yes, 7 bits. ASCII defines 128 characters, from 0x00 to 0x7F. The first stage
+> of ASCII extension used the upper 128 characters, but everyone made their own
+> table to put there so we wound up with the concept of “code pages” and you
+> couldn’t mix between them and it was awful.
+>
+> Also, we **still** have email programs alive today that panic when seeing text
+> with the high bit set, because they were written for standard ASCII and
+> nothing more.
+{:.bq-info .iso7010 .m001 role="complementary"}
 
 This is not an article about how we finally moved beyond ASCII (the short
 version is: the [Unicode Consortium][3] is defining a single table whose goal is
@@ -49,15 +48,18 @@ This is good; using words such as `begin/end` to denote blocks instead of `{}`
 is a recipe for disaster, and it permits complex arrangements to be made with
 minimal line noise.
 
-<aside markdown="block">
-Fun example using all of them:
-
-```rust
-fn foo<T: Show>(bar: [T; 5]) { println!("Bar: '{}'", bar); }
-```
-
-Good luck doing that with words instead of punctuation glyphs.
-</aside>
+> Fun example using all of them:
+>
+> ```rust
+> fn foo<T: Show>(bar: [T; 5]) { println!("Bar: '{}'", bar); }
+> ```
+>
+> Good luck doing that with words instead of punctuation glyphs.
+>
+> > Ironically, this website is hosted in Elixir, which uses `do`/`end` block
+> > delimiters…
+> {:.bq-safe role="complementary"}
+{:.bq-info .iso7010 .m004 role="complementary"}
 
 This is all well and good, until we look at strings. I take many, many issues
 with C strings and will complain at length about them some other time; for now I
@@ -97,12 +99,12 @@ wrap text in `'` and `"`. Non-English Latin languages use accented characters,
 which are only recently not compiler errors; non-Western scripts such as Arabic
 or Chinese are even less supported: consider the language [Qalb][6], which
 contains no English text in its grammar, has the GitHub URL
-<a href="https://github.com/nasser/---">`https://github.com/nasser/---`</a>, and
-still uses ASCII quotes for string literals.
+[`https://github.com/nasser/---`][qalb], and still uses ASCII quotes for string
+literals.
 
 English isn’t the only language with quotation marks that aren’t valid syntax,
 however. French uses « and » as its double quotes, and ‹ and › as its single
-quotes. There are more, and more esoteric, quotation marks that can  be found on
+quotes. There are more, and more esoteric, quotation marks that can be found on
 Wikipedia, but I don’t know much about them and would prefer to avoid putting my
 foot in my mouth over them.
 
@@ -141,3 +143,4 @@ didn’t think of them.
 [7]: https://wikipedia.org/wiki/String_interpolation
 [8]: https://www.xkcd.com/327/
 [9]: https://wikipedia.org/wiki/SQL_injection
+[qalb]: https://github.com/nasser/---

@@ -8,10 +8,10 @@ summary: >
   Some things I learned while using the `nom` library on a parser project.
 ---
 
-1. ToC
-{:toc}
+> Rust version 1.25; `nom` version 3.2.
+{:.bq-info role="complementary"}
 
-# Introduction
+## Introduction
 
 My primary side project at the time of this writing is a parser for the [COSMOS]
 message definition language. I’m writing it mostly to learn how to make a useful
@@ -25,14 +25,14 @@ attempting to identify patterns in the text and create data structures.
 In case you’re curious, I do have most of a finite-state-machine diagram written
 for the bulk of the grammar:
 
-[![Lexer FSM][lexer]{:.right}{:style="width:50%"}][lexer]
+![Lexer FSM][lexer]{:.right}{:style="width:50%"}
 
 I say most, because there is a long tail of less common modifier elements that
 can affect elements, but these are the four main elements that comprise 80% of
 the source text. Adding them to the diagram in a useful manner made it a visual
 nightmare, so I elided them.
 
-# Parsing
+## Parsing
 
 I opted to work without a lexer stage that converts the source text into a
 stream of token items that the parser can then consume. I may refactor to use a
@@ -75,30 +75,28 @@ I then define a partially-constructed carrier type that takes `nom`’s generic
 carrier, `IResult`, and defines it to always have a `CompleteStr` as the source
 type. The parse-value and error types are left for each call site.
 
-<aside markdown="block">
-
-For reference, `ParseResult` has the following variants:
-
-```rust
-Ok((unparsed: CompleteStr, parsed: T))
-Err(error: NomErrorEnum<E>)
-```
-
-</aside>
+> For reference, `ParseResult` has the following variants:
+>
+> ```rust
+> Ok((unparsed: CompleteStr, parsed: T))
+> Err(error: NomErrorEnum<E>)
+> ```
+>
+{:.bq-info .iso7010 .m002 role="complementary"}
 
 ```rust
 /// Lexes a single word (denoted by whitespace, non-whitespace, whitespace)
 fn word(text: CompleteStr) -> ParseResult<CompleteStr> {
-    ws!(text, take_till!(char::is_whitespace))
+  ws!(text, take_till!(char::is_whitespace))
 }
 
 /// Lexes a hex number
 fn hnum(text: CompleteStr) -> ParseResult<u64> {
-    preceded!(text, ws!(tag!("0x")), word).and_then(|(rem, num)| {
-        u64::from_str_radix(&num, 16)
-            .map(|x| (rem, x))
-            .map_err(|_| nom_error!(num, 'x' as u32))
-    })
+  preceded!(text, ws!(tag!("0x")), word).and_then(|(rem, num)| {
+    u64::from_str_radix(&num, 16)
+      .map(|x| (rem, x))
+      .map_err(|_| nom_error!(num, 'x' as u32))
+  })
 }
 ```
 
@@ -131,66 +129,66 @@ Let’s show one more:
 ```rust
 /// Lexes any unsigned integer, including name words and hex digits.
 fn unum(text: CompleteStr) -> ParseResult<u64> {
-    use std::{u8, u16, u32, u64};
-    word(text).and_then(|(rem, num)| num.parse::<u64>()
-        .or_else(|_| {
-            alt!(num,
-                tag!("MIN_UINT8") => { |_| u64::from(u8::min_value()) } |
-                tag!("MAX_UINT8") => { |_| u64::from(u8::max_value()) } |
-                //  repeat through u64
-                //  then try the hex parser
-                hnum
-            ).map(|(_, u)| u)
-        })
-        .map(|u| (rem, u))
-        .map_err(|_| nom_error!(num, 'u' as u32))
-    )
+  use std::{u8, u16, u32, u64};
+  word(text).and_then(|(rem, num)| num.parse::<u64>()
+    .or_else(|_| {
+      alt!(num,
+        tag!("MIN_UINT8") => { |_| u64::from(u8::min_value()) } |
+        tag!("MAX_UINT8") => { |_| u64::from(u8::max_value()) } |
+        //  repeat through u64
+        //  then try the hex parser
+        hnum
+      ).map(|(_, u)| u)
+    })
+    .map(|u| (rem, u))
+    .map_err(|_| nom_error!(num, 'u' as u32))
+  )
 }
 ```
 
 This is a much more complex parser; let me break it down.
 
 1. Line 4 finds a logical word in the text. `.and_then` is invoked only if it
-    succeeded, so a failure exits the function immediately. Note that the
-    closing parenthesis of `.and_then` is on line 15; everything inside depends
-    on `word` succeeding!
+  succeeded, so a failure exits the function immediately. Note that the
+  closing parenthesis of `.and_then` is on line 15; everything inside depends on
+  `word` succeeding!
 
 1. Line 4 then attempts to use the standard library’s string-to-number parser.
 
 1. If `num.parse` fails, then the `.or_else` from lines 5 to 11 is invoked. This
-    drops the standard library’s error, and tries to match a series of named
-    keywords that correspond to numbers. The `alt!` combinator takes in `num`,
-    the success output of `word`, and tests if it is the listed strings. If one
-    matches, then the right side of `=>` fires, and a u64 is returned!
+  drops the standard library’s error, and tries to match a series of named
+  keywords that correspond to numbers. The `alt!` combinator takes in `num`, the
+  success output of `word`, and tests if it is the listed strings. If one
+  matches, then the right side of `=>` fires, and a u64 is returned!
 
-    This also attempts the hexadecimal parser on line 11, since hex numbers are
-    valid unsigned integers. `alt!` is a little magic – the transform after the
-    `tag!` calls is actually altering only the `val` in `Ok((rem, val))` – and
-    this doesn’t need to be done on the output value of `hnum`, which is already
-    a `u64`.
+  This also attempts the hexadecimal parser on line 11, since hex numbers are
+  valid unsigned integers. `alt!` is a little magic – the transform after the
+  `tag!` calls is actually altering only the `val` in `Ok((rem, val))` – and
+  this doesn’t need to be done on the output value of `hnum`, which is already
+  a `u64`.
 
 1. Line 12 receives the `ParseResult<CompleteStr, u64, E>` from `alt!` and drops
-    the unparsed output of success – we statically know it will be an empty
-    string, because `word` made sure that the `num` value had no extraneous text
-    – and returns only the number. This is necessary because `num.parse` returns
-    a bare `Ok(u64)` on success, and therefore the closure inside `.or_else`
-    must also return `Ok(u64)` or else the types don’t match and the interior
-    `Result` carrier fails!
+  the unparsed output of success – we statically know it will be an empty
+  string, because `word` made sure that the `num` value had no extraneous text
+  – and returns only the number. This is necessary because `num.parse` returns
+  a bare `Ok(u64)` on success, and therefore the closure inside `.or_else` must
+  also return `Ok(u64)` or else the types don’t match and the interior `Result`
+  carrier fails!
 
-    Line 13 terminates the `.or_else()` call, bringing us back up to the
-    `.and_then` closure.
+  Line 13 terminates the `.or_else()` call, bringing us back up to the
+  `.and_then` closure.
 
 1. The `.and_then` closure must return a `ParseResult` carrier, which is a
-    totally different type than the result of the standard library parser! The
-    output of `num.parse().or_else()` is `Result<u64, _>` but we need a
-    `Result<(CompleteStr, u64), NomError>`!
+  totally different type than the result of the standard library parser! The
+  output of `num.parse().or_else()` is `Result<u64, _>` but we need a
+  `Result<(CompleteStr, u64), NomError>`!
 
-    Thus, line 14 changes the success type from `u64` to `(CompleteStr, u64)` by
-    adding in the remainder of the text that from when `word` did its work, and
-    line 15 throws away the standard-library error type and replaces it with a
-    `nom` error type specific to `unum`.
+  Thus, line 14 changes the success type from `u64` to `(CompleteStr, u64)` by
+  adding in the remainder of the text that from when `word` did its work, and
+  line 15 throws away the standard-library error type and replaces it with a
+  `nom` error type specific to `unum`.
 
-# Newtype Wrappers
+## Newtype Wrappers
 
 `nom` uses a common Rust pattern of wrapping a semantically-meaningless type in
 a semantically-meaningful type that only exists at compile time. In this case,
@@ -208,7 +206,7 @@ to use `CompleteStr` instead of `&str` as the source type.
 
 ***EXCEPT!***
 
-# Lifetimes and References
+## Lifetimes and References
 
 During my process of porting my project to use `CompleteStr` instead of `str`, I
 swiftly ran into fun problems.
@@ -235,21 +233,21 @@ Enter [`nom` PR #715][nom_715].
 This PR was a welcome addition, which implemented `Deref` on `CompleteStr` to
 get at the inner `&str` without explicit destructuring and restructuring.
 
-<aside markdown="block">
-NOTE: According to the [Rust docs on Deref][Deref],
-
-> On the other hand, the rules regarding Deref and DerefMut were designed
-> specifically to accommodate smart pointers. Because of this, **`Deref`**
-> **should only be implemented for smart pointers** to avoid confusion.
-
-This is good advice, generally speaking, but Rust doesn’t have a mechanism for
-subclassing like we see in C++ or other OO languages, or even in C, and these
-are often really useful behaviors to have. The `nom` `CompleteStr` is in all
-respects an ordinary `&str`, with some extra information that doesn’t need to be
-represented outside the compiler and doesn’t affect the behavior of the type.
-
-As such, `Deref` isnt’t the right choice, but it’s the only one available.
-</aside>
+> NOTE: According to the [Rust docs on Deref][Deref],
+>
+> > On the other hand, the rules regarding Deref and DerefMut were designed
+> > specifically to accommodate smart pointers. Because of this, **`Deref`**
+> > **should only be implemented for smart pointers** to avoid confusion.
+>
+> This is good advice, generally speaking, but Rust doesn’t have a mechanism for
+> subclassing like we see in C++ or other OO languages, or even in C, and these
+> are often really useful behaviors to have. The `nom` `CompleteStr` is in all
+> respects an ordinary `&str`, with some extra information that doesn’t need to
+> be represented outside the compiler and doesn’t affect the behavior of the
+> type.
+>
+> As such, `Deref` isnt’t the right choice, but it’s the only one available.
+{:.bq-warn .iso7010 .w013 role="complementary"}
 
 Here’s the code:
 
@@ -257,10 +255,10 @@ Here’s the code:
 pub struct CompleteStr<'a>(pub &'a str);
 
 impl<'a> Deref for CompleteStr<'a> {
-    type Target = str;
-    fn deref(&self) -> &str {
-        self.0
-    }
+  type Target = str;
+  fn deref(&self) -> &str {
+    self.0
+  }
 }
 ```
 
@@ -271,10 +269,10 @@ rewrite this with all of the lifetimes and dereferences in place.
 
 ```rust
 impl<'a> Deref for CompleteStr<'a> {
-    type Target = str;
-    fn deref<'self>(&'self self) -> &'self str {
-        &*self.0
-    }
+  type Target = str;
+  fn deref<'self>(&'self self) -> &'self str {
+    &*self.0
+  }
 }
 ```
 
@@ -349,10 +347,10 @@ and this reference has the *handle*’s lifetime.
 
 ```rust
 impl<'a> Deref for CompleteStr<'a> {
-    type Target = &'a str;
-    fn deref<'self>(&'self self) -> &'self &'a str {
-        &self.0
-    }
+  type Target = &'a str;
+  fn deref<'self>(&'self self) -> &'self &'a str {
+    &self.0
+  }
 }
 ```
 
@@ -369,9 +367,9 @@ building a new `CompleteStr` from a reference to `&str`:
 
 ```rust
 impl<'a, 'b> From<&'b &'a str> CompleteStr<'a> {
-    fn from(src: &'b &'a str) -> CompleteStr<'a> {
-        CompleteStr(*src)
-    }
+  fn from(src: &'b &'a str) -> CompleteStr<'a> {
+    CompleteStr(*src)
+  }
 }
 ```
 
@@ -380,7 +378,7 @@ and the end result is that it’s now very easy to do `str` operations on
 operation and then immediately rewrap the emitted `&str`, and this pattern is
 now strewn throughout my project to great success.
 
-# Conclusion
+## Conclusion
 
 These are a few of my experiences building a parser; I’ll update this post or
 write sequels as I move forward.
@@ -411,10 +409,20 @@ comment tokens coming through.
 I’m having a lot of fun on this project and it’s been a wild learning experience
 so I hope I’m able to release some code from it in the near future!
 
+> Note from the future: lol. lmao.
+>
+> I advanced further in the next three months and then got to the stage where I
+> needed to parse bitstream literals, and [`bitvec`] has diverged to be a new
+> and all-consuming project in its own right.
+>
+> Be careful of shaving yaks, lest you wind up becoming a shearmaker.
+{:.bq-safe .iso7010 .e004 role="complementary"}
+
 [COSMOS]: //cosmosrb.com/
 [Deref]: //doc.rust-lang.org/std/ops/trait.Deref.html
+[`bitvec`]: /crates/bitvec
 [lexer]: 2018-04-05-adventures-with-nom/lexer.png
 [nom]: //rust.unhandledexpression.com/nom/
 [nom_715]: //github.com/Geal/nom/pull/715
 [nom_725]: //github.com/Geal/nom/pull/725
-[tap]: //github.com/myrrlyn/tap-rs
+[tap]: /crates/tap

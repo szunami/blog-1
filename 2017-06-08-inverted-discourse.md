@@ -47,7 +47,7 @@ and conversations are modeled. Each network is broken in a different way, but as
 this piece is prompted by events occurring on and somewhat particular to Twitter
 I shall focus only on it.
 
-### Ordering
+## Ordering
 
 In pretty much every medium, the first person to make a comment is considered
 more important than anyone else who makes that comment, and the relative
@@ -57,10 +57,9 @@ across the internet, is Newest First. All else being equal, if Amanda and
 MalwareTech post before I start scrolling, I will see the second post first and
 the first, second.
 
-<aside markdown="block">
-This is probably not what Jesus meant by “the first shall be last and the last
-shall be first.”
-</aside>
+> This is probably not what Jesus meant by “the first shall be last and the last
+> shall be first.”
+{.bq-safe .iso7010 :role="complementary"}
 
 As a reader, I will come across MalwareTech’s tweet first, and have a genuine
 reaction, possibly including liking/retweeting, to it first. By the time I see
@@ -70,7 +69,7 @@ seen Amanda’s and decided to repost it himself (***which is not the case; I***
 ***just only have the one example scenario***) then it is downright unfair and
 rude.
 
-### Popularity
+## Popularity
 
 MalwareTech has the bigger audience by almost two orders of magnitude; it stands
 to reason that his tweets would reach a larger audience. This is fine, on its
@@ -93,7 +92,7 @@ This setting can be disabled, but it’s apparently on by default. I certainly
 hadn’t turned it on manually, as I dislike this behavior, but it was on for me
 when I was told the switch existed.
 
-### Method
+## Method
 
 If you’re in a conversation, which do you value more? Someone in the group
 responding to you, or someone grabbing a bullhorn and speaking *at*, not *to*,

@@ -40,10 +40,7 @@ processing device, including *peripheral devices* (single-purpose computers
 controlled by a CPU, which provide real functionality such as storage or
 transmission).
 
-1. ToC
-{:toc}
-
-# CPU Components
+## CPU Components
 
 In order to determine what should go in a CPU, we first need to identify what it
 is.
@@ -54,28 +51,26 @@ emitting the result as output.
 
 Let us begin there, at the module called the **Arithmetic/Logic Unit** (ALU).
 
-# ALU
+## ALU
 
 The ALU is essentially a multi-function calculator. It has two main input
 *buses* and one main output *bus*. These buses must all have the same width; for
 the purposes of this article, I will be using 8-bit buses.
 
-<aside markdown="block" class="terminology">
-- A *bus* is a collection of *wires*.
-- A *wire* is an electrical pathway which carries one *bit* of information.
-- A *bit* is a single **b**inary dig**it**. It can be either `1` or `0`.
-</aside>
+> - A *bus* is a collection of *wires*.
+> - A *wire* is an electrical pathway which carries one *bit* of information.
+> - A *bit* is a single **b**inary dig**it**. It can be either `1` or `0`.
+{:.bq-safe role="complementary"}
 
 The first functions to construct for the ALU are the logic functions. These are
 simple: pick the operations to implement, and then create them in parallel.
 
-<aside markdown="block" class="terminology">
-Multi-bit signals are given names and widths, and can be referred to by the name
-alone, which implies the full width, or as a slice. Slices look like this:
-`Name[high:low]`, for wide slices, or `Name[bit]` for single-bit slices.
-</aside>
+> Multi-bit signals are given names and widths, and can be referred to by the
+> name alone, which implies the full width, or as a slice. Slices look like
+> this: `Name[high:low]`, for wide slices, or `Name[bit]` for single-bit slices.
+{:.bq-safe role="complementary"}
 
-## Logic
+### Logic
 
 Let us implement the three Boolean fundamental operations: `AND`, `OR`, and
 `NOT`. While we can ask our electrical engineers to make 8-bit-wide logic gates,
@@ -106,17 +101,16 @@ different logic gates. Suppose that an `AND` gate asserts low voltage while the
 high voltage coming out of `OR`, into `AND`, and thence into `GND`, will not
 only waste power, but also destroy the logic gates.
 
-## Selection
+### Selection
 
 The solution to this problem is called a *multiplexer*. A multiplexer is a logic
 element which is capable of acting like a railway switch: multiple input buses
 enter the device, which uses `AND` gates to only connect one of them to output.
 
-<aside markdown="block" class="terminology">
-If you’re interested, the formula for a mux is
-$$Y = (A \land S) \lor (B \land \lnot S)$$, or `Y = (A & S) | (B & ~S)` in C
-syntax.
-</aside>
+> If you’re interested, the formula for a mux is
+> $$Y = (A \land S) \lor (B \land \lnot S)$$, or `Y = (A & S) | (B & ~S)` in C
+> syntax.
+{:.bq-safe role="complementary"}
 
 There also exists a demultiplexer, which is just a multiplexer facing backwards.
 One input bus comes in, and gets routed among different output buses. We’ll get
@@ -145,7 +139,7 @@ logic only has two symbols), so we only connect the `A` input to it.
 
 This is three operation clusters, but our multiplexer only supports two!
 
-### Composition
+#### Composition
 
 This is where composition becomes most useful. We have established that a 2:1
 multiplexer (mux for short, henceforth) and 1:2 demultiplexer (demux) are a
@@ -162,7 +156,7 @@ You take a 2:1 mux, and have each of its inputs be… another mux! This is a
 
 It looks something like this:
 
-```text
+```term
      ┌─────┐             |
 ══A══╡     │          S[1:0]
      │ mux ╞══Y0══╗      │
@@ -182,37 +176,36 @@ As you can see, every doubling of input buses only requires one more selector
 line. The new selector line controls where the end mux looks, while the old
 selector line gets forwarded to each leaf (left) mux.
 
-<aside markdown="block" class="terminology">
-The downside of binary tree structures is their *overhead*. A 4:1 mux has three
-internal buses which are not part of the interface, and rather than being a
-single unit, is three.
-
-An 8:1 mux consists of two 4:1 muxes connected to a 2:1 mux. This structure has
-two 2:1 muxes sitting in the internal logic, not part of the interface at all,
-as well six internal paths.
-
-<aside markdown="block" class="terminology">
-The expense formula for binary trees is both incredibly simple (make one and
-count) and also requires Calculus II. This is the calculus; I’m throwing it in
-as a bonus and you can skip this if you want; I will only reference it one time.
-
-If you take a sum, starting at some number and successively adding half of that
-to your result, your sum approaches twice the starting number.
-
-$$\sum_{k=0}^{\infty}\frac{1}{2^k} = 2$$
-
-If you have an n-bit-wide binary tree, you wind up with $$2^n - 1$$ nodes in the
-tree. This formula uses $$log_2{n}$$ to compute the *depth* of the tree, and
-accumulates the width of the tree at each level. Since each level closer to the
-root has half as many nodes as the previous root, we wind up following the above
-series to a finite end.
-
-$$\sum_{k=log_2{n}}^{0}2^k = n + \frac{n}{2} + \frac{n}{4} + \frac{n}{8} + ... + 8 + 4 + 2 + 1 = 2^n - 1$$
-
-Deep trees have a *lot* of middleware that links them together, but performs no
-user-facing work.
-</aside>
-</aside>
+> The downside of binary tree structures is their *overhead*. A 4:1 mux has
+> three internal buses which are not part of the interface, and rather than
+> being a single unit, is three.
+>
+> An 8:1 mux consists of two 4:1 muxes connected to a 2:1 mux. This structure
+> has two 2:1 muxes sitting in the internal logic, not part of the interface at
+> all, as well six internal paths.
+>
+> > The expense formula for binary trees is both incredibly simple (make one and
+> > count) and also requires Calculus II. This is the calculus; I’m throwing it
+> > in as a bonus and you can skip this if you want; I will only reference it
+> > one time.
+> >
+> > If you take a sum, starting at some number and successively adding half of
+> > that to your result, your sum approaches twice the starting number.
+> >
+> > $$\sum_{k=0}^{\infty}\frac{1}{2^k} = 2$$
+> >
+> > If you have an n-bit-wide binary tree, you wind up with $$2^n - 1$$ nodes in
+> > the tree. This formula uses $$log_2{n}$$ to compute the *depth* of the tree,
+> > and accumulates the width of the tree at each level. Since each level closer
+> > to the root has half as many nodes as the previous root, we wind up
+> > following the above series to a finite end.
+> >
+> > $$\sum_{k=log_2{n}}^{0}2^k = n + \frac{n}{2} + \frac{n}{4} + \frac{n}{8} + ... + 8 + 4 + 2 + 1 = 2^n - 1$$
+> >
+> > Deep trees have a *lot* of middleware that links them together, but performs
+> > no user-facing work.
+> {:.bq-info .iso7010 .m055 role="complementary"}
+{:.bq-info .iso7010 .m002 role="complementary"}
 
 Suppose you want to mux 8 things? You take two of these, slap a 2:1 mux between
 them, and now you're done. The lower two bits of the now-three-bit select line
@@ -227,9 +220,9 @@ demux and mux are properly synchronized, traffic flow through the whole system
 is seamless, and it appears from the outside as if the logic operators are
 swapped out on the fly.
 
-##### Braced ALU Core
+###### Braced ALU Core
 
-```
+```term
      ┌─────┐     ┌─────┐
      │ 1:2 ╞══A══╡ AND │
      │  d  ╞══B══╡     ╞══Ya══╗   ┌─────┐
@@ -241,28 +234,30 @@ swapped out on the fly.
 ──S─────┴────────────────────────────┘
 ```
 
-<aside markdown="block" class="terminology">
-The usage of early-alphabet letters starting from A as input, the S for select,
-and the Y for output is an informal convention that I will be (mostly) keeping
-throughout the series.
+> The usage of early-alphabet letters starting from A as input, the S for
+> select, and the Y for output is an informal convention that I will be (mostly)
+> keeping throughout the series.
+>
+> The usage of X and Z are discouraged as variable names, because they refer to
+> the other two Boolean states.
+{:.bq-safe role="complementary"}
 
-The usage of X and Z are discouraged as variable names, because they refer to
-the other two Boolean states.
+<!-- -->
 
-Other two Boolean states? Yes, I lied, a little bit. Circuit analysis has four
-possible values of a digital line at any point: `1` (logic-HIGH), `0`
-(logic-LOW), `X` (don’t-care), and `Z` (floating). A value of `Z` means that no
-logic element is actively *driving* the line, and it is floating at some garbage
-environmental value about which we don’t care.
-
-This is different from `X` in that `X` is an actively asserted line, just not
-one that matters to us. A discarded, driven mux input is `X`; the unused demux
-output is `Z`.
-
-The nice thing about `Z` is that, since it is not contested by any other logic
-element, a line at `Z` can safely connect to an active line without causing the
-circuit to melt. We will return to this concept later as well.
-</aside>
+> Other two Boolean states? Yes, I lied, a little bit. Circuit analysis has four
+> possible values of a digital line at any point: `1` (logic-HIGH), `0`
+> (logic-LOW), `X` (don’t-care), and `Z` (floating). A value of `Z` means that
+> no logic element is actively *driving* the line, and it is floating at some
+> garbage environmental value about which we don’t care.
+>
+> This is different from `X` in that `X` is an actively asserted line, just not
+> one that matters to us. A discarded, driven mux input is `X`; the unused demux
+> output is `Z`.
+>
+> The nice thing about `Z` is that, since it is not contested by any other logic
+> element, a line at `Z` can safely connect to an active line without causing
+> the circuit to melt. We will return to this concept later as well.
+{:.bq-warn .iso7010 .w007 role="complementary"}
 
 The 1:2 demux and 2:1 mux can be replaced with 1:n and n:1 elements, where n is
 whatever power of 2 necessary to route through all the elements contained
@@ -273,7 +268,7 @@ We can imagine adding in a `NOT` block in our system, connecting it only to `A`
 and letting `B` be discarded, and our ALU gains new functionality without
 any change to the interface besides widening the mode selector.
 
-## Mathematics
+### Mathematics
 
 This is where things get weird. Honestly, you can skip this.
 
@@ -284,24 +279,23 @@ cover the very simplest method of performing arithmetic, which is not the method
 used in any modern computer, and if you really want to know, email me asking for
 it.
 
-### Decimal Addition
+#### Decimal Addition
 
 Let’s do some basic addition. In base-10 numbers, the order of digits is
 0123456789, and after 9, you wrap to 0 and generate a *carry digit* which
 propagates to the next more significant column.
 
-<aside markdown="block" class="terminology">
-We read left to right, so the left-most digit is the *most significant*, meaning
-that it has the highest power of whatever base we are using. The power decreases
-by one with every column to the right, until the decimal point is reached, at
-which point the powers become negative.
-
-$$123.45$$ breaks down to $$1 \times 10^2 + 2 \times 10^1 + 3 \times 10^0 + 4
-\times 10^{-1} + 5 \times 10^{-2}$$. The farthest left column has the most
-affect on the value of the number, so it is the most significant; the farthest
-right column has the least affect on the value of the number, so it is the least
-significant.
-</aside>
+> We read left to right, so the left-most digit is the *most significant*,
+> meaning that it has the highest power of whatever base we are using. The power
+> decreases by one with every column to the right, until the decimal point is
+> reached, at which point the powers become negative.
+>
+> $$123.45$$ breaks down to $$1 \times 10^2 + 2 \times 10^1 + 3 \times 10^0 + 4
+> \times 10^{-1} + 5 \times 10^{-2}$$. The farthest left column has the most
+> effect on the value of the number, so it is the most significant; the farthest
+> right column has the least effect on the value of the number, so it is the
+> least significant.
+{:.bq-info .iso7010 .m002 role="complementary"}
 
 When you carry a digit, you perform normal decimal addition on the next column,
 but also add the 1 generated by the previous column. Then you repeat the process
@@ -309,13 +303,14 @@ working your way left, until you reach the end of the number. The sum is
 guaranteed to be one digit wider, at most, than the arguments going in (called
 *addends* for addition).
 
-### Binary Addition
+#### Binary Addition
 
 Binary addition works the exact same way, except it only has two digits, so we
-have the digits 01 and $$1 + 1 == 10$$, which means that the bitwise-addition
-emits a 0 as its bit output and sends a carry to the next column over.
+have the digits $$0$$ and $$1$$, and $$1 + 1 == 10$$, which means that the
+bitwise-addition emits a 0 as its bit output and sends a carry to the next
+column over.
 
-```text
+```term
   1010
   1100
 +_____
@@ -327,7 +322,7 @@ column left. In 4-bit addition, the result is also 4-bits, so the carry output
 (the fifth bit from the right) is not part of the returned sum, but on a carry
 line, which goes somewhere else.
 
-### Ripple-Carry Adder
+#### Ripple-Carry Adder
 
 So, the most obvious algorithm for addition is that which you learned in grade
 school: start at the right and work your way left, pushing carries as you go. A
@@ -335,7 +330,7 @@ carry plus a one plus a one is 1 and a carry, so the carries can never build up.
 
 Let’s take a look!
 
-```text
+```term
 A B                                        Cin
 ║ ║                                         │
 ║ ╚═══╤════╤════╤════╤════╤════╤════╤════╕  │
@@ -413,14 +408,14 @@ long as the replacement module is mathematically correct, the formal behavior of
 the system is unchanged. (Obviously, the layout and power consumption are
 altered, but that’s an electrical engineer’s problem, not ours.)
 
-<aside markdown="block" class="terminology">
-A Look-Ahead Carry adder is a binary tree structure, which I discussed earlier.
-A 32-bit adder requires 63 worker elements, so while it operates quickly (carry
-math goes up and down the tree, so it only takes 5 steps to stabilize), it costs
-almost twice as much as a ripple-carry adder. This tradeoff is not always ideal.
-</aside>
+> A Look-Ahead Carry adder is a binary tree structure, which I discussed
+> earlier. A 32-bit adder requires 63 worker elements, so while it operates
+> quickly (carry math goes up and down the tree, so it only takes 5 steps to
+> stabilize), it costs almost twice as much as a ripple-carry adder. This
+> tradeoff is not always ideal.
+{:.bq-info role="complementary"}
 
-#### Binary Subtraction
+##### Binary Subtraction
 
 First, let’s talk about how numbers are represented in binary. 8-bit *unsigned*
 numbers (positive only) range from 0 (`0b00000000`) to 255 (`0b11111111`).
@@ -467,8 +462,8 @@ Inductively:
 ~(number-in-2s-complement) + 1 = -number
 ```
 
-This works for all `n`-bit numbers, which can represent integers from
-$$-2^{n-1}$$ to $$+2^{n-1} - 1$$.
+This works for all `n`-bit numbers, which can represent signed integers from
+$$-2{n-1}$$ to $$+2^{n-1} - 1$$.
 
 So to implement subtraction, we use the exact same hardware, but stick a `NOT`
 gate in front of `B` and force the carry input high. Since we can use the same
@@ -480,7 +475,7 @@ basic arithmetic.
 Multiplication and division, and fractional numbers, are an entirely other
 problem. I will not be discussing them.
 
-## Combining Mathematics and Logic
+### Combining Mathematics and Logic
 
 Scroll way back up to the top, and imagine a multiplexer setup rigged to route
 two data streams through one of our available operations: `AND`, `OR`, `NOT`,
@@ -500,7 +495,7 @@ The specification of which bits in the number are which inputs, and which
 numbers are legal (not all combinations of `S` and `Cin` result in sensible
 output), comprise (part of) an **instruction set**.
 
-# Memory
+## Memory
 
 As it stands, our ALU is barely useful. We have to manually provide the input
 instruction, and the output result gets dumped in our lap for us to use or throw
@@ -536,7 +531,7 @@ instead of 20, and look like something like this: `SSSCAAAAABBBBBYYYYY`.
 
 Our CPU now looks like this:
 
-```text
+```term
 SCABY      Register File      ╔════Data access
 │││││┌──┬──┬──┬──┬──┬──┬──┬──┐║
 ││││└┤  │  │  │  │  │  │  │  ╞╝
@@ -569,7 +564,7 @@ and receive data from the `Y` bus into the specified register.
 
 That’s pretty much it for a (simple) CPU.
 
-# Review
+## Review
 
 A CPU consists of the worker logic in the ALU (arithmetic/logic unit) and
 data storage in the register file. A multiplexer pair bookends the ALU, so that

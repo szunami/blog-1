@@ -18,10 +18,7 @@ summary: >
   language might aid the use of parts of a record in place of the whole.
 ---
 
-1. ToC
-{:toc}
-
-# Introduction
+## Introduction
 
 I work in systems-level C for a living, and have reason to do some pretty
 esoteric things with it. One of the strengths of C (I don’t, in fact, have
@@ -37,7 +34,7 @@ One of the hallmarks of a system that deals with complex data is the ability to
 combine one or more smaller objects into a larger one, much like building with
 LEGO bricks.
 
-## Type Punning
+### Type Punning
 
 The term [*type punning*][1] refers to the practice of performing contortions in
 both code and data to transmute an object from one type to another without
@@ -80,34 +77,33 @@ The above example is hilariously unsafe and relies on hardware specifics about
 the way floating point numbers are represented as bits according to the IEEE754
 standard, and likely doesn’t work for all possible float values.
 
-<aside markdown="block">
-It also doesn’t compile anymore under `-Wall`. I copied it verbatim and didn’t
-attempt to actually run it myself. I also wanted to use that exact notation
-because that’s the syntax we’ll be using later with `struct` pointers, where C
-is much more relaxed.
-
-C’s firm glare of a warning in this case explicitly mentions type punning and
-that a float can’t be stored in an integral type even if we try to sweet-talk
-our way past the compiler like this. But this is C, and nothing is truly
-forbidden. So we use a `union`, which lets us bypass silly things like alias
-restrictions and interpret a bit pattern however we so please.
-
-```c
-float orig;
-union { float f; long l; } u;
-u.f = orig;
-u.l = 0x5F3759DF - (u.l >> 1);
-return u.f;
-```
-
-This was pointed out to me by some kind redditors and so I updated this post
-with the *proper* way to break the rules.
-</aside>
+> It also doesn’t compile anymore under `-Wall`. I copied it verbatim and didn’t
+> attempt to actually run it myself. I also wanted to use that exact notation
+> because that’s the syntax we’ll be using later with `struct` pointers, where C
+> is much more relaxed.
+>
+> C’s firm glare of a warning in this case explicitly mentions type punning and
+> that a float can’t be stored in an integral type even if we try to sweet-talk
+> our way past the compiler like this. But this is C, and nothing is truly
+> forbidden. So we use a `union`, which lets us bypass silly things like alias
+> restrictions and interpret a bit pattern however we so please.
+>
+> ```c
+> float orig;
+> union { float f; long l; } u;
+> u.f = orig;
+> u.l = 0x5F3759DF - (u.l >> 1);
+> return u.f;
+> ```
+>
+> This was pointed out to me by some kind redditors and so I updated this post
+> with the *proper* way to break the rules.
+{:.bq-warn .iso7010 .w011 role="complementary"}
 
 Type punning can also be used to reclassify structured data rather than raw
 primitives, as I’ll show below.
 
-# Structured Data in C
+## Structured Data in C
 
 C uses a purely compositional model of data: `struct`s are types that are built
 out of smaller items, which may be primitives or other `struct`s. Structure
@@ -119,7 +115,7 @@ struct as if it were one of its component members … directly. However, the
 state of C’s memory model lets us work type puns to mimic a highly simplified
 form of mechanics that somewhat approximate inheritance in other languages.
 
-## Composition in C
+### Composition in C
 
 This section can be skipped if you’re already well acquainted with type punning
 on C structures; I’m including it for any potential audience members who are not
@@ -131,8 +127,8 @@ tie them together like this:
 
 ```c
 struct String {
-    size_t len;
-    char* text;
+  size_t len;
+  char* text;
 }
 ```
 
@@ -146,38 +142,37 @@ struct String str;
 then all elements in `str` stay together at all times. We’e just composed two
 data primitives, an unsigned word integer and a pointer to bytes, together.
 
-<aside markdown="block">
-Note that the actual text isn’t in the `struct String` type. It’s “somewhere
-else”, probably the heap, but we don’t really care here.
-
-It’s also possible to store the text inline, by doing
-
-```c
-struct StringImmediate {
-    size_t len;
-    char text[];
-}
-```
-
-but now the `struct StringImmediate` type is *unsized*, and the compiler will
-assume that it’s one word long and if we want to access memory beyond it, that
-is entirely our call but don’t blame it when we break things.
-</aside>
+> Note that the actual text isn’t in the `struct String` type. It’s “somewhere
+> else”, probably the heap, but we don’t really care here.
+>
+> It’s also possible to store the text inline, by doing
+>
+> ```c
+> struct StringImmediate {
+>   size_t len;
+>   char text[];
+> }
+> ```
+>
+> but now the `struct StringImmediate` type is *unsized*, and the compiler will
+> assume that it’s one word long and if we want to access memory beyond it, that
+> is entirely our call but don’t blame it when we break things.
+{:.bq-warn .iso7010 .w022 role="complementary"}
 
 Suppose we want to define some other object, say, a mailing address. This is
 made up of a few different pieces of text. We might do this:
 
 ```c
 enum UsState {
-    Alabama,
-    /* ... */
-    Wyoming,
+  Alabama,
+  /* ... */
+  Wyoming,
 }
 struct MailingAddr {
-    struct String street_addr;
-    struct String town;
-    UsState state;
-    int zipcode;
+  struct String street_addr;
+  struct String town;
+  UsState state;
+  int zipcode;
 }
 ```
 
@@ -192,10 +187,10 @@ addresses, so we can build a person like this:
 
 ```c
 struct Person {
-    struct String name;
-    int birthday;
-    struct MailingAddr addr;
-    /* maybe more data */
+  struct String name;
+  int birthday;
+  struct MailingAddr addr;
+  /* maybe more data */
 }
 ```
 
@@ -204,66 +199,64 @@ in memory:
 
 ```c
 struct PersonExpanded {
-    size_t name_len; // 4 or 8 bytes, depending on system
-    char* name_text; // 4 or 8 bytes
-    int birthday; // almost always 4 bytes anymore
-    //  on a 64-bit system, the next four bytes might be skipped
-    size_t addr_street_addr_len; // 4 or 8 bytes
-    char* addr_street_addr_text; // 4 or 8 bytes
-    size_t addr_town_len; // 4 or 8 bytes
-    char* addr_town_text; // 4 or 8 bytes
-    int addr_state; // enums are transparently ints (4 bytes)
-    int addr_zipcode; // 4 bytes
-    /* maybe more data */
+  size_t name_len; // 4 or 8 bytes, depending on system
+  char* name_text; // 4 or 8 bytes
+  int birthday; // almost always 4 bytes anymore
+  //  on a 64-bit system, the next four bytes might be skipped
+  size_t addr_street_addr_len; // 4 or 8 bytes
+  char* addr_street_addr_text; // 4 or 8 bytes
+  size_t addr_town_len; // 4 or 8 bytes
+  char* addr_town_text; // 4 or 8 bytes
+  int addr_state; // enums are transparently ints (4 bytes)
+  int addr_zipcode; // 4 bytes
+  /* maybe more data */
 } // at least 36 or 60 bytes, maybe more with padding
 ```
 
 I for one am glad data composition exists in C. Writing that all out by hand is
 a recipe for bugs and disaster.
 
-# Structure Punning
+## Structure Punning
 
 C’s memory model states that structures and arrays have no secret members. This
 means that for any given structure or array with some address `A`, the first
 element within that structure or array also has the same address `A`.
 
-<aside markdown="block">
-This is why C arrays start from 0. The array member syntax `arr[idx]` is syntax
-sugar for `*(arr + (idx * size))`.
-
-```c
-int arr[4]; // 16 bytes of memory
-printf("%p", arr); // some address A
-printf("%p", &arr[0]); // the same address A
-printf("%p", &arr[1]); // A + 4
-
-char* pa = arr;
-bool t = (pa + (2 * 4)) == &arr[2]; // true
-```
-
-The C compiler secretly multiplies offset by width for you when working with
-pointers, so `arr + 1` where `1` counts `int`s, is actually `arr + 4` where `4`
-counts bytes.
-
-```c
-bool t2 = &arr[3] == arr + 3; // true
-```
-
-<aside markdown="block">
-Addition is commutative. $$a + b$$ is identical to $$b + a$$. So the C arithmetic
-`base + offset` is equivalent to `offset + base`.
-
-You may be ahead of me. If not, remember that in C, `*(base + offset)` is also
-written as `base[offset]`.
-
-```c
-int d = 3[arr];
-//  fetches arr[3]
-```
-
-This is totally valid C.
-</aside>
-</aside>
+> This is why C arrays start from 0. The array member syntax `arr[idx]` is
+> syntax sugar for `*(arr + (idx* size))`.
+>
+> ```c
+> int arr[4]; // 16 bytes of memory
+> printf("%p", arr); // some address A
+> printf("%p", &arr[0]); // the same address A
+> printf("%p", &arr[1]); // A + 4
+>
+> char* pa = arr;
+> bool t = (pa + (2 * 4)) == &arr[2]; // true
+> ```
+>
+> The C compiler secretly multiplies offset by width for you when working with
+> pointers, so `arr + 1` where `1` counts `int`s, is actually `arr + 4` where
+> `4` counts bytes.
+>
+> ```c
+> bool t2 = &arr[3] == arr + 3; // true
+> ```
+>
+> > Addition is commutative. $$a + b$$ is identical to $$b + a$$. So the C
+> > arithmetic `base + offset` is equivalent to `offset + base`.
+> >
+> > You may be ahead of me. If not, remember that in C, `*(base + offset)` is
+> > also written as `base[offset]`.
+> >
+> > ```c
+> > int d = 3[arr];
+> > //  fetches arr[3]
+> > ```
+> >
+> > This is totally valid C.
+> {:.bq-info .iso7010 .m009 role="complementary"}
+{:.bq-info .iso7010 .m004 role="complementary"}
 
 Say we have a `struct Person` and a function that only needs a `struct String`.
 A person struct can become their name struct very easily:
@@ -293,50 +286,49 @@ and behavior did (this is a direct sequel to my last post; if you haven’t, go
 read). This let us seamlessly access fields of a `struct Person` even though we
 were handed a pointer that thought it only went to a `struct String`.
 
-<aside markdown="block">
-“Hold up,” you may be thinking, “you just took a pointer that could only
-guarantee two words of data at its end, and tried to read a third!”
-
-(If you weren’t thinking that, that’s okay, but you *should be*.)
-
-That is in fact exactly what happened. So what if we were wrong? What if that
-`struct String*` didn’t aim at a `struct Person` after all?
-
-The answer is ***memory safety violations***. If you’re lucky, you’ll be aimed
-at a `struct Person` and this will be okay. If you’re slightly less lucky,
-you’ll leave the memory you own, the OS will get mad at you, and your program
-will crash.
-
-And if you’re very very unlucky, you’ll gaily access memory you own but
-shouldn’t divulge and expose information that shouldn’t be exposed.
-
-Hello, welcome to C, and a good third of all the CVE bugs filed over the last
-forty years including disasters like [Heartbleed][3] and [Cloudbleed][4].
-
-This is why I rant about C being recklessly unsafe.
-</aside>
+> “Hold up,” you may be thinking, “you just took a pointer that could only
+> guarantee two words of data at its end, and tried to read a third!”
+>
+> (If you weren’t thinking that, that’s okay, but you *should be*.)
+>
+> That is in fact exactly what happened. So what if we were wrong? What if that
+> `struct String*` didn’t aim at a `struct Person` after all?
+>
+> The answer is ***memory safety violations***. If you’re lucky, you’ll be aimed
+> at a `struct Person` and this will be okay. If you’re slightly less lucky,
+> you’ll leave the memory you own, the OS will get mad at you, and your program
+> will crash.
+>
+> And if you’re very very unlucky, you’ll gaily access memory you own but
+> shouldn’t divulge and expose information that shouldn’t be exposed.
+>
+> Hello, welcome to C, and a good third of all the CVE bugs filed over the last
+> forty years including disasters like [Heartbleed][3] and [Cloudbleed][4].
+>
+> This is why I rant about C being recklessly unsafe.
+{:.bq-harm .iso7010 .p010 role="complementary"}
 
 Ignoring the aside above about memory safety (a sentence I hope never to write
 again as long as I live), type punning like this is at times necessary, and in a
 controlled environment, safe. (For certain, not-100%, values of safe.)
 
-## Example Use Case
+### Example Use Case
 
 I write device drivers for an operating system. These drivers require lots of
 aggregate information. It looks something like this:
 
 ```c
 struct DevFuncs {
-    /* seven function pointers */
+  /* seven function pointers */
 }
 struct DevHdr {
-    /* OS information */
+  /* OS information */
 }
 struct Device {
-    struct DevFuncs vtab;
-    struct DevHdr info;
-    struct String name;
-    /* more data */
+  struct DevFuncs vtab;
+  struct DevHdr info;
+  struct String name;
+  /* more data */
 }
 
 struct Device devices[16];
@@ -394,7 +386,7 @@ Note that the security concern form above applies here in full force. If the
 assumptions about the original pointer are untrue, this will cause *flagrant*
 violations of memory safety.
 
-## Safer Type Punning
+### Safer Type Punning
 
 I prefer Rust as a systems language for many reasons. It has its tradeoffs from
 C, but by and large it is a worthy peer.
@@ -417,24 +409,24 @@ this in Rust, I envision a system that leverages the language’s powerful patte
 system and the compiler’s excellent ability to trace existence and reference
 viability.
 
-## Reference Destructuring in Rust
+### Reference Destructuring in Rust
 
 Let us envision the structure described above in Rust:
 
 ```rust
 #[repr(C)]
 pub struct DevFuncs {
-    /* function pointers */
+  /* function pointers */
 }
 #[repr(C)]
 pub struct DevHdr {
-    /* device header */
+  /* device header */
 }
 pub struct Device {
-    pub vtab: DevFuncs,
-    pub info: DevHdr,
-    pub name: String,
-    /* more */
+  pub vtab: DevFuncs,
+  pub info: DevHdr,
+  pub name: String,
+  /* more */
 }
 
 static devices: [Device; 16];
@@ -446,8 +438,8 @@ instance just enough to obtain interior references, like so:
 
 ```rust
 for dev in &devices {
-    let num = osRegisterDrivers(&dev.vtab as *const c_void);
-    osRegisterDevice(num, &dev.info as *const DevHdr);
+  let num = osRegisterDrivers(&dev.vtab as *const c_void);
+  osRegisterDevice(num, &dev.info as *const DevHdr);
 }
 ```
 
@@ -468,7 +460,7 @@ do this, puppies and your MMU will cry.”
 But just as Rust isn’t C, it also isn’t Java. We can do dangerous things as long
 as we pinky promise to be careful and plan ahead.
 
-## Reference Restructuring in Rust
+### Reference Restructuring in Rust
 
 To briefly summarize everything I've outlined so far, I am describing a
 situation where our code receives a reference to an interior member of a struct,
@@ -482,9 +474,8 @@ know the exact offset between the start of the `Parent` and the start of the
 `Child`, the compiler *does*.
 
 Therefore, I propose a syntax similar to Rust’s pre-existing syntax for struct
-decomposing.
+decomposing, shown below:
 
-<aside markdown="block">
 ```rust
 //  declare a new struct type
 struct  Foo { foo: i32, bar: i32, baz: i32, }
@@ -494,15 +485,14 @@ let f = Foo { foo: 1, bar: 2, baz: 3, };
 let g = Foo { foo: -1, .. f };
 // g is Foo { foo: -1, bar: 2, baz: 3, }
 ```
-</aside>
 
 If we have two types `Parent` and `Child` defined such that
 
 ```rust
 struct Parent {
-    /* ... */
-    c: Child,
-    /* ... */
+  /* ... */
+  c: Child,
+  /* ... */
 }
 ```
 
@@ -541,7 +531,7 @@ cannot be provably backtraced to the origin in its parent object), so this
 syntax requires an `unsafe` block in order to permit compilation of code that
 may well cause memory violations.
 
-# Conclusion
+## Conclusion
 
 Structured data permits programs to keep related information close by without
 requiring more complex tricks such as mutual pointers and permits programs to
@@ -578,34 +568,34 @@ Example syntax:
 ```rust
 struct Bar { /* ... */ }
 pub struct Foo {
-    name: String,
-    bar: Bar,
-    id: i32,
-    bar2: Bar,
+  name: String,
+  bar: Bar,
+  id: i32,
+  bar2: Bar,
 }
 extern {
-    #[ref_send(Foo)]
-    fn register_bar(&Bar);
-    #[ref_send(Foo)]
-    fn register_bar2(&Bar);
+  #[ref_send(Foo)]
+  fn register_bar(&Bar);
+  #[ref_send(Foo)]
+  fn register_bar2(&Bar);
 }
 
 static foos: [Foo; 16];
 
 for foo in &foos {
-    register_bar(&foo.bar);
-    register_bar2(&foo.bar2);
+  register_bar(&foo.bar);
+  register_bar2(&foo.bar2);
 }
 
 //  later
 
 #[ref_recv(Foo)]
 fn do_thing(rbar: &Bar) {
-    let rfoo: &Foo = &Foo { bar: *rbar, .. };
+  let rfoo: &Foo = &Foo { bar: *rbar, .. };
 }
 #[ref_recv(Foo)]
 fn do_other_thing(rbar: &Bar) {
-    let rfoo: &Foo = &Foo { bar2: *rbar, .. };
+  let rfoo: &Foo = &Foo { bar2: *rbar, .. };
 }
 ```
 
@@ -640,7 +630,7 @@ full layout information of the parent type containing that member, it can solve
 the memory layout of the parent instance that will satisfy the constraint of a
 member instance at a fixed location.
 
-## Summary
+### Summary
 
 Access to the interior of structs is a necessary part of systems programming. C
 permits, and many environments make use of, the ability to upcast pointers from

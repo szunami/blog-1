@@ -9,16 +9,16 @@ summary: >
   A walkthrough of the recent bitfield behavior I implemented in `bitvec`
 ---
 
-Rust version: `1.36.0`
+> This article is significantly out of date. I made a lot of changes to `bitvec`
+> in 2020, many, ironically, shortly after publishing this. I will rewrite it
+> soon; in the meantime, it is still correct in the general case but
+> occasionally very wrong in the specifics.
+{:.bq-warn .iso7010 .w001}
+
+Rust version: 1.36. `bitvec` version: 0.16.
 
 If you don’t care about bit collections in other languages, use the table of
 contents to jump ahead.
-
-# Table of Contents
-{:.no_toc}
-
-1. ToC
-{:toc}
 
 I am the author of a Rust library called [`bitvec`]. This is the most powerful
 memory manipulation crate in the Rust ecosystem and, to my knowledge, the world.
@@ -42,6 +42,7 @@ for manipulating memory as sequences of raw bits, rather than of typed values.
 > | Ruby[^1] | defines [`Integer#​[]`](https://ruby-doc.org/core-2.6.5/Integer.html#method-i-5B-5D) (read), but not `Integer#[]=` (write) |
 >
 > The [Wikipedia article] has more information, as well.
+{:.bq-info role="complementary"}
 
 <!-- Due to a bug in the Markdown parser I use, the Ruby link must (a) have a
 zero-width space between the `#` and the `[`, but also (b) must use direct-link
@@ -59,14 +60,14 @@ where you can write or read typed numeric data against it.
 
 Enough about everyone else. Let’s talk about me.
 
-# Creating bitfields with `bitvec`
+## Creating bitfields with `bitvec`
 
 In order to cook an apple pie, you must first create the universe, and in order
 for me to explain something, I must first deliver a CS101 lecture.
 
 This section is the CS102.
 
-## Treat some memory as bits
+### Treat some memory as bits
 
 In order to have a region of memory we can use as bitfields, we must first
 allocate a region of memory, either on the heap, or the stack, or in the static
@@ -86,6 +87,10 @@ let static_bits = unsafe {
 };
 ```
 
+> None of these type names exist anymore. `Local` is `LocalBits`, `BigEndian`
+> and `LittleEndian` are `Msb0` and `Lsb0`, and `Word` is just `usize`.
+{:.bq-warn .iso7010 .w001 role="complementary"}
+
 We now have 64 mutable, contiguous, bits in each of the local stack frame, the
 heap, and the static memory segment. It doesn’t matter where they are; the main
 working type of this crate is the `&/mut BitSlice<C, T>` reference, which
@@ -96,6 +101,9 @@ Notice that each of those three allocations uses a different Rust fundamental:
 to use the unsigned integer types that correspond to register widths in your CPU
 as storage types: `u8`, `u16`, `u32`, and (only on 64-bit-word processors)
 `u64`. The `Word` type aliases to your local `usize`[^2].
+
+> Now it’s just `usize`.
+{:.bq-warn}
 
 You may also notice that each of the three allocations uses a different first
 type parameter. The first type parameter is an implementation of the `Cursor`
@@ -117,7 +125,7 @@ Other languages restrict you from one and/or both of these options. This is
 unfortunate, because as it turns out, there is not a universal convention for
 these among all I/O protocols.
 
-## Choose a region of contiguous bit *indices* within that memory
+### Choose a region of contiguous bit *indices* within that memory
 
 I emphasized the word *indices* in that heading, because `bitvec` **does not**
 expose bit positions in memory to you. The two type parameters in all of the
@@ -141,7 +149,7 @@ in the memory range `[13 .. 27]`. That’s 14 bits. `bitvec` disallows storing a
 type whose bit width is smaller than a region, so we can’t store `u8` in it, but
 `u16`, `u32`, and `u64` are all fair game.
 
-## Put some data in that region
+### Put some data in that region
 
 ```rust
 stack_bits [13 .. 27].store(0x3123u16);
@@ -159,7 +167,7 @@ region.
 This is why the first non-zero digit in the numbers above is `3`: anything
 higher would get truncated, and will not be written into the region.
 
-## Pull that data back out
+### Pull that data back out
 
 ```rust
 let s: u16 = stack_bits [13 .. 27].load().unwrap();
@@ -182,7 +190,7 @@ receive them when `load`ing. `store` exits without effect, `load` returns
 I’m not going to demean myself by posting an uncompiled example here to show
 that the `s`, `m`, and `l` values all match exactly what we put in. They do.[^4]
 
-# More than just variable-width data storage
+## More than just variable-width data storage
 
 So `bitvec` can compress data storage. If you know you have a number that will
 never surpass `1023`, you can treat it as a `u16` when holding it and pack it
@@ -190,10 +198,10 @@ into a `u10` when storing it. That doesn’t impress you; C can do that:
 
 ```c
 struct three_tens {
-    uint16_t eins : 10;
-    uint16_t zwei : 10;
-    uint16_t drei : 10;
-    uint16_t _pad : 2;
+  uint16_t eins : 10;
+  uint16_t zwei : 10;
+  uint16_t drei : 10;
+  uint16_t _pad : 2;
 };
 ```
 
@@ -201,10 +209,10 @@ and so can Erlang:
 
 ```erlang
 three_tens = <<
-    eins:10,
-    zwei:10,
-    drei:10,
-    _pad:2
+  eins:10,
+  zwei:10,
+  drei:10,
+  _pad:2
 >>
 ```
 
@@ -220,7 +228,7 @@ Compacted machine memory isn’t cool. You know what’s cool?
 
 Declaring the layout of an I/O protocol in your type system.
 
-## I/O Packet Destructuring
+### I/O Packet Destructuring
 
 Let’s pick an example out of thin air, like, for instance, an [IPv4 packet].
 
@@ -258,7 +266,7 @@ let bits: Ipv4Pkt = bytes.bits();
 
 let ihl = bits[4 .. 8].load::<u8>() as usize;
 if ihl < 5 {
-    return Err(InvalidIhl);
+  return Err(InvalidIhl);
 }
 let split = ihl * 32;
 
@@ -272,7 +280,7 @@ that range.
 There is one field in the IPv4 header that stymies this approach, and I’ll cover
 it now: Fragment Offset.
 
-## Byte Endianness Gotchas
+### Byte Endianness Gotchas
 
 Fragment Offset is in word `[1]`, bits `[19 .. 32]`. This translates to bits
 `[51 .. 64]` of the bit slice. Note that, in the protocol diagram, bits
@@ -307,7 +315,7 @@ let fragment_offset = u16::from_be_bytes(bytes);
 In the future, `.load_be()` will interpret the memory as big-endian, and
 `.load_le()` will interpret it as little-endian.
 
-## Building a Bitfield Struct
+### Building a Bitfield Struct
 
 Rust does not have bitfield syntax. `bitvec` does not provide this; it is purely
 a library, not a syntax extension. This means that access to bitfields in a
@@ -318,12 +326,12 @@ For a C structure such as this:
 
 ```c
 struct SixFlags {
-    uint16_t eins : 3;
-    uint16_t zwei : 2;
-    uint16_t drei : 3;
-    uint16_t vier : 3;
-    uint16_t funf : 2;
-    uint16_t seis : 3;
+  uint16_t eins : 3;
+  uint16_t zwei : 2;
+  uint16_t drei : 3;
+  uint16_t vier : 3;
+  uint16_t funf : 2;
+  uint16_t seis : 3;
 };
 ```
 
@@ -337,27 +345,27 @@ type SixFlagsBits = BitSlice<Local, u16>;
 #[repr(C)]
 #[derive(Copy, Clone, Default)]
 pub struct SixFlags {
-    inner: u16,
+  inner: u16,
 };
 
 impl SixFlags {
-    pub fn eins(&self) -> &SixFlagsBits {
-        &self.inner.bits()[0 .. 3]
-    }
+  pub fn eins(&self) -> &SixFlagsBits {
+    &self.inner.bits()[0 .. 3]
+  }
 
-    pub fn eins_mut(&mut self) -> &mut SixFlagsBits {
-        &mut self.inner.bits()[0 .. 3]
-    }
+  pub fn eins_mut(&mut self) -> &mut SixFlagsBits {
+    &mut self.inner.bits()[0 .. 3]
+  }
 
-    pub fn zwei(&self) -> &SixFlagsBits {
-        &self.inner.bits()[3 .. 5]
-    }
+  pub fn zwei(&self) -> &SixFlagsBits {
+    &self.inner.bits()[3 .. 5]
+  }
 
-    pub fn zwei_mut(&mut self) -> &mut SixFlagsBits {
-        &mut self.inner.bits()[3 .. 5]
-    }
+  pub fn zwei_mut(&mut self) -> &mut SixFlagsBits {
+    &mut self.inner.bits()[3 .. 5]
+  }
 
-    //  you get the idea…
+  //  you get the idea…
 }
 ```
 
@@ -397,8 +405,12 @@ ABI with `#[repr(C)]` and faithful transcription of the memory types.
 >
 > Which, now that I write it here, looks like it’s going on the to-do list. For
 > `0.17`.
+{:.bq-info}
 
-# Summary
+> I did.
+{:.bq-safe}
+
+## Summary
 
 Rust has bitfields now. More flexible than C, about as capable as Erlang, though
 without the language support, and miles beyond the sequence libraries in every
@@ -432,33 +444,30 @@ based on runtime conditions of the slice, and must include code for all paths),
 the comprehension gain in the source code – clear text, automatic bounds checks,
 and idiomatic Rust patterns – is a benefit you do not want to miss.
 
-# Footnotes
+## Footnotes
 
-[^1]: Ruby’s `Integer` class is, in fact, implemented as a hybrid between an
-      `i31` and a bit-vector so that it can have arbitrary-sized integers with
-      minimal cost. No, you are *not* tricking me into explaining what an `i31`
-      is in this article. Footnotes don’t nest[^7].
+\[^1\]: Ruby’s `Integer` class is, in fact, implemented as a hybrid between an
+`i31` and a bit-vector so that it can have arbitrary-sized integers with minimal
+cost. No, you are *not* tricking me into explaining what an `i31` is in this
+article. Footnotes don’t nest.
 
-[^2]: For technical reasons, including but not limited to the fact that `usize`
-      is a discrete type and *not* an alias to `u32` or `u64`, `bitvec`
-      disallows `usize` as backing storage. I might remove this restriction
-      later.
+\[^2\]: For technical reasons, including but not limited to the fact that
+`usize` is a discrete type and *not* an alias to `u32` or `u64`, `bitvec`
+disallows `usize` as backing storage. I might remove this restriction later.
 
-[^3]: I might change that in the future, but `std` has the same requirement, so
-      why get wild too soon? It would be pretty neat to have `[high .. low]`
-      provide reversed directionality, though.
+\[^3\]: I might change that in the future, but `std` has the same requirement,
+so why get wild too soon? It would be pretty neat to have `[high .. low]`
+provide reversed directionality, though.
 
-[^4]: This is, of course, checked by the [test suite].
+\[^4\]: This is, of course, checked by the [test suite].
 
-[^5]: Matching the (bad) behavior of existing C code is the other reason I chose
-      `<Local, Word>` as the default type parameter.
+\[^5\]: Matching the (bad) behavior of existing C code is the other reason I
+chose `<Local, Word>` as the default type parameter.
 
-[^6]: `<BigEndian, u8>` used to be the default parameter choice in `bitvec`
-      types, as it appears to be a very common sequence type. I changed it since
-      `<Local, Word>` gives better performance for users who don’t care about
-      layout, and users who *do* care about layout will specify it.
-
-[^7]: Or do they?
+\[^6\]: `<BigEndian, u8>` used to be the default parameter choice in `bitvec`
+types, as it appears to be a very common sequence type. I changed it since
+`<Local, Word>` gives better performance for users who don’t care about layout,
+and users who *do* care about layout will specify it.
 
 [IPv4 packet]: https://en.wikipedia.org/wiki/IPv4#Packet_structure
 [Wikipedia article]: https://en.wikipedia.org/wiki/Bit_array "Wikipedia: Bit array"

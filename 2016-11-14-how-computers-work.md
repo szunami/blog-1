@@ -11,10 +11,7 @@ summary: >
   depth in following posts.
 ---
 
-1. ToC
-{:toc}
-
-# Introduction
+## Introduction
 
 Computing is an incredibly complex and detailed topic, and one about which I’m
 both passionate and reasonably well-informed. I’ve had some remarks about how
@@ -25,7 +22,7 @@ Well, actually, the commenter was asking if I had a YouTube channel, but I can�
 get into videos to save my life, so, I’m writing instead. Maybe one day I’ll
 narrate something. Who knows.
 
-# Series Overview
+## Series Overview
 
 Modern computing uses a stack metaphor rather extensively, and for good reason.
 My goal with this is to have a series of articles, each of which covers one part
@@ -33,7 +30,7 @@ of the stack, and will have a general discussion about where it fits in the big
 picture, and a more detailed discussion that (ideally) will not require reading
 the other articles to grasp it.
 
-## General Knowledge
+### General Knowledge
 
 One of the hazards of specialization is that jargon and technical information
 become common knowledge to me, so I lose track of what is or isn’t actually
@@ -44,14 +41,14 @@ email or any other means with questions or followups of any kind.
 
 Without further ado, let’s begin.
 
-# Historical Background
+## Historical Background
 
 In the general sense, a computer is any device which is capable of manipulating
 information to suit a human’s purpose. The abacus could be included in this
 category as a very early, primitive computer, as it assisted humans in
 performing arithmetic.
 
-## Mechanical Computation
+### Mechanical Computation
 
 However, the modern sense of the word “computer” is a narrower category, whose
 first entry is [Charles Babbage]’s [difference engine]. This was a machine which
@@ -83,7 +80,7 @@ Babbage’s Analytical Engine was never built, nor was Lovelace’s algorithm ev
 executed, but their work in mechanical computation and mathematics laid the
 foundation for the birth of electronic computation nearly a century later.
 
-## Universal Computation
+### Universal Computation
 
 The invention and deployment of telegraph and telephone networks in the late
 19<sup>th</sup> century provided the groundwork for electronic systems control.
@@ -94,7 +91,7 @@ mid-1930s independently by [Alonzo Church]’s [lambda calculus] and
 [Alan Turing]’s concept of the [Turing machine]. The set of logical behaviors
 used to implement computation were described by [George Boole] in the 1850s.
 
-### Lambda Calculus
+#### Lambda Calculus
 
 I’m going to briefly talk about theoretical mathematics. Don’t worry if you’re
 not a “math person” or my usage of the word “calculus” worries you; this *isn’t*
@@ -120,7 +117,7 @@ of a program’s correctness. Every possible computation can be modeled on a
 whiteboard using lambda calculus, which means that programs can be solved on a
 whiteboard and shown to succeed or fail (…mostly.)
 
-### Turing machine
+#### Turing machine
 
 A *Turing machine* is a theoretical model for a machine which follows a certain
 set of rules for its behavior. A machine is said to be *Turing complete* if, by
@@ -136,10 +133,10 @@ It works by:
 
 - Selecting a single cell from memory and reading it
 - Executing the instruction appropriate for the combination of read memory and
-internal state
-    - Writing a new value to that memory cell
-    - Selecting a new internal state
-    - Selecting a different memory cell
+  internal state
+  - Writing a new value to that memory cell
+  - Selecting a new internal state
+  - Selecting a different memory cell
 
 Turing machines are *discrete*, *finite*, and *distinguishable*. This means that
 it can not operate on, nor select, fractions of a cell; it has a limited amount
@@ -152,7 +149,7 @@ The importance of this concept, as well as that of the lambda calculus, is that
 together they define a formal model of general-purpose computation and the
 necessary properties of machines that can implement it.
 
-### Boolean Algebra
+#### Boolean Algebra
 
 [Boolean algebra] is a set of mathematical rules that mix logic and arithmetic.
 It defines three fundamental operations, `AND` ($$\land$$), `OR` ($$\lor$$), and
@@ -160,23 +157,23 @@ It defines three fundamental operations, `AND` ($$\land$$), `OR` ($$\lor$$), and
 of data. The logical operators act on binary symbols, *true* and *false*. These
 can be represented as *1* and *0*, respectively.
 
-|$$A$$|$$B$$|$$A \land B$$|$$A \lor B$$|$$\lnot A$$|
-|:---:|:---:|:-----------:|:----------:|:---------:|
-|$$0$$|$$0$$|    $$0$$    |    $$0$$   |   $$1$$   |
-|$$0$$|$$1$$|    $$0$$    |    $$1$$   |   $$1$$   |
-|$$1$$|$$0$$|    $$0$$    |    $$1$$   |   $$0$$   |
-|$$1$$|$$1$$|    $$1$$    |    $$1$$   |   $$0$$   |
+| $$A$$ | $$B$$ | $$A \land B$$ | $$A \lor B$$ | $$\lnot A$$ |
+| :---: | :---: | :-----------: | :----------: | :---------: |
+| $$0$$ | $$0$$ |     $$0$$     |    $$0$$     |    $$1$$    |
+| $$0$$ | $$1$$ |     $$0$$     |    $$1$$     |    $$1$$    |
+| $$1$$ | $$0$$ |     $$0$$     |    $$1$$     |    $$0$$    |
+| $$1$$ | $$1$$ |     $$1$$     |    $$1$$     |    $$0$$    |
 
 There are other Boolean operators that can be defined as combinations of these
 fundamentals: `XOR` ($$\oplus$$), `XNOR` ($$\equiv$$), `NAND`
 ($$\overline{\land}$$), and `NOR` ($$\overline{\lor}$$).
 
-|$$A$$|$$B$$|$$A \oplus B$$|$$A \equiv B$$|$$\overline{A \land B}$$|$$\overline{A \lor B}$$|
-|:---:|:---:|:------------:|:------------:|:----------------------:|:---------------------:|
-|$$0$$|$$0$$|     $$0$$    |    $$1$$     |          $$1$$         |         $$1$$         |
-|$$0$$|$$1$$|     $$1$$    |    $$0$$     |          $$1$$         |         $$0$$         |
-|$$1$$|$$0$$|     $$1$$    |    $$0$$     |          $$1$$         |         $$0$$         |
-|$$1$$|$$1$$|     $$0$$    |    $$1$$     |          $$0$$         |         $$0$$         |
+| $$A$$ | $$B$$ | $$A \oplus B$$ | $$A \equiv B$$ | $$\overline{A \land B}$$ | $$\overline{A \lor B}$$ |
+| :---: | :---: | :------------: | :------------: | :----------------------: | :---------------------: |
+| $$0$$ | $$0$$ |     $$0$$      |     $$1$$      |          $$1$$           |          $$1$$          |
+| $$0$$ | $$1$$ |     $$1$$      |     $$0$$      |          $$1$$           |          $$0$$          |
+| $$1$$ | $$0$$ |     $$1$$      |     $$0$$      |          $$1$$           |          $$0$$          |
+| $$1$$ | $$1$$ |     $$0$$      |     $$1$$      |          $$0$$           |          $$0$$          |
 
 The `NAND` and `NOR` operators are especially interesting, in that they are each
 *functionally complete* – that is, all other Boolean operations can be created
@@ -185,12 +182,12 @@ out of combinations of only `NAND` or only `NOR` operators. Coincidentally,
 transistors, so modern computers are usually built entirely out of `NAND` logic
 or `NOR` logic.
 
-## Electrical Computation
+### Electrical Computation
 
 There are several problems with mechanical general-purpose computers, including
 size, speed (or rather the lack), and power consumption.
 
-### Engineering
+#### Engineering
 
 The advent of the telegraph and electrical signaling resulted in the discovery
 that switching relays could be combined to implement basic Boolean logic. If
@@ -211,7 +208,7 @@ computers were able to begin making significant advances in size, complexity,
 and self-manipulation. Since transistors are still in use today, I will delve
 more into their operation in a future article.
 
-### Architecture
+#### Architecture
 
 There are two overarching kinds of computer: those which keep their programming
 separate from their data, and those that do not. The former class is referred to
@@ -229,7 +226,7 @@ Most modern computers use the von Neumann architecture, though many smaller
 devices such as embedded microcontrolelrs use the Harvard architecture, as it is
 often cheaper.
 
-# Conclusion
+## Conclusion
 
 These topics provide the theoretical and engineering background on which
 computers are built, but I’m probably not going to touch on them very much, if

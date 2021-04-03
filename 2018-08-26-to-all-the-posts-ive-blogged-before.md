@@ -28,7 +28,7 @@ So, here’s my love letter to all the posts I’ve blogged before, all the post
 I totally promise I’m currently blogging, and all the posts I’ll blog to come.
 [^1]
 
-# Writing Helps Me Think
+## Writing Helps Me Think
 
 It’s “easy” to understand something when it’s only in your head – or, at least,
 it’s easy to *think* that you understand something when you don’t have to
@@ -61,7 +61,7 @@ from far above. And though it took almost a year after writing it, and some
 in-person shocks and reminders, I finally found a sense of closure built on the
 foundation of writing it.
 
-# Writing Helps Me Remember
+## Writing Helps Me Remember
 
 I majored in Computer Engineering in university, which in the American
 curriculum means I spent a lot of time learning about the electrical science
@@ -93,7 +93,7 @@ Our ability to retain knowledge is profoundly amplified by removing it from the
 mind, setting it in the written word, and retaining just the key to look it up
 and enough general awareness to use it upon rereading.
 
-# Writing Deduplicates Labor
+## Writing Deduplicates Labor
 
 Whenever I find myself having to give the same talk or explanation multiple
 times, I swiftly find myself writing it down in *some* form. Often, lately, this
@@ -114,7 +114,7 @@ phenomenal way to accomplish that for information sharing.
 
 On that note…
 
-## Blogs Don’t Need to Be Unique
+### Blogs Don’t Need to Be Unique
 
 It’s not at all a requirement that you write about something about which nobody
 else has. If you can find such a topic, and you’re not publishing your personal
@@ -133,7 +133,7 @@ shapes your worldview and work – is *always* useful and worth writing down. At
 the minimum, readers will be able to better understand you; ideally, they will
 be able to learn from you.
 
-## Blogs Don’t Need to Be Theses
+### Blogs Don’t Need to Be Theses
 
 This is a trap into which I often fall, but: your blog posts absolutely don’t
 need to be ground-breaking, edge-pushing, boundary-shattering explorations of
@@ -147,7 +147,7 @@ publishing your lab notes is still a valuable and worthwhile thing to do. I plan
 on doing more of that, as much as I can, and my [`bitvec`] and [`cosmonaut`]
 pages are attempts at describing some of my work in ordinary and mundane detail.
 
-# Conclusion
+## Conclusion
 
 When I first started this blog, it was pretty much just for myself. Then I wrote
 down some things I wanted to be able to use in larger discussions, and now it
@@ -174,18 +174,14 @@ a good choice I made in my title.
 [*How Computers Work*]: /blog/category/how-computers-work
 [*On Safety*]: /blog/misc/rust-2018
 [*Type Theory*]: /blog/category/type-theory
-[`bitvec`]: /bitvec
-[`cosmonaut`]: /cosmonaut
+[`bitvec`]: /crates/bitvec
+[`cosmonaut`]: /crates/cosmonaut
 [Arshia]: //twitter.com/arshia__
 [Manish]: //twitter.com/ManishEarth
 [manish-post]: //manishearth.github.io/blog/2018/08/26/why-i-enjoy-blogging/
 
 [^1]: Title reference is the book and movie “To All the Boys I’ve Loved Before”
 
-[^2]: Granted, said communication has largely resulted in the reader screaming
-    in terror, but to be fair that is the correct response and indicates
-    successful communication.
+[^2]: Granted, said communication has largely resulted in the reader screaming in terror, but to be fair that is the correct response and indicates successful communication.
 
-[^3]: The draft of the next part is about booting a microcontroller and running
-    programs on it. I can *probably* write it, but honestly, I’m no longer
-    certain of what I know.
+[^3]: The draft of the next part is about booting a microcontroller and running programs on it. I can *probably* write it, but honestly, I’m no longer certain of what I know.

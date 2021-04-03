@@ -7,6 +7,7 @@ tags:
 category: misc
 summary: >
   The snapchat story of a four-day trip between Utah and Michigan
+published: false
 ---
 
 Oh wow this turned out to be a lot harder than I expected, sorry.

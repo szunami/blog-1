@@ -19,10 +19,7 @@ programming soon.
 This is just a list and brief overview of some advanced topics on processor
 design, to give you some starting points on your own reading.
 
-1. ToC
-{:toc}
-
-# Advanced Processor Features
+## Advanced Processor Features
 
 The processor I drew at the end of the previous post was *extremely* simple. It
 consisted solely of a register file and an ALU linked together, with interfaces
@@ -31,7 +28,7 @@ to load instructions from *somewhere else*, and a data input/output bus.
 That’s a good gist of how processors work, but the reality is way, way more
 complicated, and it took up an entire senior-level class.
 
-## Miscellaneous Registers
+### Miscellaneous Registers
 
 While the concept of the register file is accurate, from an engineer’s point of
 view, software architecture puts semantic meaning on various groups of registers
@@ -41,56 +38,49 @@ For example, on the MIPS architecture, there are 32 registers which are given
 the following purposes and names. Only register zero has hardware alterations –
 it always emits the number 0 when read, and drops writes.
 
+> This is because `0` is a very common number when programming, and it can be
+> shorter to encode “read from `$0`” than “use this embedded number: `0`” in
+> many instruction sets.
+{:.bq-safe role="complementary"}
+
 - `$0` (`$zero`) – drops writes, reads 0
-
 - `$1` (`$at`) – temporary register used by the assembler
-
 - `$2` and `$3` (`$v0`, `$v1`) – return values from function calls or expression
     evaluation go here, and then get moved if they are to be preserved
-
 - `$4` through `$7` (`$a0` to `$a3`) – arguments for function calls. If a
     function takes more than four arguments, the rest go on the *stack* (I’ll
     get to that later).
-
 - `$8` through `$15` (`$t0` to `$t7`) – temporary registers for the currently
     executing function. These registers are considered to always be fair game to
     use and overwrite.
-
 - `$16` through `$23` (`$s0` to `$s7`) – saved registers for the previously
     executing function. If a function wants to use them, it *must* push their
     old values to the stack when the function starts, and then restore them from
     the stack to those registers before it exits.
-
 - `$24` and `$25` (`$t8` and `$t9`) – more temporary registers like `$t0` to
     `$t7`.
-
 - `$26` and `$27` (`$k0` and `$k1`) – these registers are only for the kernel.
     Some CPUs will only permit access to these registers when the CPU thinks it
     is being run in “kernel mode”; others use the honor system.
-
 - `$28` (`$gp`) – a global pointer into main memory. This is like a bookmark.
-
 - `$29` (`$sp`) – the stack pointer. This is also a bookmark, but has *very*
     strict usage semantics. I will talk about stacks later.
-
 - `$30` (`$fp`) – the frame pointer. This also points to “the stack”, and has a
     different meaning. I will talk about it in the stack article.
-
 - `$31` (`$ra`) – This register stores the *return address*; when the currently
     executing function ends, it loads the return address value into the program
     counter, causing the computer to jump to a different part of the instruction
     sequence.
 
 CPUs also define a special “status register” which contains, instead of a single
-`n`bit value, `n` 1-bit “flag” values indicating the state of the CPU. This
+`n`-bit value, `n` 1-bit “flag” values indicating the state of the CPU. This
 status register holds flags for things like arithmetic overflow, arithmetic
 carry output, *interrupt* state, CPU mode, and comparison results.
 
-<aside markdown="block">
-The ALU I showed last post actually ties its `Cin` and `Cout` lines to this
-register, not to the instruction bus. I lied about that to make it easier to get
-at the time.
-</aside>
+> The ALU I showed last post actually ties its `Cin` and `Cout` lines to this
+> register, not to the instruction bus. I lied about that to make it easier to
+> discuss at the time.
+{:.bq-warn .iso7010 .w020 role="complementary"}
 
 Architectures can also define other special-purpose registers, but you get the
 point about how they work. I’ll talk about what they mean when needed.
@@ -117,7 +107,7 @@ accesses available.
 
 Computers are wild.
 
-## Pipelines
+### Pipelines
 
 The CPU from my last post could only do one thing at a time, and we had to wait
 for it to complete its operation before we could start another.
@@ -162,7 +152,7 @@ class used yet?).
     ALU.
 
 Intel CPUs have up to a 20-stage pipeline. I have no clue what goes on in there.
-It’s black magic. These five stages are the general actions that must always
+It’s opaque magic. These five stages are the general actions that must always
 happen; Intel has apparently found a way to further subdivide them.
 
 The advantage of pipelining is that as soon as one instruction moves forward in
@@ -181,7 +171,7 @@ instruction to come out, but from then on an instruction will be emitted every
 Pipelines trade *latency* (time from input to resulting output) for *throughput*
 (time between consecutive outputs).
 
-## Hazards
+### Hazards
 
 Here’s a problem: what if a second instruction depends on the result from the
 instruction just preceding it? This happens all the time, yet in the pipeline,
@@ -196,7 +186,7 @@ There is also a read-after-write hazard, where an instruction clobbers a
 register you had planned to use before you have a chance to read from it, so you
 wind up reading garbage. Neither of these are good things.
 
-## Operand Forwarding
+### Operand Forwarding
 
 This is a solution to WAR and RAW hazards. A cleverly built CPU can detect that
 a new instruction is attempting to use the same register or registers as a
@@ -212,25 +202,24 @@ that register safety is assured, and then resume instruction processing. This is
 called a **stall**, and is less awesome (there are ticks without work), but is
 easier and cheaper to implement.
 
-## Branch Prediction
+### Branch Prediction
 
-<aside markdown="block" class="terminology">
-A *branch* refers to an event in the code that informs the CPU to stop getting
-instructions from the current section of the program, and instead start getting
-instructions from somewhere else.
-
-This event is called a *branch* if it occurs based on testing a condition (`if`
-statements in code), a *jump* if it happens unconditionally (`goto`, `break`),
-or a *call* or *return* if it happens as part of changing functions.
-</aside>
+> A *branch* refers to an event in the code that informs the CPU to stop getting
+> instructions from the current section of the program, and instead start
+> getting instructions from somewhere else.
+>
+> This event is called a *branch* if it occurs based on testing a condition
+> (`if` statements in code), a *jump* if it happens unconditionally (`goto`,
+> `break`), or a *call* or *return* if it happens as part of changing functions.
+{:.bq-info .iso7010 .m002 role="complementary"}
 
 The other problem with pipelines, especially very deep pipelines like Intel’s,
 is that if an instruction has a comparison-and-branch, the CPU doesn’t know if
 it will branch or not until stage 3. If it branches, then the instructions
 behind the branch instruction which have started working through the CPU are now
-garbage, and the CPU must throw them out when the exit. This means that from the
-time a branch occurs to the time the new code enters the CPU, the CPU is doing
-no useful work.
+garbage, and the CPU must throw them out before the new instructions enter the
+pipeline. This means that from the time a branch occurs to the time the new code
+enters the CPU, the CPU is doing no useful work.
 
 Clever hardware engineers, compiler authors, and programmers will set up their
 work to try to predict which branches get taken, and to make such prediction
@@ -243,13 +232,13 @@ loading from the current region.
 
 This is why if you are writing low-level systems code that branches based on
 random noise, and you don’t have a good reason why, your professors (and if
-you’re learning from this article, I’m including me in that group) **will** slap
-you for it.
+you’re learning from this article, I’m including me in that group) **will** yell
+at you for it.
 
-## Instruction Flow
+### Instruction Flow
 
 Modern desktop CPUs have gotten so ridiculously fast relative to memory access
-that Intel has come up with a clever, black-magic piece of wizardry called
+that Intel has come up with a clever, opaque-magic piece of wizardry called
 **hyper-threading**.
 
 Each CPU core has two instruction fetchers, which operate independently. They
@@ -264,10 +253,11 @@ and the CPU interleaves them to get a rather seamless result. This allows each
 stream some more time for memory to come in before it has to work, and reduces
 CPU idle time by increasing the amount of work ready to be done.
 
-# Instruction Set
+## Instruction Set
 
-This is the only part of the article actually relevant to you if you’re here for
-programming.
+> This is the only part of the article actually relevant to you if you’re here
+> for programming.
+{:.bq-safe role="complementary"}
 
 A CPU’s *instruction set* and *instruction set architecture* are its interface
 to the outside world. These are specifications of how binary numbers should be
@@ -284,7 +274,7 @@ components that are considered part of the chip (such as a floating-point-math
 coprocessor, a GPU, other hardware...) have instructions that tell the CPU to
 put them on the field, as it were.
 
-# Peripheral Devices
+## Peripheral Devices
 
 A CPU on its own is just a calculator with a small amount of internal memory.
 That’s incredibly useless.
@@ -294,7 +284,7 @@ functionality. Each of these devices has its own controlling processor, but the
 way those work is defined by a *driver specification* the manufacturer provides
 (or the FOSS community reverse-engineers) that tells the CPU how to talk to it.
 
-## Expanded Memory
+### Expanded Memory
 
 The CPU only has so much space in its own register file. The CPU’s register file
 is small for the following reasons:
@@ -318,7 +308,7 @@ or large, but not both.
 The solution for this is a memory hierarchy, with small and fast at one end and
 large and slow at the other.
 
-### Cache
+#### Cache
 
 The *cache* is a collection of memory kept on board the CPU, that is distinct
 from the register file. There are four tiers of cache, with L1 closest to the
@@ -327,7 +317,7 @@ the last, and these caches may be shared among cores in a multi-core chip.
 
 Even L4 cache, though, is orders of magnitude faster than RAM.
 
-### RAM
+#### RAM
 
 RAM (**R**andom **A**ccess **M**emory) is a large array of memory cells. It is
 called random-access in contrast to sequential-access memory (like magnetic
@@ -336,11 +326,21 @@ that cell’s location in memory, absolute or relative to the accessing element.
 
 Current RAM speeds are roughly two to four thousand times slower than CPUs. This
 is why CPU caches exist; when the CPU first asks for a chunk of RAM, the CPU
-halts and waits for the RAM request to complete. This request dumps a chunk of
+halts† and waits for the RAM request to complete. This request dumps a chunk of
 RAM, rather than just the requested cell, into the caches. Since studies of
 programs show that subsequent memory access will likely be to the same cell or
 near neighbors, the caches provide rapid access to those memory regions until
 the CPU is done with them, at which point they are written back to RAM.
+
+> The action that halts the processor is actually an interrupt raised by the
+> memory controller. Computers that run a supervisor program such as an
+> operating system will usually react to that interrupt by selecting another
+> unit of work and jumping the processor’s program counter to it. This is how
+> essentially all modern computers implement running more than one program per
+> processor.
+{:.bq-info .iso7010 .m006 role="complementary"}
+
+##### Alignment
 
 A 64-bit CPU connects to RAM with a 64-bit bus, so RAM access works best when
 the address being requested is an even multiple of 64 bits. Even though CPUs
@@ -354,34 +354,32 @@ Each row in this table is an 8-byte word, and each cell is one byte. The least
 significant nibble (four bits) of each cell’s address is marked in the cell, and
 the remaining nibbles are marked to the left.
 
-<aside markdown="block" class="terminology">
-Programming and computer science often work with numbers that make little sense
-to express in base-10, and much more sense to express in bases such as -2, -8,
-or -16.
+> Programming and computer science often work with numbers that make little
+> sense to express in base-10, and much more sense to express in bases such as
+> -2, -8, or -16.
+>
+> These are commonly denoted by using an `0<tag>` prefix.
+>
+> - Binary (base 2) is denoted by `0b` and uses the digits `01`, like `0b1010`.
+> - Octal (base 8) is denoted by `0o` or `\` and uses the digits `01234567`. It
+>   can be written `0o012` or `\012`. The latter form is a quirk from early C
+>   compilers, and is often preferred to the former because `0` and `o` look
+>   very similar. A disadvantage of octal is that because each digit is three
+>   bits wide, octal digits do not cleanly divide bytes.
+>
+> - Hexadecimal (base 16) is denoted by `0x` and uses the digits
+>   `0123456789ABCDEF`. Hexadecimal digits are four bits wide, and so a byte is
+>   cleanly represented by a pair. This makes hexadecimal the most common
+>   notation for working with large binary numbers, as it is an optimal balance
+>   between compression, legibility, and regularity.
+>
+> Where hexadecimal numbers are used and include the digits `A` through `F`, a
+> prefix is not required; however, it is considered good practice for almost all
+> occasions. I am not using it in the table below to save space, and because it
+> is obvious that the numbers are hexadecimal.
+{:.bq-info .iso7010 .m002 role="complementary"}
 
-These are commonly denoted by using an `0<tag>` prefix.
-
-- Binary (base 2) is denoted by `0b` and uses the digits `01`, like `0b1010`.
-
-- Octal (base 8) is denoted by `0o` or `\` and uses the digits `01234567`. It
-    can be written `0o012` or `\012`. The latter form is a quirk from early C
-    compilers, and is often preferred to the former because `0` and `o` look
-    very similar. A disadvantage of octal is that because each digit is three
-    bits wide, octal digits do not cleanly divide bytes.
-
-- Hexadecimal (base 16) is denoted by `0x` and uses the digits
-    `0123456789ABCDEF`. Hexadecimal digits are four bits wide, and so a byte is
-    cleanly represented by a pair. This makes hexadecimal the most common
-    notation for working with large binary numbers, as it is an optimal balance
-    between compression, legibility, and regularity.
-
-Where hexadecimal numbers are used and include the digits `A` through `F`, a
-prefix is not required; however, it is considered good practice for almost all
-occasions. I am not using it in the table below to save space, and because it is
-obvious that the numbers are hexadecimal.
-</aside>
-
-```text
+```term
 Main bits            Last 4 bits
 64       32       │               │
                   ├─┼─┼─┼─┼─┼─┼─┼─┤
@@ -429,7 +427,7 @@ four bytes `0x14` through `0x17`, and store the 64-bit value in the full word
 Efficient memory usage requires that variables be properly aligned according to
 their sizes, and this comes into play significantly in low-level programming.
 
-### Bulk Storage
+#### Bulk Storage
 
 RAM is great, but requires constant power supplies to preserve its stored values
 (dynamic RAM slowly leaks charge; electrical science is just rude like that),
@@ -458,7 +456,7 @@ stop doing whatever task required that transaction and pick up some other task
 instead. This is called *multitasking* and is one of the more important features
 of modern operating systems.
 
-## I/O
+### I/O
 
 What good is a computer that can’t talk to the outside world, where we live? If
 we can’t put in data for it to work on, and it can’t put out results, there’s
@@ -469,7 +467,7 @@ devices, like the computers that sit inside robot parts and cars and satellites,
 receive data from the environment and can control other devices like motors or
 radios or screens.
 
-### Display
+#### Display
 
 The simplest (not really; it’s actually quite complex to implement, but simplest
 from a user’s perspective) output device is a monitor. The computer prints text
@@ -480,7 +478,7 @@ typewriters, which is why our text encodings look like they do), or make noise
 through speakers, but the quintessential form of computer to human communication
 is the display.
 
-### User Input
+#### User Input
 
 Humans give data to the computer through a keyboard (and also a mouse). At first
 computers were given input by directly manipulating electrical switches, but
@@ -496,13 +494,13 @@ That happened in the ‘60s. Nearly sixty years later, and that interface has
 barely changed; the command line is still present in all computers and pretty
 much impossible for a programmer to ignore.
 
-### Networking
+#### Networking
 
 The most revolutionary I/O device is, by far, the networking card. With this,
 computers can communicate with each other and exchange data and share work,
 without having to be in the same case, room, or building.
 
-# Interrupts
+## Interrupts
 
 There are two ways a CPU can check on the outside world: perpetually ask the
 world what its status is, or wait for the world to poke it.
@@ -525,9 +523,12 @@ that hold a value; that value is the address of the respective handler function.
 Interrupt handlers must be fast, self-contained, and simple, because while a CPU
 is in interrupt-mode, *no other interrupt can be serviced*.
 
-<aside markdown="block">
-Kinda. Yes I’m lying; no I’m not going to explain further. Email me.
-</aside>
+> Somewhat. Most processors implement ranked categories of interrupt, and while
+> in any given interrupt mode, no lesser-priority interrupt can preëmpt, but
+> higher-priority interrupts generally can. This is generally considered
+> unpleasant, so almost all interrupts have the same priority and thus execute
+> sequentially rather than contentiously.
+{:.bq-warn .iso7010 .w012 role="complementary"}
 
 The interrupt handler does something (usually informing the OS of what happened
 so the OS can do work at its leisure) and exits, at which point the CPU goes
@@ -551,3 +552,12 @@ interest; I’m happy to go on at length about them, but I do mean *at length*.
 And next up is assembly language, and thence into actual programming, which is
 the domain about which I actually want to talk and you, probably, actually want
 to read.
+
+> I interviewed at Space Dynamics Laboratory on 2016, Nov 4. Shortly after I
+> published this article, I got my hire letter, so I moved from Michigan to Utah
+> and went to work. This was my first job after college, and the transition from
+> unemployment to industry, followed by the real-world effects of the new
+> administration, derailed the rest of this series.
+>
+> Oops.
+{:.bq-safe .iso7010 .e016 role="complementary"}

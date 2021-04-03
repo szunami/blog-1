@@ -6,6 +6,7 @@ tags:
 - rust
 summary: >
   Create a partner trait to `From` that allows conversion in a method chain.
+  Available in the [`tap`](/crates/tap) crate now.
 ---
 
 - Feature Name: convert_trait
@@ -13,14 +14,12 @@ summary: >
 - RFC PR: (leave this empty)
 - Rust Issue: (leave this empty)
 
-# Summary
-[summary]: #summary
+## Summary
 
 This is a partner trait to [`From`] and [`Into`] that allows using a conversion
 method in the middle of a chain.
 
-# Motivation
-[motivation]: #motivation
+## Motivation
 
 Currently, Rust code cannot write
 
@@ -51,6 +50,7 @@ let c: C = <A as Into<B>>::into(a).b_to_c();
 > This can be shortened as `Into<B>::into(a)`, because `a` has a known type and
 > thus fully specifies the trait impl to use. I will use fully specified trait
 > functions in this RFC for clarity.
+{:.bq-info role="complementary"}
 
 or to use the companion trait, `From`:
 
@@ -59,6 +59,7 @@ let c: C = <B as From<A>>::from(a).b_to_c();
 ```
 
 > This can be shortened as `B::from(a)`.
+{:.bq-info role="complementary"}
 
 Both of these require significantly rearranging the expression, using a leading
 type and function instead of method and trailing type, and introduce a lot of
@@ -70,8 +71,7 @@ This trait supports the use case of type conversions in a method chain where
 require a much smaller insertion of type information, rather than a large
 rewrite, making writing these expressions more smooth.
 
-# Guide-level explanation
-[guide-level-explanation]: #guide-level-explanation
+## Guide-level explanation
 
 Rust offers the `std::convert` module as a defined set of interfaces for
 converting values from one type to another. The `From` trait is the idiomatic
@@ -93,16 +93,16 @@ struct Source;
 struct Target;
 
 impl From<Source> for Target {
-    fn from(src: Source) -> Self {
-        Target
-    }
+  fn from(src: Source) -> Self {
+    Target
+  }
 }
 
 fn main() {
-    let a = Source;
-    let b = Target::from(a);
-    let c: Target = a.into();
-    let d = a.convert::<Target>();
+  let a = Source;
+  let b = Target::from(a);
+  let c: Target = a.into();
+  let d = a.convert::<Target>();
 }
 ```
 
@@ -111,16 +111,15 @@ choice for use in trait bounds, while `.convert::<Target>()` is the right choice
 for use in method calls. They both perform the same underlying thing:
 `<Target as From<Self>>::from(self)`.
 
-# Reference-level explanation
-[reference-level-explanation]: #reference-level-explanation
+## Reference-level explanation
 
 In the `std::convert` module, define a new trait:
 
 ```rust
 pub trait Convert : Sized {
-    fn convert<T: Sized + From<Self>>(self) -> T {
-        <T as From<Self>>::from(self)
-    }
+  fn convert<T: Sized + From<Self>>(self) -> T {
+    <T as From<Self>>::from(self)
+  }
 }
 ```
 
@@ -130,15 +129,13 @@ and blanket-implement it on all sized types:
 impl<T: Sized> Convert for T {}
 ```
 
-# Drawbacks
-[drawbacks]: #drawbacks
+## Drawbacks
 
 Why should we *not* do this?
 
 The standard library should not be a slowly-accumulating pile of idioms.
 
-# Rationale and alternatives
-[rationale-and-alternatives]: #rationale-and-alternatives
+## Rationale and alternatives
 
 - Why is this design the best in the space of possible designs?
 
@@ -155,14 +152,12 @@ The standard library should not be a slowly-accumulating pile of idioms.
   Method chains are less ergonomic than possible when they require type
   conversions.
 
-# Prior art
-[prior-art]: #prior-art
+## Prior art
 
 The `Into` trait shows willingness in the standard library to define companion
 traits that function only as a reshaping of how the base trait is invoked.
 
-# Unresolved questions
-[unresolved-questions]: #unresolved-questions
+## Unresolved questions
 
 - What parts of the design do you expect to resolve through the RFC process
   before this gets merged?
@@ -184,10 +179,18 @@ traits that function only as a reshaping of how the base trait is invoked.
 
   None
 
-# Future possibilities
-[future-possibilities]: #future-possibilities
+## Future possibilities
 
 None
+
+[summary]: #summary
+[motivation]: #motivation
+[guide-level-explanation]: #guide-level-explanation
+[reference-level-explanation]: #reference-level-explanation
+[drawbacks]: #drawbacks
+[alternatives]: #rationale-and-alternatives
+[prior-art]: #prior-art
+[unresolved]: #unresolved-questions
 
 [`From`]: https://doc.rust-lang.org/std/convert/trait.From.html
 [`Into`]: https://doc.rust-lang.org/std/convert/trait.Into.html

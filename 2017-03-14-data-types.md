@@ -12,10 +12,7 @@ summary: >
   theories behind that behavior.
 ---
 
-1. ToC
-{:toc}
-
-# Introduction
+## Introduction
 
 Computing is composed of two categories of information: instructions, and data.
 If computers speak a language, instructons are verbs and adverbs, and data are
@@ -46,36 +43,36 @@ neither $$A$$ nor $$B$$ go outside the circles, things that are either in $$A$$
 or in $$B$$ go in the outer area of their respective circle, and things that are
 both in $$A$$ and in $$B$$ go in the intersection in the middle.
 
-<aside markdown="block">
-Incidentally, this maps well to Boolean logic. The [Venn Diagram][1] of two
-intersecting circles in a universe is equivalent to the [Karnaugh Map][2] of two
-binary variables. The diagram below has a K-map on the left and a Venn diagram
-(which is harder to draw in text than one might think) on the right.
+> Incidentally, this maps well to Boolean logic. The [Venn Diagram][1] of two
+> intersecting circles in a universe is equivalent to the [Karnaugh Map][2] of
+> two binary variables. The diagram below has a K-map on the left and a Venn
+> diagram (which is harder to draw in text than one might think) on the right.
+>
+> ```term
+>    ┌─┬─┐    ┌─────────────────┐
+>  A │1│3│    │   ┌───┮━━━┭───┐ │
+>    ├─┼─┤    │ 0 │ 1 │ 3 │ 2 │ │
+> ¬A │0│2│    │   └───┶━━━┵───┘ │
+>    └─┴─┘    └─────────────────┘
+>    ¬B B
+> ```
+>
+> Cell 0 is full of elements which are neither `A` nor `B`, but are in the
+> universe `U`. Cell 1 is full of elements which are `A` but are not `B`: the
+> outer section of one of the two circles. Cell 2, `B` but not `A`, is the other
+> circle. Cell 3 is the intersection, filled with elements that are both `A` and
+> `B`.
+>
+> The group of cells 1, 2, and 3 holds all elements that are in either `A` or
+> `B`, and relates to Boolean OR. In mathematics, this is called the union
+> operator: $$A \cup B$$. Cells 1 and 2 hold elements that are `A` or `B` but
+> not in both, and relate to Boolean XOR. This is called the disjoint union or
+> symmetric union: $$A \Delta B$$. Cell 3 alone is composed of items that are
+> both `A` and `B`, and relates to Boolean AND. This is also called the
+> intersection: $$A \cap B$$.
+{:.bq-info .iso7010 .m002 role="complementary"}
 
-```text
-   ┌─┬─┐    ┌─────────────────┐
- A │1│3│    │   ┌───┮━━━┭───┐ │
-   ├─┼─┤    │ 0 │ 1 │ 3 │ 2 │ │
-¬A │0│2│    │   └───┶━━━┵───┘ │
-   └─┴─┘    └─────────────────┘
-   ¬B B
-```
-
-Cell 0 is full of elements which are neither `A` nor `B`, but are in the
-universe `U`. Cell 1 is full of elements which are `A` but are not `B`: the
-outer section of one of the two circles. Cell 2, `B` but not `A`, is the other
-circle. Cell 3 is the intersection, filled with elements that are both `A` and
-`B`.
-
-The group of cells 1, 2, and 3 holds all elements that are in either `A` or `B`,
-and relates to Boolean OR. In mathematics, this is called the union operator:
-$$A \cup B$$. Cells 1 and 2 hold elements that are `A` or `B` but not in both,
-and relate to Boolean XOR. This is called the disjoint union or symmetric union:
-$$A \Delta B$$. Cell 3 alone is composed of items that are both `A` and `B`, and
-relates to Boolean AND. This is also called the intersection: $$A \cap B$$.
-</aside>
-
-# Set Theory in Programming
+## Set Theory in Programming
 
 In mathematics, we have freer room to say what elements belong to what sets
 because we have an infinite symbol space that need never collide. This is untrue
@@ -102,7 +99,7 @@ such as ASCII, UTF-8, or the myriad other standards, memory models (also known
 as Application Binary Interface, or ABI for short), or transmission protocols
 used to operate communication lines like Ethernet, telephone, serial, or more.
 
-# Data Types
+## Data Types
 
 As I briefly touched on above, computing has a concept of *data types* that
 governs how bits are interpreted. All programming languages have some kind of
@@ -170,35 +167,34 @@ This is fine: C’s type system is very permissive, and as long as we guarantee
 that the sizes of everything we’re throwing around are sufficient, it won’t
 cause catastrophes merely by writing data to memory locations.
 
-<aside markdown="block">
-In C, the above symbol `bytes` is of type `char*`. The compiler knows that the
-symbol `bytes` points to four consecutive bytes, but this information never
-leaves the compiler.
-
-We can use type casting to pretend that `bytes` actually points to one 4-byte
-slot, rather than four one-byte slots in a row, by casting to `(int*)bytes`. We
-can then dereference it to store `0x12345678` at the location. Without the
-leading `*`, this would attempt to redefine the symbol `bytes` to point to
-`0x12345678` rather than to whatever address it was originally pointing.
-
-However, because computers are weird, the memory at `bytes` may likely turn out
-to be `0x78563412`, not `0x12345678`, because most modern CPUs store bytes from
-least significant first to most significant last.
-
-I am convinced that endianness exists solely because every discipline has to
-have some kind of issue over which to bitterly feud despite, if not because of,
-there being no real difference between the sides, and the hardware engineers
-were feeling left out.
-</aside>
+> In C, the above symbol `bytes` is of type `char*`. The compiler knows that the
+> symbol `bytes` points to four consecutive bytes, but this information never
+> leaves the compiler.
+>
+> We can use type casting to pretend that `bytes` actually points to one 4-byte
+> slot, rather than four one-byte slots in a row, by casting to `(int*)bytes`.
+> We can then dereference it to store `0x12345678` at the location. Without the
+> leading `*`, this would attempt to redefine the symbol `bytes` to point to
+> `0x12345678` rather than to whatever address it was originally pointing.
+>
+> However, because computers are weird, the memory at `bytes` may likely turn
+> out to be `0x78563412`, not `0x12345678`, because most modern CPUs store bytes
+> from least significant first to most significant last.
+>
+> I am convinced that endianness exists solely because every discipline has to
+> have some kind of issue over which to bitterly feud despite, if not because
+> of, there being no real difference between the sides, and the hardware
+> engineers were feeling left out.
+{:.bq-info .iso7010 .m014 role="complementary"}
 
 C also lets us build complex data structures, like so:
 
 ```c
 //  Make a struct Foo that takes up four bytes
 struct Foo {
-    short s;
-    char c1;
-    char c2;
+  short s;
+  char c1;
+  char c2;
 } foo;
 
 //  Assign four bytes into foo
@@ -212,7 +208,7 @@ printf("%i, %i, %i", foo.s, foo.c1, foo.c2);
 In every single case above, the data value found in memory is exactly the same.
 What changes is how that run of data is interpreted.
 
-# Type Theory
+## Type Theory
 
 It’s important to remember that bare bits have no type whatsoever. Data is
 inherently untyped, and humans and programs give meaning to data by how they
@@ -233,7 +229,7 @@ This doesn’t change the premise that types are abstract, not concrete. When da
 is tagged with its type, the type is read and used to select among behavior. The
 type itself is just a number that the code treats as significant.
 
-## Weak Types
+### Weak Types
 
 C is a classical example of a weak type system: it is only concerned with memory
 logistics. If a symbol has a certain bit width, it can store any value that will
@@ -244,7 +240,7 @@ match up.
 This permits programmers a great deal of freedom, but leaves lots of room for
 mistakes.
 
-## Strong Types
+### Strong Types
 
 By contrast, the Rust language has an incredibly strong type system. It matches
 C’s level of memory efficiency by not storing type metadata in memory wherever
@@ -281,7 +277,7 @@ that the compiler sees a set $$Foo$$ and a set $$Bar$$, and elements of one are
 In set theory terms, these plain types are fully disjoint and cannot mix.
 Rust does offer a way around this, however.
 
-## Algebraic Types
+### Algebraic Types
 
 The term *algebraic types* refers to treating types as abstract mathematical
 sets, rather than blocks of memory. In addition to being abstract, these types
@@ -302,8 +298,8 @@ elements.
 
 ```rust
 enum Option<T> {
-    Some(T),
-    None,
+  Some(T),
+  None,
 }
 ```
 
@@ -318,7 +314,9 @@ same time. Let’s put that in mathematical terms: the set $$Option$$ is the sum
 of the sets $$Some$$ and $$None$$, which are two sets such that their
 intersection is empty.
 
-$$Option := \{ Some + None \} | \{ Some \} \cap \{ None \} = \{∅\}$$
+$$
+Option := \{ Some + None \} | \{ Some \} \cap \{ None \} = \{∅\}
+$$
 
 (The $$|$$ character above means “where”, and this states that the left side is
 only true when the right side is satisfied. If there exists an element that is
@@ -333,26 +331,26 @@ special value the *discriminant*.
 C pointers use the `NULL` value to indicate invalidity. This value is often
 presumed to be 0, but might not be, depending on the hardware.
 
-<aside markdown="block">
-Furthermore, address number `0` is not required to be invalid to access, and on
-many architectures, is a perfectly serviceable address to use. I work on a
-processor whose memory map includes `0`, but our C compiler has not been patched
-to use a non-zero `NULL` value, and so I am unable to access that word in a
-program.
+> Furthermore, address number `0` is not required to be invalid to access, and
+> on
+> many architectures, is a perfectly serviceable address to use. I work on a
+> processor whose memory map includes `0`, but our C compiler has not been
+> patched to use a non-zero `NULL` value, and so I am unable to access that word
+> in a program.
+>
+> The AVR microcontroller architecture is another example of an address space in
+> which `0` is valid; however, in AVR, address zero is not a memory cell, but a
+> CPU register.
+>
+> This is educational, but also allows for horrifyingly unsafe program behavior.
+{:.bq-harm .iso7010 .f005 role="complementary"}
 
-The AVR microcontroller architecture is another example of an address space in
-which `0` is valid; however, in AVR, address zero is not a memory cell, but a
-CPU register.
-
-This is educational, but also allows for horrifyingly unsafe program behavior.
-</aside>
-
-In Rust, the exact value is hidden from us, but for `Option<Pointer>`, the `None`
-variant is just the platform’s `NULL` value, and the `Some(Pointer)` variant is
-anything else. This permits memory that looks in Rust to be identical to C, but
-is treated by the code as being two completely different types. The compiler
-will refuse to treat a `None` as a `Some`, and if it can’t prove it at compile
-time, it will inject code that will enforce this behavior at runtime.
+In Rust, the exact value is hidden from us, but for `Option<Pointer>`, the
+`None` variant is just the platform’s `NULL` value, and the `Some(Pointer)`
+variant is anything else. This permits memory that looks in Rust to be identical
+to C, but is treated by the code as being two completely different types. The
+compiler will refuse to treat a `None` as a `Some`, and if it can’t prove it at
+compile time, it will inject code that will enforce this behavior at runtime.
 
 In Rust’s type theory, `enum`s are sum types, since the set of all enum values
 is the sum of all the values of each set within it.
@@ -368,8 +366,8 @@ A more complex structure has many more possible values.
 
 ```rust
 struct Baz {
-    a: i32,
-    b: Option<i32>,
+  a: i32,
+  b: Option<i32>,
 }
 ```
 
@@ -381,7 +379,7 @@ Baz := \{ i32 \} \times \{ \{ Some(i32) \} + \{ None \} \} | \{ Some(i32) \}
 \cap \{ None \} = \{∅\}
 $$
 
-# Conclusion
+## Conclusion
 
 In daily life, we organize information by type. In the real world, type is often
 an innate quality things have (like weight or strength or color), but can also

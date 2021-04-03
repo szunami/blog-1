@@ -15,10 +15,10 @@ summary: >
   possible.
 ---
 
-1. ToC
-{:toc}
+> Rust version at time of writing: 1.19
+{:.bq-info role="complementary"}
 
-# Introduction
+## Introduction
 
 The second draft of this article was 4,000 words long before I wrote the heading
 “The Point of This Article, No Really I Mean It This Time” and that’s when I
@@ -29,10 +29,9 @@ and deserialization (henceforth <dfn>ser/des</dfn> for short). We also have some
 significant concerns in the radio network that lets us talk to orbital hardware,
 but ser/des is what makes that network useful. So we think about it a lot.
 
-<aside markdown="block">
-Also, I know less than nothing about radio engineering, and am only lightly
-involved in the network. I am, however, both learned and tasked on ser/des.
-</aside>
+> Also, I know less than nothing about radio engineering, and am only lightly
+> involved in the network. I am, however, both learned and tasked on ser/des.
+{:role="complementary"}
 
 Our spacecraft are usually flying software written in C or C++, or firmware
 written in Verilog or VHDL, talking to ground sites running applications in C♯,
@@ -53,17 +52,17 @@ C’s limitations) and memmove and cast pointers.
 
 Here is an example COSMOS block, taken (and scrubbed) from my current project.
 
-```text
+```cosmos
 TELEMETRY BLOG_POST FOO_TLM BIG_ENDIAN "I stripped the real names, obviously."
   APPEND_ITEM    LEN              16 UINT        "Packet Length"
-  # This is a magic number that is used for type-match. I'll cover it later.
+  ## This is a magic number that is used for type-match. I'll cover it later.
   APPEND_ID_ITEM OPCODE           16 UINT 0xABCD "Packet Opcode"
   APPEND_ITEM    GPSW             16 UINT        "GPS Week"
   APPEND_ITEM    GPSM             32 UINT        "GPS Millisecond of week"
   APPEND_ITEM    FRT              64 UINT        "Free running timer"
   APPEND_ITEM    ResetCount       16 UINT        "Processor Reset Count"
   APPEND_ITEM    NetLogicalAddress 8 UINT        "Network Logical Address"
-  # This is also a magic typematch number.
+  ## This is also a magic typematch number.
   APPEND_ID_ITEM ProtocolId        8 UINT 0x42   "Network Protocol ID"
   APPEND_ITEM    AsciiData        -8 STRING      "Payload text buffer"
   ITEM           NetCrc         -8 8 UINT        "CRC"
@@ -78,7 +77,7 @@ definitions, as well as ser/des methods. I do not know of similar libriaries in
 other languages, though I am attempting to write one in Rust. That effort is
 what motivates this post.
 
-# Data Format
+## Data Format
 
 For various reasons not worth exploring here, we do not always write our message
 layouts in ways optimally suited for ease of transmutation by C or Rust. The
@@ -99,7 +98,7 @@ of a `BLOG_POST FOO_TLM` message (henceforth <dfn>BPFT</dfn>) is the width of
 the entire message (not the width of the `AsciiData` field) and we can use that
 for bookkeeping.
 
-## Example Type and Deserialization in C
+### Example Type and Deserialization in C
 
 Let’s get some basic C types down that we’ll then build on. We need an enum of
 all messages in the project and a tagged-union to contain them, as well as a
@@ -107,43 +106,43 @@ struct definition of the BPFT type.
 
 ```c
 enum Message {
-    /* others */
-    Message_BPFT,
-    Message_NONE,
+  /* others */
+  Message_BPFT,
+  Message_NONE,
 }
 /* ... other struct definitions ... */
 struct BlogPost_FooTlm {
-    unsigned char* ascii_data;
-    /* C integer types are terrible */
-    unsigned long long frt;
-    unsigned int gpsm;
-    unsigned short len;
-    unsigned short gpsw;
-    unsigned short reset_count;
-    unsigned char net_logical_address;
-    unsigned char net_crc;
+  unsigned char* ascii_data;
+  /* C integer types are terrible */
+  unsigned long long frt;
+  unsigned int gpsm;
+  unsigned short len;
+  unsigned short gpsw;
+  unsigned short reset_count;
+  unsigned char net_logical_address;
+  unsigned char net_crc;
 }
 struct TypedMessage {
-    enum Message ty;
-    union {
-        /* others */
-        struct BlogPost_FooTlm bpft,
-        void* none,
-    } msg;
+  enum Message ty;
+  union {
+    /* others */
+    struct BlogPost_FooTlm bpft,
+    void* none,
+  } msg;
 }
 /* Blanks a TypedMessage struct to a safe NONE state */
 void blank_typed_message(struct TypedMessage* self) {
-    memset(&(self->msg), 0, sizeof(self->msg));
-    self->ty = Message_NONE;
+  memset(&(self->msg), 0, sizeof(self->msg));
+  self->ty = Message_NONE;
 }
 ```
 
-<aside markdown="block">
-Notice that the two fields `OPCODE` and `ProtocolId` aren’t in the C struct?
-They’re `ID_ITEM`s in COSMOS, which means they’re magic constants. We need to
-know them for sniffing packets, but they don’t need to be carried in the struct.
-They are *type-level integers*, not instance-level. I’ll get back to that.
-</aside>
+> Notice that the two fields `OPCODE` and `ProtocolId` aren’t in the C struct?
+> They’re `ID_ITEM`s in COSMOS, which means they’re magic constants. We need to
+> know them for sniffing packets, but they don’t need to be carried in the
+> struct. They are *type-level integers*, not instance-level. I’ll get back to
+> that.
+{:.bq-safe .iso7010 .e011 role="complementary"}
 
 My mission docs state that all 74 packet types have opcodes in the same place,
 which makes first-level detection easier. Let’s see what a BPFT-specific
@@ -153,52 +152,52 @@ returns *some* deserialized message.
 ```c
 /* Deserialize a packet into a BPFT structure */
 int deser_bpft(unsigned char* pkt, struct BlogPost_FooTlm* out) {
-    out->len = ntohs(*(unsigned short*)pkt);
-    out->gpsw = ntohs(*(unsigned short*)&pkt[4]);
-    out->gpsm = ntoh(*(unsigned int*)&pkt[6]);
-    out->frt = ntohl(*(unsigned long long*)&pkt[10]);
-    out->reset_count = ntohs(*(unsigned short*)&pkt[18]);
-    out->net_logical_address = ntoh(*(unsigned char*)&pkt[20]);
-    out->ascii_data = malloc(out->len - 23);
-    if (out->ascii_data == NULL) {
-        return -1;
-    }
-    memmove(out->ascii_data, &pkt[22], out->len - 23);
-    out->net_crc = pkt[out->len - 1];
-    return 0;
+  out->len = ntohs(*(unsigned short*)pkt);
+  out->gpsw = ntohs(*(unsigned short*)&pkt[4]);
+  out->gpsm = ntoh(*(unsigned int*)&pkt[6]);
+  out->frt = ntohl(*(unsigned long long*)&pkt[10]);
+  out->reset_count = ntohs(*(unsigned short*)&pkt[18]);
+  out->net_logical_address = ntoh(*(unsigned char*)&pkt[20]);
+  out->ascii_data = malloc(out->len - 23);
+  if (out->ascii_data == NULL) {
+    return -1;
+  }
+  memmove(out->ascii_data, &pkt[22], out->len - 23);
+  out->net_crc = pkt[out->len - 1];
+  return 0;
 }
 /* Deserialize a packet into _some_ structure */
 struct TypedMessage deser(unsigned char* pkt, int len) {
-    /* Set up a return value */
-    struct TypedMessage out;
-    /* Early abort if needed */
-    if (len < 4) {
+  /* Set up a return value */
+  struct TypedMessage out;
+  /* Early abort if needed */
+  if (len < 4) {
+    goto fail;
+  }
+  /* Switch on the globally known identifier position */
+  switch ntohs(*(unsigned short*)&pkt[2]) {
+  /* A message family */
+  case 0xABCD:
+    switch pkt[21] {
+    /* BPFT specifically */
+    case 0x42:
+      /* Deserialize as BPFT into the return structure */
+      if (deser_bpft(pkt, (void*)&(out.msg)) != 0) {
         goto fail;
-    }
-    /* Switch on the globally known identifier position */
-    switch ntohs(*(unsigned short*)&pkt[2]) {
-    /* A message family */
-    case 0xABCD:
-        switch pkt[21] {
-        /* BPFT specifically */
-        case 0x42:
-            /* Deserialize as BPFT into the return structure */
-            if (deser_bpft(pkt, (void*)&(out.msg)) != 0) {
-                goto fail;
-            }
-            /* Set the type flag */
-            out.ty = Message_BPFT;
-            goto exit;
-        default:
-            goto fail;
-        }
+      }
+      /* Set the type flag */
+      out.ty = Message_BPFT;
+      goto exit;
     default:
-        goto fail;
+      goto fail;
     }
+  default:
+    goto fail;
+  }
 fail:
-    blank_typed_message(&out);
+  blank_typed_message(&out);
 exit:
-    return out;
+  return out;
 }
 ```
 
@@ -211,42 +210,45 @@ write like this in real life and neither should you.
 Let me break down what’s happening here:
 
 1. The `deser` function is called on a packet freshly received from the network
-    layer. It has had all its transport wrappings removed, has been recombined
-    if needed, and should look like one of the 74 message types declared in this
-    project. This function looks at bytes 2 and 3 as a single 16-bit value and
-    compares against known magic numbers.
+   layer. It has had all its transport wrappings removed, has been recombined if
+   needed, and should look like one of the 74 message types declared in this
+   project. This function looks at bytes 2 and 3 as a single 16-bit value and
+   compares against known magic numbers.
 
-    <aside markdown="block">
-    If you haven’t read my previous type posts, let me explain what the weird
-    `ntoh(…)` snippets are doing.
+   > If you haven’t read my previous type posts, let me explain what the weird
+   > `ntoh(…)` snippets are doing.
+   >
+   > 1. We need to get the address of the start of a field, here `LEN`. This is
+   >    done by taking `&pkt[2]` because `LEN` starts at byte 2, counting from
+   >    0.
+   > 1. We need to tell the computer that the value at this address is two
+   >    bytes wide. We do this by saying that the address, is the address of an
+   >    `unsigned short`. This is the `(unsigned short*)` prefix of `&pkt[2]`.
+   > 1. We need to tell the computer, take this address of an unsigned short
+   >    and read its contents. This is the `*` in front of everything from
+   >    above.
+   > 1. We then need to tell the computer “by the way, that unsigned short you
+   >    just read? It is in big-endian, or network order. If you’re a
+   >    little-endian CPU, flip those bytes.” This is the `ntohs()` function
+   >    call wrapping everything.
+   {:.bq-warn .iso7010 .w011 role="complementary"}
 
-    1. We need to get the address of the start of a field, here `LEN`. This is
-        done by taking `&pkt[2]` because `LEN` starts at byte 2, counting from
-        0.
-    1. We need to tell the computer that the value at this address is two bytes
-        wide. We do this by saying that the address, is the address of an
-        `unsigned short`. This is the `(unsigned short*)` prefix of `&pkt[2]`.
-    1. We need to tell the computer, take this address of an unsigned short and
-        read its contents. This is the `*` in front of everything from above.
-    1. We then need to tell the computer “by the way, that unsigned short you
-        just read? It is in big-endian, or network order. If you’re a
-        little-endian CPU, flip those bytes.” This is the `ntohs()` function
-        call wrapping everything.
-    </aside>
 1. If the discovered number is the magic number indicating one of a family of
-    telemetry messages, we enter into another block to finish determining type.
-    This means inspecting byte 21 and branching on its value. If it is the magic
-    number of a BPFT, we deserialize and return a tagged union over all message
-    struct types.
-1. To deserialize a BPFT, we have to do the previously-described transformations
-    of the data stream on every field (except the magic indicators), and also
-    allocate an array elsewhere on the heap to store the string. We can’t store
-    it inline, because C doesn’t allow non-final variable-width struct fields.
-1. The caller of `deser()` can inspect the `.ty` field of the returned struct to
-    determine what kind of structure was returned, and then access the struct
-    with `.msg.bpft.ascii_data` or other field names.
+   telemetry messages, we enter into another block to finish determining type.
+   This means inspecting byte 21 and branching on its value. If it is the magic
+   number of a BPFT, we deserialize and return a tagged union over all message
+   struct types.
 
-## Lessons From the Example
+1. To deserialize a BPFT, we have to do the previously-described transformations
+   of the data stream on every field (except the magic indicators), and also
+   allocate an array elsewhere on the heap to store the string. We can’t store
+   it inline, because C doesn’t allow non-final variable-width struct fields.
+
+1. The caller of `deser()` can inspect the `.ty` field of the returned struct to
+   determine what kind of structure was returned, and then access the struct
+   with `.msg.bpft.ascii_data` or other field names.
+
+### Lessons From the Example
 
 This example code should illustrate a couple issues with the C type and logic
 systems, bad code smells notwithstanding.
@@ -266,15 +268,15 @@ from the programmer and every component in the system.
 These are both cases that Rust is in a position to address, and has much of the
 groundwork laid to do so.
 
-# Rust’s Current Type System
+## Rust’s Current Type System
 
 At present, Rust *kind of* has fields integrated into type knowledge; for
 example, its slice type is a <dfn>wide pointer</dfn> that looks like this:
 
 ```rust
 pub struct SliceRef<T> {
-    ptr: *const T,
-    len: usize,
+  ptr: *const T,
+  len: usize,
 }
 ```
 
@@ -297,22 +299,25 @@ able to solve the problem of non-tailing unsized types and, I hope, uncoupled
 fields. For the rest this article, I will be using Rust syntax that assumes type
 level integers have landed according to the linked RFCs.
 
-# Solving Unsized Types
+> Const generics began stabilizing in Rust 1.51. They are not yet able to
+> perform type-level computation, but this work is also in progress.
+{:.bq-safe .iso7010 .e004 role="complementary"}
+
+## Solving Unsized Types
 
 The message description specification for my project, as for all data formats,
 includes a means of determining the finite size of the item. C strings are the
 most prominent exception to this rule, which do not carry length out of band but
 rather use a special marker value in the stream to signal termination.
 
-<aside markdown="block">
-Null-terminated strings and null pointers are the two most catastrophic failures
-of computing theory. At least Tony Hoare had the grace to apologize for his sin;
-Dennis Ritchie (an otherwise truly impeccable pioneer in the field) did not.
-
-<aside markdown="block">
-Yes, Rust fixes both of these mistakes.
-</aside>
-</aside>
+> Null-terminated strings and null pointers are the two most catastrophic
+> failures of computing theory. At least Tony Hoare had the grace to apologize
+> for his sin; Dennis Ritchie (an otherwise truly impeccable pioneer in the
+> field) did not.
+>
+> > Yes, Rust fixes both of these mistakes.
+> {:.bq-safe role="complementary"}
+{:.bq-info .iso7010 .m011 role="complementary"}
 
 We know that for all message formats that carry their own length information as
 a field, there is a finite range of possible sizes, because integers in the
@@ -335,24 +340,24 @@ Rust’s type system to do the same thing we currently do with type-level types:
 make a BPFT type family, that is monomorphized at runtime, just as Rust traits
 currently do.
 
-## Generically-Sized Types
+### Generically-Sized Types
 
 ```rust
 pub struct BlogPost_FooTlm<const N>
 where N: u16,
 //  the proposed `with` keyword is
 //  equivalent to `where` but for math,
-//  not type, logic
+//  rather than type logic
 with N >= 23,
 {
-    ascii_data: Box<[u8; N - 23]>,
-    frt: u64,
-    gpsm: u32,
-    len: N,
-    gpsw: u16,
-    reset_count: u16,
-    net_logical_address: u8,
-    net_crc: u8,
+  ascii_data: Box<[u8; N - 23]>,
+  frt: u64,
+  gpsm: u32,
+  len: N,
+  gpsw: u16,
+  reset_count: u16,
+  net_logical_address: u8,
+  net_crc: u8,
 }
 ```
 
@@ -377,19 +382,19 @@ above, and nothing’s changed. Instead, I’m going to showcase an extension of
 previously unsafe and/or impossible behavior that type-level integers can make
 possible and safe.
 
-## Safed Superpowers: Zero-Cost Transmutation
+### Safed Superpowers: Zero-Cost Transmutation
 
 Let’s first of all declare a Rust structure that exactly mirrors the COSMOS
 description text. Thanks to type-level integers, the `ascii_data` field is no
 longer unsized, and so we can have it in a non-tailing position.
 
-<aside markdown="block">
-Ordinarily `#[repr(packed)]` is a Very Bad Idea, but this particular case is the
-only instance I can imagine where it is not only a good idea but a required one.
-
-In the future, my team should design the message layouts such that the pitfalls
-of fully packed structs are not a worry.
-</aside>
+> Ordinarily `#[repr(packed)]` is a Very Bad Idea, but this particular case is
+> the only instance I can imagine where it is not only a good idea but a
+> required one.
+>
+> In the future, my team should design the message layouts such that the
+> pitfalls of fully packed structs are not a worry.
+{:.bq-harm .iso7010 .p015 role="complementary"}
 
 ```rust
 #[repr(packed)]
@@ -397,16 +402,16 @@ pub struct BlogPost_FooTlm<const N>
 where N: u16,
 with N >= 23,
 {
-    len: N,
-    opcode: u16,
-    gpsw: u16,
-    gpsm: u32,
-    frt: u64,
-    reset_count: u16,
-    net_logical_address: u8,
-    protocol_id: u8,
-    ascii_data: [u8; N - 23],
-    net_crc: u8,
+  len: N,
+  opcode: u16,
+  gpsw: u16,
+  gpsm: u32,
+  frt: u64,
+  reset_count: u16,
+  net_logical_address: u8,
+  protocol_id: u8,
+  ascii_data: [u8; N - 23],
+  net_crc: u8,
 }
 ```
 
@@ -417,27 +422,27 @@ The end result of all this work in Rust’s type system is that we can go back t
 using C-style programming, but safely:
 
 ```rust
-use std::convert::{From,Into};
+use std::convert::{From, Into};
 
 impl From<[u8; N as usize]> for BlogPost_FooTlm<N>
 where N: u16,
 with N >= 23,
 {
-    fn from(mut src: [u8; N as usize]) -> Self<N> {
-        let mut out = unsafe { ::std::mem::transmute(src) };
-        out.from_be();
-        out
-    }
+  fn from(mut src: [u8; N as usize]) -> Self<N> {
+    let mut out = unsafe { std::mem::transmute(src) };
+    out.from_be();
+    out
+  }
 }
 
 impl Into<[u8; N as usize]> for BlogPost_FooTlm<N>
 where N: u16,
 with N >= 23,
 {
-    fn into(mut self) -> [u8; N as usize] {
-        self.to_be();
-        unsafe { ::std::mem::transmute(self) }
-    }
+  fn into(mut self) -> [u8; N as usize] {
+    self.to_be();
+    unsafe { std::mem::transmute(self) }
+  }
 }
 ```
 
@@ -447,23 +452,23 @@ because the type parameter is encoded in a known position in the byte sequence,
 the compiler is able to generate code that will handle all this correctly,
 safely, and completely transparently to the programmer.
 
-<aside markdown="block">
-<del>
-For the sake of brevity, we will briefly pretend that there exists a Rust trait
-that defines `from_be` and `to_be` methods that flip bytes around as
-appropriate, and I implemented it on this type to flip each field between
-network (big) and native (little) endianness. The devil’s in the details.
-</del>
+> <del>
+> For the sake of brevity, we will briefly pretend that there exists a Rust
+> trait that defines `from_be` and `to_be` methods that flip bytes around as
+> appropriate, and I implemented it on this type to flip each field between
+> network (big) and native (little) endianness. The devil’s in the details.
+> </del>
+>
+> <del>
+> These methods exist on primitives, but not as a trait that can be implemented
+> on structs.
+> </del>
+>
+> <ins>I wrote [Lilliput](/lilliput) to solve exactly this problem.</ins>
+>
+{:.bq-safe .iso7010 .e016 role="complementary"}
 
-<del>
-These methods exist on primitives, but not as a trait that can be implemented on
-structs.
-</del>
-
-<ins>I wrote [Lilliput](/lilliput) to solve exactly this problem.</ins>
-</aside>
-
-## Handling Concrete-Type Explosions
+### Handling Concrete-Type Explosions
 
 However, this requires a great deal of work to take place at runtime, and unlike
 with standard type generics where all types are known and planned at compile
@@ -473,8 +478,9 @@ functions to handle it.
 The solution to *this* problem is already partially solved with Rust’s trait
 system, and will be further solved when the [`impl Trait` RFC][4] lands.
 
-<ins>Update: `impl Trait` landed in 1.26, and has nothing to do with return
-value elision; this was incorrect speculation on my part.</ins>
+> Update: `impl Trait` landed in 1.26, and has nothing to do with return value
+> elision; this was incorrect speculation on my part.
+{:.bq-safe role="complementary"}
 
 Rust is very good at recognizing large structures and rewriting things behind
 the scenes to use pointers instead of values, so that functions manipulating
@@ -490,9 +496,9 @@ impl<const N> BlogPost_FooTlm<N>
 where N: u16,
 with N >= 23,
 {
-    pub fn extract_ascii_data(self) -> [u8; N - 23] {
-        self.ascii_data
-    }
+  pub fn extract_ascii_data(self) -> [u8; N - 23] {
+    self.ascii_data
+  }
 }
 ```
 
@@ -508,7 +514,7 @@ nothing, and merely forbid access to the now-logically-destroyed fields until
 such time as it can free the entire memory block formerly owned by the BPFT
 instance.
 
-# Sentinel Values in Type Declarations
+## Sentinel Values in Type Declarations
 
 So, types that can be generic over integer values will have solved one of my two
 problems discovered in the course of my work. What about the other, that I have
@@ -527,15 +533,15 @@ matching on values already of a known good type, like this:
 ```rust
 #[derive(Debug)]
 struct Foobar {
-    a: i32,
-    b: i32,
+  a: i32,
+  b: i32,
 }
 
 let f: foobar = Foobar { a: 1, b: 2 };
 match f {
-    Foobar { a, b: 1 } => println!("Found a Foobar with a/{} and b/1", a),
-    Foobar { a: 1, b } => println!("Found a Foobar with a/1 and b/{}", b),
-    m @ Foobar { .. } => println!("Found a {:?}", m),
+  Foobar { a, b: 1 } => println!("Found a Foobar with a/{} and b/1", a),
+  Foobar { a: 1, b } => println!("Found a Foobar with a/1 and b/{}", b),
+  m @ Foobar { .. } => println!("Found a {:?}", m),
 }
 ```
 
@@ -552,22 +558,22 @@ did in C: read from a known location in the stream and match on it:
 
 ```rust
 enum Message {
-    BPFT(Box<BlogPost_FooTlm>),
-    None,
+  BPFT(Box<BlogPost_FooTlm>),
+  None,
 }
 fn deser(pkt: &[u8]) -> Message {
-    use Message::*;
-    let opcode = NetworkEndian::read_u16(&src[2 .. 4]);
-    match opcode {
-        0xCDAB => {
-            let proto_id = src[21];
-            match proto_id {
-                case 0x42 => BPFT(box src.into()),
-                _ => None,
-            }
-        }
+  use Message::*;
+  let opcode = NetworkEndian::read_u16(&src[2 .. 4]);
+  match opcode {
+    0xCDAB => {
+      let proto_id = src[21];
+      match proto_id {
+        case 0x42 => BPFT(box src.into()),
         _ => None,
+      }
     }
+    _ => None,
+  }
 }
 ```
 
@@ -576,9 +582,10 @@ What if, since we defined our message struct types to be byte-equivalent to the
 packet byte stream fits in a type? This is an extension of type-level integers
 that I’m not sure I’ve yet seen, so I’m treating it as a separate offshoot.
 
-## Magic Constants
+### Magic Constants
 
-<ins>UPDATE: Struct constants landed in Rust 1.20</ins>
+> <ins>UPDATE: Struct constants landed in Rust 1.20</ins>
+{:.bq-safe role="complementary"}
 
 I’m going to redefine BPFT yet again, getting even further from valid Rust.
 
@@ -588,23 +595,26 @@ pub struct BlogPost_FooTlm<N>
 where N: u16,
 with N >= 23,
 {
-    len: N,
-    //  Keep this flip in mind
-    const opcode: u16 = 0xCDAB,
-    gpsw: u16,
-    gpsm: u32,
-    frt: u64,
-    reset_count: u16,
-    net_logical_address: u8,
-    const protocol_id: u8 = 0x42,
-    ascii_data: [u8; N - 23],
-    net_crc: u8,
+  len: N,
+  //  Keep this flip in mind
+  const opcode: u16 = 0xCDAB,
+  gpsw: u16,
+  gpsm: u32,
+  frt: u64,
+  reset_count: u16,
+  net_logical_address: u8,
+  const protocol_id: u8 = 0x42,
+  ascii_data: [u8; N - 23],
+  net_crc: u8,
 }
 ```
 
-<ins>Rust 1.28 expects to make the endian conversion functions, among others,
-`const` so they can be used on literals in `const` context. When this lands,
-the above can be written as `0xABCD.to_be()`.</ins>
+> <ins>
+> Rust 1.28 expects to make the endian conversion functions, among others,
+> `const` so they can be used on literals in `const` context. When this lands,
+> the above can be written as `0xABCD.to_be()`.
+> </ins>
+{:.bq-safe role="complementary"}
 
 This declares that not only is there a type family of BPFT structures dependent
 on values of `len`, but that it is *illegal* for BPFT instances to exist whose
@@ -634,10 +644,10 @@ for deserialization:
 fn deser<O, const N>(src: [u8; N]) -> Result<Box<O>, &'static str>
 where N: usize, O: As<[u8; N]>
 {
-    match src {
-        bpft @ BlogPost_FooTlm<N> { .. } => Ok(box bpft.from_be()),
-        _ => Err("Invalid byte sequence"),
-    }
+  match src {
+    bpft @ BlogPost_FooTlm<N> { .. } => Ok(box bpft.from_be()),
+    _ => Err("Invalid byte sequence"),
+  }
 }
 ```
 
@@ -668,7 +678,7 @@ bytes are in network endian but this is almost assuredly happening on a little
 endian machine, we then call `.from_be()` on the binding, which invokes the
 type’s correct endian converter, and returns the now-altered result.
 
-# Ending
+## Ending
 
 I’m at 4,000 words again, so rather than my planned conclusion of “reasons this
 would be useful to anyone other than me,” I’ll just end here. I’ll build on this
@@ -680,7 +690,7 @@ write into a proper RFC, much less adding to the compiler. However, if any of
 this sounds interesting to you, I’d love to hash this out and refine it into a
 better, more general form that might one day land.
 
-# TL;DR
+## TL;DR
 
 I want `std::mem::transmute()` to be type-safe and give Rust programs run-time
 type inference that is statically known to be logically sound.

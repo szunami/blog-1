@@ -10,17 +10,15 @@ summary: >
   system and the mechanics of teleporting.
 ---
 
-**SPOILERS FOR *BATTLESTAR GALACTICA (2003)* THROUGHOUT. READ ONLY IF YOU HAVE**
-**SEEN THE ENTIRE SERIES, THE WHOLE ENTIRE THING.**
+> **SPOILERS FOR *BATTLESTAR GALACTICA (2003)* THROUGHOUT. READ ONLY IF YOU**
+> **HAVE SEEN THE ENTIRE SERIES, THE WHOLE ENTIRE THING.**
+{:.bq-harm .iso7010 .p025 role="complementary"}
 
 Note on how to read this article: everything with a green bar to the left of it
 can, and maybe should, be skipped. Also, if you turned off JavaScript, you’re
 going to have a bad time, because the math is rendered by you, not by me.
 
-1. ToC
-{:toc}
-
-# Background
+## Background
 
 I’m rewatching [*Battlestar Galactica*] (2003) and, having recently read an
 excellent hard sci-fi concerned with things like orbital dynamics, I realized I
@@ -32,7 +30,7 @@ wherever possible but subject to story whimsy where not.
 So I wanted to write down some quick sketches of astrodynamic realities of the
 show’s story, just for fun.
 
-## Articles of Faith
+### Articles of Faith
 
 Let’s assume that, since the show takes place in our universe and in our past
 (*Daybreak (Part 3)*), that the rules of physics we currently know to be true
@@ -47,9 +45,9 @@ The map below was created by [Kevin Grazier], the show’s science advisor, and
 Note that this picture has a lot of small text! If you can’t read it, don’t
 worry, I’ll write out all the important pieces as I go.
 
-[![Map of the Twelve Colonies of Kobol][map]{:.unset}][map]
+![Map of the Twelve Colonies of Kobol][map]{:.fullwidth}
 
-# Orbital Motions
+## Orbital Motions
 
 Alright, let’s put some numbers on paper.
 
@@ -66,7 +64,7 @@ internal barycenter, and each star has planets.
 For the rest of the article, I’ll use the word “Cyrannus” to refer
 *specifically* to the joint barycenter of the four stars.
 
-## Helios Α/Β and Γ/Δ Barycenters in Cyrannus
+### Helios Α/Β and Γ/Δ Barycenters in Cyrannus
 
 The Helios Α/Β and Γ/Δ barycenters orbit the Cyrannus barycenter at a diameter
 of 10,091 SU (radius 5,045) and period of 546,892 years. This gives us a linear
@@ -74,20 +72,19 @@ speed of half a kilometer per second.
 
 $$
 \frac {
-    5,045 SU \times \frac { 150,000,000 km } { 1 SU } \times \tau
+  5,045 SU \times \frac { 150,000,000 km } { 1 SU } \times \tau
 } {
-    546,892 yr \times \frac { 31,557,600 sec } { 1 yr }
+  546,892 yr \times \frac { 31,557,600 sec } { 1 yr }
 } = 0.551 km/s
 $$
 
-<aside markdown="block">
-I use τ instead of π because [it’s the correct circle constant][tau].
+> I use τ instead of π because [it’s the correct circle constant][tau].
+>
+> Orbits aren’t circular, they’re elliptical, but the eccentricity is not given
+> and the circular solution is an easy and reasonably
+{:.bq-info .iso7010 .m002 role="complementary"}
 
-Orbits aren’t circular, they’re elliptical, but the eccentricity is not given
-and the circular solution is an easy and reasonably
-</aside>
-
-## Helios Alpha in Helios Alpha/Beta
+### Helios Alpha in Helios Alpha/Beta
 
 Helios Alpha orbits the Alpha/Beta barycenter at a radius of 63SU and period of
 373 years (unclear, small text). The linear speed of that sun around its
@@ -97,7 +94,7 @@ $$
 \frac { 63 SU \times \tau } { 373 yr } = 5.048 km/s
 $$
 
-## Caprica/Gemenon in Helios Alpha
+### Caprica/Gemenon in Helios Alpha
 
 Caprica is in a binary-planet system, so it orbits in a system probably like the
 Earth-Moon system. The barycenter of that system is 1 SU from Helios Alpha, with
@@ -108,7 +105,7 @@ $$
 \frac { \tau SU } { 1 yr } = 29.89 km/s
 $$
 
-## Caprica in Caprica/Gemenon
+### Caprica in Caprica/Gemenon
 
 Their inter-planet radius is 246,500 km and their period is 28.2 days, so
 Caprica orbits the Gemenon barycenter at six hundred meters per second, slightly
@@ -127,24 +124,23 @@ are moving in the same direction<sup>†</sup>, so when its motion around Gemeno
 lines up with: their motion around Helios Α, Α’s motion around Α/Β, and Α/Β’s
 motion around Cyrannus.
 
-<aside markdown="block">
-†: Space is not planar. Space is not 2-dimensional. Orbital planes are not
-required to be parallel to their sibling, parent, or cousin orbits, and a
-complex system like Cyrannus is guaranteed to have complex inclination maths to
-add to the mix. They’re shown in the picture but no numbers are given, so I’m
-going to ignore them. This isn’t an astrogation treatise.
-
-<aside markdown="block">
-While I’m poking holes in easy mental models of orbits, they’re also not
-2-dimensional ellipses; they have “vertical” oscillation orthogonal to their
-ecliptic plane. This is almost always small relative to the orbit. For example,
-our sun has a vertical oscillation amplitude of ≈10% its semimajor axis about
-the galactic center, with a vertical period ≈⅓ its galactic orbital period (≈70
-million years vertical, ≈250 million years circumferential). The astute among
-you may notice that the ratio of circumferential to vertical motion is nearly π.
-I don’t know if there’s anything to read into that.
-</aside>
-</aside>
+> †: Space is not planar. Space is not 2-dimensional. Orbital planes are not
+> required to be parallel to their sibling, parent, or cousin orbits, and a
+> complex system like Cyrannus is guaranteed to have complex inclination maths
+> to add to the mix. They’re shown in the picture but no numbers are given, so
+> I’m going to ignore them. This isn’t an astrogation treatise.
+>
+> > While I’m poking holes in easy mental models of orbits, they’re also not
+> > 2-dimensional ellipses; they have “vertical” oscillation orthogonal to their
+> > ecliptic plane. This is almost always small relative to the orbit. For
+> > example, our sun has a vertical oscillation amplitude of ≈10% its semimajor
+> > axis about the galactic center, with a vertical period ≈⅓ its galactic
+> > orbital period (≈70 million years vertical, ≈250 million years
+> > circumferential). The astute among you may notice that the ratio of
+> > circumferential to vertical motion is nearly π. I don’t know if there’s
+> > anything to read into that.
+> {:.bq-warn .iso7010 .w018 role="complementary"}
+{:.bq-warn .iso7010 .w027 role="complementary"}
 
 So that’s an example of the kind of layers of orbital motion that ships in the
 *Battlestar Galactica* universe need to handle when moving around. They only
@@ -152,32 +148,32 @@ need to go as far up the stack as the lowest common reference frame of their
 destination, so travel between planets in the same system requires less work
 than travel between planets in different systems.
 
-<aside markdown="block">
-Orbital motions in the ecliptic can be combined with sums of each orbit’s
-equation against the local barycenter. My high school calculus class used the
-function $$A \times cis(\frac{t}{P})$$ to combine
-$$A \times (cos(\frac{t}{P}) + i \times sin(\frac{t}{P}))$$, and I will do that
-here to save space. The 2-D equation of a circular orbit is thus
-$$f(t) = R \times cis(\frac { \tau \times t } { P })$$ where `R` is the radius
-and `P` is the period, so they look more or less like this:
+> Orbital motions in the ecliptic can be combined with sums of each orbit’s
+> equation against the local barycenter. My high school calculus class used the
+> function $$A \times cis(\frac{t}{P})$$ to combine
+> $$A \times (cos(\frac{t}{P}) + i \times sin(\frac{t}{P}))$$, and I will do
+> that here to save space. The 2-D equation of a circular orbit is thus
+> $$f(t) = R \times cis(\frac { \tau \times t } { P })$$ where `R` is the radius
+> and `P` is the period, so they look more or less like this:
+>
+> $$
+> f(t) \rightarrow (x, iy) = 5,045 \times cis(\frac{ \tau \times t }{ 546,892 })
+> \+ 63 \times cis(\frac{ \tau \times t }{ 373 }) + cis(\tau \times t)
+> \+ 0.001643 cis(\frac{ \tau \times t }{ 0.0772 })
+> $$
+>
+> That was a hellish adventure to write, and I presume it is equally annoying to
+> read. I will not write that again or even use it; just putting it here as an
+> example of combining nested orbital motions (I don’t even want to get into
+> adding the $$z$$ directions).
+>
+> The main takeaway from my writing this is: everything in space is constantly
+> in motion. Here in our own solar system, we only really have to contend with
+> one sun, so interplanetary travel is “just” a plot against one reference
+> point.
+{:.bq-info .iso7010 .m013 role="complementary"}
 
-$$
-f(t) \rightarrow (x, iy) = 5,045 \times cis(\frac{ \tau \times t }{ 546,892 })
-+ 63 \times cis(\frac{ \tau \times t }{ 373 }) + cis(\tau \times t)
-+ 0.001643 cis(\frac{ \tau \times t }{ 0.0772 })
-$$
-
-That was a hellish adventure to write, and I presume it is equally annoying to
-read. I will not write that again or even use it; just putting it here as an
-example of combining nested orbital motions (I don’t even want to get into
-adding the $$z$$ directions).
-
-The main takeaway from my writing this is: everything in space is constantly in
-motion. Here in our own solar system, we only really have to contend with one
-sun, so interplanetary travel is “just” a plot against one reference point.
-</aside>
-
-# Linear Interstellar Travel
+## Linear Interstellar Travel
 
 The Cyrannus system has four suns, and each pair has different binary-system
 characteristics against the total barycenter. The distances make inter-pair
@@ -216,20 +212,19 @@ engines, and then a decade and a half on the float.
 
 So rather than send colony ships back and forth forever, we have the jump drive.
 
-# Jump Drives
+## Jump Drives
 
 The FTL drive depicted in *Battlestar Galactica* is not a hyperfast accelerator
 like *Star Wars* uses, nor is it a subspace tunneler like *Stargate*.
 
-<aside markdown="block">
-The events of *Star Wars Episode VIII: The Force Awakens* demonstrate that their
-hyperspace drive is an accelerator, and the *Stargate* series states that they
-travel linearly through “subspace”, a dimension where small local distances map
-to large distances in primary spacetime.
-
-I’m writing this because I’m a nerd for space sci-fi and you’re reading this
-because you are too. Don’t judge.
-</aside>
+> The events of *Star Wars Episode VIII: The Force Awakens* demonstrate that
+> their hyperspace drive is an accelerator, and the *Stargate* series states
+> that they travel linearly through “subspace”, a dimension where small local
+> distances map to large distances in primary spacetime.
+>
+> I’m writing this because I’m a nerd for space sci-fi and you’re reading this
+> because you are too. Don’t judge.
+{:.bq-info .iso7010 .m055 role="complementary"}
 
 This is the only<sup>†</sup> major piece of magic in the physics of the story,
 so we will assume that all our current understanding<sup>‡</sup> of physics
@@ -237,29 +232,32 @@ holds for the rest of the show. As I said at the outset, this means that linear
 momentum must be conserved. Now, two thousand words in, I’ll actually get to the
 point of that statement and all the orbital speed math I did.
 
-<aside markdown="block">
-†: Gravity in the ships is canonically “down” while thrust is canonically
-“forward” (as displayed in every external shot of the fleet throughout the
-series). This means that they have to have something canceling forward thrust
-and simulating downward. *The Expanse* is the first TV show to determinedly use
-thrust for “gravity” orientation, so we will accept the difference between down
-and thrust as just how space films were made at the time, and not think about
-it beyond that.
+> †: Gravity in the ships is canonically “down” while thrust is canonically
+> “forward” (as displayed in every external shot of the fleet throughout the
+> series). This means that they have to have something canceling forward thrust
+> and simulating downward. *The Expanse* is the first TV show to determinedly
+> use thrust for “gravity” orientation, so we will accept the difference between
+> down and thrust as just how space films were made at the time, and not think
+> about it beyond that.
+{:.bq-info .iso7010 .m006 role="complementary"}
 
-‡: Our understanding of planetary systems is better now than it was in the show;
-early in the series, we hear the following exchange:
+<!-- -->
 
-> “Colonel, how likely are we to find water on any of these planets?”
-> — President Roslin
+> ‡: Our understanding of planetary systems is better now than it was in the
+> show; early in the series, we hear the following exchange:
 >
-> “… Most planets are just hunks of rocks or balls of gas. The galaxy’s a pretty
-> barren and desolate place when you get right down to it.” — Colonel Tigh
+> > “Colonel, how likely are we to find water on any of these planets?”
+> > — President Roslin
+> >
+> > “… Most planets are just hunks of rocks or balls of gas. The galaxy’s a
+> > pretty barren and desolate place when you get right down to it.” — Colonel
+> > Tigh
+>
+> (*Water*), when in fact, there’s water littered nearly everywhere
+> ([“The Solar System and Beyond is Awash in Water”][jpl]).
+{:.bq-info .iso7010 .m011 role="complementary"}
 
-(*Water*), when in fact, there’s water littered nearly everywhere
-([“The Solar System and Beyond is Awash in Water”][jpl]).
-</aside>
-
-## Trampoline Mechanics
+### Trampoline Mechanics
 
 When ships jump from one point to another, they move instantaneously. From jump
 scenes in the miniseries, *Razor*, *Exodus Part Two*, and
@@ -267,7 +265,7 @@ scenes in the miniseries, *Razor*, *Exodus Part Two*, and
 bundling the spacetime occupied by the vehicle under transport and immediately
 sending it somewhere else.
 
-### Jump Calculation
+#### Jump Calculation
 
 The miniseries and *33* use a dolly-zoom effect, as well as actor behavior and
 dialogue, to indicate that a warping of spacetime occurs in the moments just
@@ -279,26 +277,25 @@ Dialogue in the miniseries (part one) indicates that the jump from Caprica space
 to Ragnar orbit is highly complicated and difficult, but still within the realm
 of possibility.
 
-<aside markdown="block">
-The reason that the jump is required is because Col. Tigh utters the following
-statement:
-
-> “We have two problems. One, the Ragnar station is at least three days away at
-> best speed.” — Col. Tigh
-
-It’s not. The Galactica is eight hours linear travel time from Caprica
-(*Miniseries* dialogue, events). Even discounting the map, there is no such
-thing as a gas giant in the vicinity of three days of linear travel from any
-planet, and Caprica is demonstrably not Ragnar’s moon.
-
-Anyway, for Tigh to be right about three days’ travel with the given map,
-Galactica would need a sustained acceleration of 9200g, reaching a maximum
-velocity of 39 times the speed of light.
-
-Communicating distance in space is hard, because the distances and times
-involved are just beyond the understanding or sense of acceptability to most
-audiences.
-</aside>
+> The reason that the jump is required is because Col. Tigh utters the following
+> statement:
+>
+> > “We have two problems. One, the Ragnar station is at least three days away
+> > at best speed.” — Col. Tigh
+>
+> It’s not. The Galactica is eight hours linear travel time from Caprica
+> (*Miniseries* dialogue, events). Even discounting the map, there is no such
+> thing as a gas giant in the vicinity of three days of linear travel from any
+> planet, and Caprica is demonstrably not Ragnar’s moon.
+>
+> Anyway, for Tigh to be right about three days’ travel with the given map,
+> Galactica would need a sustained acceleration of 9200g, reaching a maximum
+> velocity of 39 times the speed of light.
+>
+> Communicating distance in space is hard, because the distances and times
+> involved are just beyond the understanding or sense of acceptability to most
+> audiences.
+{:.bq-info .iso7010 .m004 role="complementary"}
 
 We are treated to the following conversation as prelude to the first jump of the
 show.
@@ -344,10 +341,17 @@ effort. (I take exception to the comment “a small error could put us in the su
 since space is exceedingly empty, but hey, tension needs to be delivered
 somehow).
 
-### Jump Effects
+#### Jump Effects
 
 There are four jump events in the series that stand out in their significant
-observed side effects. **SPOILERS FOR THE SERIES HERE**
+observed side effects.
+
+> **SPOILERS FOR THE SERIES HERE**
+>
+> I am going to discuss important plot points for events in the pilot, midpoint,
+> and finale. But also, *why are you reading this* if you aren’t already a fan
+> who’s seen the whole show?
+{:.bq-harm .iso7010 .p004 role="complementary"}
 
 In *Exodus (Part 2)*, Galactica jumps directly into, and back out of, a
 planetary atmosphere. Its entry occurs at “99 thousand” (dialogue, units unsaid)
@@ -394,13 +398,13 @@ Between the visual demonstrations in the first episodes and the physical effects
 in the last, we can conclude that spacetime does weird things before and after a
 jump in order to perform the swap. I’ll come back to this in the conclusion.
 
-## Consequences of Transit
+### Consequences of Transit
 
 Given that the jump process is solely a position swap, it therefore follows that
 linear momentum against the external reference frame is conserved. Ships that
 are under way before a jump are shown to remain under way after it (*33*).
 
-Here’s where all the orbital mechanics work I did up ahead comes into play:
+Here’s where all the orbital mechanics work I did up above comes into play:
 
 Ships have the same speed, presumably relative to the local galactic frame, on
 both sides of a jump. But the objects at the destination will almost certainly
@@ -437,7 +441,7 @@ We can presume that this is also why the ships are depicted as constantly under
 thrust – they’re always gaining or losing local linear speed to compensate for
 the last jump or prepare for the next.
 
-# Enter the Cylon
+## Enter the Cylon
 
 What does *Galactica* have that a Cylon basestar does not have? Besides a hearty
 stock of genetic diversity, of course.
@@ -468,7 +472,7 @@ analysis. Why would they use thrusters with the force necessary to accelerate a
 ship of that mass when they can jump across gravity wells and let astrodynamics
 do the work for them?
 
-# There’s No Such Thing As Free Speed
+## There’s No Such Thing As Free Speed
 
 This article assumes conservation of momentum. Conservation of energy must also
 exist, and instantaneous travel up and down gravity wells grossly violates the
@@ -500,7 +504,7 @@ Thanks for reading. Lieutenant Gaeta is an unsung hero of the fleet.
 
 So say we all.
 
-# Bibliography
+## Bibliography
 
 - [*Battlestar Galactica*]
   - Miniseries
@@ -540,6 +544,6 @@ So say we all.
 [Jane Espenson]: https://en.wikipedia.org/wiki/Jane_Espenson
 [io9]: https://io9.gizmodo.com/5742034/a-detailed-map-of-battlestar-galacticas-twelve-colonies
 [jpl]: https://www.nasa.gov/jpl/the-solar-system-and-beyond-is-awash-in-water
-[map]: 2018-12-01-battlestar-astrodynamica/map.jpg
+[map]: ./2018-12-01-battlestar-astrodynamica/map.jpg "A semi-official of the Colonial star system"
 [tau]: //taumanifesto.com
 [0]: https://www.wolframalpha.com/input/?i=2+*+sqrt((10092+*+150000000km)+%2F+(9.8+m%2Fs%5E2))

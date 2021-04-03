@@ -11,17 +11,14 @@ summary: >
   logic elements.
 ---
 
-1. ToC
-{:toc}
-
-# Introduction
+## Introduction
 
 I studied Computer Engineering, which involved a good number of Electrical
 Engineering classes, but I’m not an Electrical Engineer and it’s not really my
 strength. I’ll do my best to discuss them, but don’t expect the same depth I’ll
 give the actual computing articles.
 
-# Basic Principles
+## Basic Principles
 
 Short version: transistors are light switches. Each controls one light bulb, and
 when looking at light bulbs you can decide whether to flick other lights on or
@@ -32,7 +29,7 @@ switch lights on and off, you have a computer.
 Imagine transistors as light-sensitive light switches, which turn on or off
 according to how much light is hitting them, and you’re pretty much there.
 
-## Electrical Operation
+### Electrical Operation
 
 A transistor is essentially a switch that can be controlled by voltage signals.
 There are two main kinds: [bipolar junction transistors] and [field effect
@@ -42,15 +39,14 @@ called the Base for BJT and the Gate for FET, affects the electrical properties
 of the transistor to either permit or deny current passage between Collector and
 Emitter (BJT) or Source and Drain (FET).
 
-<aside markdown="block">
-Transistors can be designed to handle very different voltages and currents
-through their transmission terminals (Collector/Emitter, Source/Drain) than at
-their signal terminals (Base, Gate), and so computers at low voltages with
-little current flow can control high-power devices like motors. This isn’t
-relevant to the series at this time, but it’s cool and a necessary way of
-interfacing computers with the real world. For example, my
-[senior design project].
-</aside>
+> Transistors can be designed to handle very different voltages and currents
+> through their transmission terminals (Collector/Emitter, Source/Drain) than at
+> their signal terminals (Base, Gate), and so computers at low voltages with
+> little current flow can control high-power devices like motors. This isn’t
+> relevant to the series at this time, but it’s cool and a necessary way of
+> interfacing computers with the real world. For example, my
+> [senior design project].
+{:.bq-info .iso7010 .m005 role="complementary"}
 
 I don’t have as strong of an understanding of transistors and electrical science
 as I do the computation topics, so I can’t really provide an explanation in
@@ -62,23 +58,23 @@ layer, which has regions that are *doped* with other metals. [Doping], the
 sprinkling of impurities in the pure silicon, affects the electrical properties
 of the silicon.
 
-<aside markdown="block">
-Benjamin Franklin got it wrong, so electrons have negative charge. However,
-convention says we measure current as flowing from positive regions to negative
-regions, so *technically* when we look at current flow, the “charge carrier” is
-a “hole”, and they flow as electrons jump in the opposite direction.
+> Benjamin Franklin got it wrong, so electrons have negative charge. However,
+> convention says we measure current as flowing from positive regions to
+> negative regions, so *technically* when we look at current flow, the “charge
+> carrier” is a “hole”, and they flow as electrons jump in the opposite
+> direction.
+>
+> So, actually, higher voltages have *fewer* electrons than do lower voltages.
+> Try not to think about it too much; just accept that everything works and move
+> forward. That’s what we did in class, anyway.
+>
+> Look there’s really no way to say this without a whiteboard. But at least you
+> should get what [XKCD #567][xkcd_src] is talking about now.
+>
+> ![][xkcd_img]{:.ctr}
+{:.bq-info .iso7010 .m002 role="complementary"}
 
-So, actually, higher voltages have *fewer* electrons than do lower voltages.
-Try not to think about it too much; just accept that everything works and move
-forward. That’s what we did in class, anyway.
-
-Look there’s really no way to say this without a whiteboard. But at least you
-should get what [XKCD #567][xkcd_src] is talking about now.
-
-![][xkcd_img]{:.ctr}
-</aside>
-
-## Logical Signaling
+### Logical Signaling
 
 Since there are two electrical charges, there are two flavors of transistor
 layout: *PNP* and *NPN*. These terms simply refer to whether the primary
@@ -103,25 +99,26 @@ shut off at 0V. PNP transistors require a gate voltage of 0V to activate (also
 more or less), and shut off at +5V. The former are *active-high*, and the latter
 are *active-low*.
 
-<aside>
-Note that I’m slightly lying when I say 5V. Commonplace semiconductors, like
-hobbyist microcontrollers and the individual chips you can get from Radio Shack,
-typically use 5V as their standard V<sub>CC</sub> signal voltage. However, 3.3V
-is growing in popularity, and the CPUs in desktop computers use roughly 1V. The
-lower the voltage differential between high and low, the lower the power used by
-normal operations.
-
-5V is a nice number to throw around rather than the symbol V<sub>CC</sub>,
-though, so I’ll continue to use that. It’s a convenient enough lie, and often
-true.
-
-The etymology behind V<sub>CC</sub> is not terribly important, and frankly I
-don’t remember it perfectly. Just know that it means positive voltage supply,
-and GND means ground, which is like sea level but for electricity.
-
-As I said, I’m not an electrical engineer. If you want to know more about all
-the chemistry and math behind them, this is not the article for you.
-</aside>
+> Note that I’m slightly lying when I say 5V. Commonplace semiconductors, like
+> hobbyist microcontrollers and the individual chips you can get from Radio
+> Shack,
+> typically use 5V as their standard V<sub>CC</sub> signal voltage. However,
+> 3.3V
+> is growing in popularity, and the CPUs in desktop computers use roughly 1V.
+> The lower the voltage differential between high and low, the lower the power
+> used by normal operations.
+>
+> 5V is a nice number to throw around rather than the symbol V<sub>CC</sub>,
+> though, so I’ll continue to use that. It’s a convenient enough lie, and often
+> true.
+>
+> The etymology behind V<sub>CC</sub> is not terribly important, and frankly I
+> don’t remember it perfectly. Just know that it means positive voltage supply,
+> and GND means ground, which is like sea level but for electricity.
+>
+> As I said, I’m not an electrical engineer. If you want to know more about all
+> the chemistry and math behind them, this is not the article for you.
+{:.bq-info .iso7010 .m011 role="complementary"}
 
 This is important because MOSFETs work best when their activation signal is the
 opposite voltage from the voltage on the *primary rail* that they are switching.
@@ -136,7 +133,7 @@ signal, and turn on when their control gate goes low (active-low) and NPN
 transistors connect signal to GND, and turn on when their control gate goes high
 (active-high).
 
-# Logic Gates
+## Logic Gates
 
 There are three general classes of transistor logic: PMOS, NMOS, and CMOS. The
 first letter of the name indicates the type of transistors used: PNP, NPN, and
@@ -183,7 +180,7 @@ pathways connects, pulling Y low. This is a NOR gate. Switch to PMOS in parallel
 and NMOS in series, and we have a NAND gate that will output high when either A
 or B is low, and will only output low when both A and B are high.
 
-# Conclusion
+## Conclusion
 
 Since NAND and NOR are each functionally-complete logic elements, we can chain
 together their simple CMOS implementations into the Boolean primitives using
@@ -227,5 +224,5 @@ feel remiss if I *didn’t* plug it, especially on this particular article.
 [NAND gates]:                   https://en.wikipedia.org/wiki/NAND_gate
 [NOR gates]:                    https://en.wikipedia.org/wiki/NOR_gate
 [senior design project]:        /portfolio#senior-design
-[xkcd_img]:                     https://imgs.xkcd.com/comics/urgent_mission.png
+[xkcd_img]:                     https://imgs.xkcd.com/comics/urgent_mission.png "XKCD #567, where an electrical engineer travels back in time to tell Ben Franklin to switch the labels on his “positive” and “negative” jars"
 [xkcd_src]:                     https://xkcd.com/567

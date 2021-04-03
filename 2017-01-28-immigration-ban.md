@@ -9,7 +9,7 @@ summary: >
   I have some strong thoughts about immigration and social attitudes.
 ---
 
-[![Bear River Mountains, Utah][1]{:.right}][2]
+![Bear River Mountains, Utah][1]{:.right}
 
 I woke up today in 2017 Utah. I'd had a long week at work, including twelve
 hours spent in the office on a company snow day, and was looking forward to a
@@ -129,5 +129,4 @@ not in vain, and that the struggles of other families like mine are not either.
 For many Americans, this is an abstract moral issue. I applaud those taking a
 stand even without a direct stake. For me, though, it’s **personal.**
 
-[1]: 2017-01-28-immigration-ban/2017-01-28T12-02-13.jpg
-[2]: https://instagr.am/myrrlyn "I h*ckin love mountains"
+[1]: ./2017-01-28-immigration-ban/2017-01-28T12-02-13.jpg "A view from Beaver Mountain, UT"
