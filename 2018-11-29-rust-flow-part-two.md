@@ -11,7 +11,7 @@ summary: >
   less painful way.
 ---
 
-Previously, on *Unsolicited Discourse*: [*Rust Flow*][rust-flow].
+Previously, on *Insufficient Magic*: [*Rust Flow*][rust-flow].
 
 ## Method Threading
 

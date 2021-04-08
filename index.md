@@ -1,8 +1,8 @@
 ---
-title: Unsolicited Discourse
+title: Insufficient Magic
 ---
 
-# Unsolicited Discourse
+# Insufficient Magic
 
 When I made this website, I had planned to write a lot more long-form text a lot
 more often. Unfortunately, it’s self-hosted, which is to say, more often broken
