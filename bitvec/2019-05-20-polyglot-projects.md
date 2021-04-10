@@ -564,7 +564,7 @@ which, even with editor macros, was horrifically unpleasant.
 
 #### Jumping Through Hoops and also Tables
 
-I swiftly gave up and asked Twitter user [@strega-nil] for help, and thankfully
+I swiftly gave up and asked Twitter user [@strega_nil] for help, and thankfully
 she knew what the hell she was doing and showed me some magic.
 
 C++ has some *very* powerful compile-time programming abilities. For example, we
@@ -629,7 +629,7 @@ We still have a problem: the jump tables expect four different kinds of `this`:
 but our class can only produce `HBitSlice *` in unqualified methods and
 `HBitSlice const *` in `const`-qualified methods.
 
-This is where [@strega-nil] brought out the really cool work:
+This is where [@strega_nil] brought out the really cool work:
 
 First, she defined four functions:
 
@@ -691,7 +691,7 @@ public:
 
 #### From Trampoline to Bouncy Castle
 
-Lastly, just to really flex on me, [@strega-nil] folded that trampoline call into
+Lastly, just to really flex on me, [@strega_nil] folded that trampoline call into
 a multiplexer function:
 
 ```cpp
@@ -844,7 +844,7 @@ MSP-430 which Rust cannot target, but the prospect of this fills me with
 trepidation and fear. I certainly will not produce native ports in any *other*
 language, *ever*.
 
-[@strega-nil]: https://twitter.com/strega-nil
+[@strega_nil]: https://twitter.com/strega_nil
 [`bitvec`]: /crates/bitvec
 [build-rs]: https://github.com/myrrlyn/bitvec/blob/feature/ffi/rust/build.rs
 [slice-rs]: https://github.com/myrrlyn/bitvec/blob/feature/ffi/rust/src/ffi/slice.rs
