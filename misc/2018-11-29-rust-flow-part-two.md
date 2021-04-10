@@ -12,7 +12,7 @@ summary: |
 
 Previously, on *Insufficient Magic*: [*Rust Flow*][rust-flow].
 
-# Method Threading
+## Method Threading
 
 This is a subset of “method chaining” that covers functions which explicitly
 take their receiver by some handle (value, im/mutable reference, or other) and
@@ -35,7 +35,7 @@ This is a problem because Rust will implicitly step down a receiver in order to
 fit the type declared as the `self` parameter in a method, but this is an
 irreversible process.
 
-# Tapping
+## Tapping
 
 Ruby provides a method, `Object#tap`, in the standard library which takes and
 returns `self`, and runs a given block on that `self`. This is distinct from the
@@ -56,7 +56,7 @@ transparent at the type level – adding or removing a tap call cannot change th
 type of the expression before or after it – and agnostic to the behavior of the
 accessory block it runs.
 
-# Current API Design
+## Current API Design
 
 One common problem in building Rust APIs is determining how to support running
 multiple small methods on an object in order to make manipulating it more
@@ -111,7 +111,7 @@ immediately using it – but very **in**convenient for anything else. Removing t
 
 Tap solves this problem by decoupling API contracts from usage style.
 
-# Tapping API Design
+## Tapping API Design
 
 Tap frees API authors from having to plan for, and constrain, the code style of
 end users. The `Command` API is built to expect method chaining, and as a
@@ -175,7 +175,7 @@ closure without requiring braces to contain repeated statements. The presence of
 tap calls does not introduce lifetime problems by degrading the initial `Vec`
 value.
 
-## Inverse, Inverse
+### Inverse, Inverse
 
 I have described the problems of using `&mut self -> &mut Self` modifier APIs.
 This is an easy dodge: make them fully consuming APIs – `mut self -> Self`. Many
@@ -208,7 +208,7 @@ should be replaced with `&mut self -> ()` mutators. Doing so improves both the
 experience of writing code against the API and the codegen performed by the
 compiler, and the `self -> Self` value passing can be regained with taps.
 
-# Inspection Without Modification
+## Inspection Without Modification
 
 I have primarily described taps as a means of decoupling modifier APIs from end
 user bindings. This is the pattern that is more interesting and useful to API
@@ -221,7 +221,7 @@ dropping log points anywhere in an expression without requiring temporary bind
 points, or ticking a counter, or running any other side effect you might want
 when something happens.
 
-# Summary
+## Summary
 
 Tapping methods allow API authors to only use the borrows they explicitly need,
 and allow users to write code more ergonomically. They permit adding inspection
@@ -237,7 +237,7 @@ To the compiler, taps are invisible and zero-cost.[^1] To the library author,
 taps remove the burden of supporting multiple use conventions. To the user, taps
 enable painless structuring of their code however they find easiest.
 
-# Get the Code
+## Get the Code
 
 I am a co-maintainer of [`tap`][tap_crate] and likely the primary author in the
 event of any ongoing work.

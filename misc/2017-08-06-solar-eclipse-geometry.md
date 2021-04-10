@@ -9,7 +9,7 @@ summary: |
   eclipse.
 ---
 
-# Introduction
+## Introduction
 
 Later this month, a full solar eclipse will occur that transits the entire width
 of the United States of America, running from Oregon to South Carolina.
@@ -33,7 +33,7 @@ of the solar system from mere Earth-surface observation.
 
 So let’s answer it!
 
-# Glossary
+## Glossary
 
 I’m going to use some jargon, and explicitly *not* use some common terms. It’s
 important that vocabulary is mutual, so any terms that are uncommon will be
@@ -87,7 +87,7 @@ and “outward” to be away from the barycenter.
 
 I will not use the words up or down at all.
 
-# Setting the Scene
+## Setting the Scene
 
 The solar system is not neatly aligned. Terra rotates around an axis that is not
 the axis about which it revolves. Furthermore, Luna revolves around Terra on an
@@ -113,7 +113,7 @@ retrograde.
 At some point I’m going to have to figure out how to do better diagrams than
 this. I’m nowhere near good enough on paper to draw these out and insert photos.
 
-# Rise in the East, Set in the West
+## Rise in the East, Set in the West
 
 Let's briefly talk about the sun and moon both rising in the east and setting in
 the west. These are both due to the fact that the Earth is rotating about its
@@ -160,7 +160,7 @@ nightlide (Sol setting in the West).
 
 The moon follows this same appearance, and I’ll do the math for why that is now.
 
-# Arc Velocity in Terran Sky
+## Arc Velocity in Terran Sky
 
 The motions of Sol and Luna in Terra’s sky, from the perspective of a fixed
 observer on Terra’s surface, are governed strongly by Terra’s rotation, and are
@@ -187,7 +187,7 @@ $$\frac{\tau}{86164.1 s}$$, which comes out to:
 - [Arc Velocity of Terra][3]: $$\omega_{T} := 7.29212 \times 10^{-5} \frac{rad}
   {s}$$
 
-## Arc Velocity of Sol, from Terra
+### Arc Velocity of Sol, from Terra
 
 The motion of Sol across the sky is the difference of this arc velocity minus
 the arc velocity of Terra in its orbit around Sol, which is roughly
@@ -196,7 +196,7 @@ $$\frac{1}{365.26}th$$ of Terran rotational arc velocity.
 So in short, the arc velocity of Sol in Terran sky is roughly 73 microrad/s,
 which not coincidentally is $$\frac{\tau}{2}$$ radian per 12 hours.
 
-## Arc Velocity of Luna, from Terra
+### Arc Velocity of Luna, from Terra
 
 Like Sol, Luna’s arc velocity is the difference of Luna’s orbital arc velocity
 and Terra’s rotational arc velocity. However, the orbital arc velocity is not as
@@ -221,7 +221,7 @@ rotate, thirty times faster than Luna advances. This means that the Terran
 surface significantly outpaces Luna **in terms of apparent position in the sky**
 and so Luna moves from East to West.
 
-## Arc Velocity Conclusion
+### Arc Velocity Conclusion
 
 Sol moves across the sky, East to West, at 73 microrad/s. Luna moves across the
 sky, East to West, at 2 microrad/s.
@@ -237,7 +237,7 @@ moving faster.
 
 Next up: the shadow.
 
-# Tangential Velocity in Orbital Plane
+## Tangential Velocity in Orbital Plane
 
 We care about two components here: the tangential velocity of Luna in its orbit,
 and the tangential velocity of the Terran surface in its *rotation*.
@@ -292,7 +292,7 @@ During the eclipse, both Luna and Sol will be sliding across the sky from East
 to West, with Luna remaining relatively still in the sky while Sol moves behind
 it.
 
-# Why is the Eclipse Path Shaped Like That
+## Why is the Eclipse Path Shaped Like That
 
 This one’s simple to explain but hard to compute, so I’m not going to do the
 math.
@@ -326,7 +326,7 @@ solar geometry lines, which may be helpful in visualizing the overall layout.
 
 ![A globe map of the eclipse track][11]{:.fullwidth}
 
-# Fin
+## Fin
 
 These two are the only major things I’ve seen so far that I’m in a position to
 attempt to answer. If I come across anything else between now and 2017 Aug 21,

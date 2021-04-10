@@ -27,13 +27,13 @@ So, here’s my love letter to all the posts I’ve blogged before, all the post
 I totally promise I’m currently blogging, and all the posts I’ll blog to come.
 [^1]
 
-# Writing Helps Me Think
+## Writing Helps Me Think
 
 It’s “easy” to understand something when it’s only in your head – or, at least,
 it’s easy to *think* that you understand something when you don’t have to
 explain it to anyone else and only vaguely have to explain it to yourself. But
-the act of writing something down, even if it’s in a <del>love letter hidden in
-your closet</del> <ins>a draft article you never published</ins>, helps order
+the act of writing something down, even if it’s in a ~~love letter hidden in
+your closet~~ <ins>a draft article you never published</ins>, helps order
 thoughts and provide structure and clarity and, if need be, closure, in a way
 that leaving them unwritten much less unsaid does not.
 

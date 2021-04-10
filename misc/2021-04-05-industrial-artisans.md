@@ -3,6 +3,7 @@ title: Industrial Artisans
 subtitle: Individual Craftwork in the Autofactory Era
 date: 2021-04-05
 tags:
+published: false
 ---
 
 I’m a big believer in web programming. My very first creative endeauvours with
@@ -23,7 +24,7 @@ earnest I’ve always wanted to build my own as much as possible rather than jus
 toss some documents onto a host somebody else controls and let them control the
 formatting.
 
-# My First Website
+## My First Website
 
 I started out by cobbling together a single-page application from some HTML
 partials and JavaScript. I actually got pretty far into having a functional,
@@ -34,7 +35,7 @@ temporarily-dead machine and hopefully I’ll be able to resurrect it. Most of i
 content is superseded but there were two projects in particular that I want
 back.
 
-# My Second Website
+## My Second Website
 
 After I got out of university, I had a bunch of free time on my hands, what with
 being a household boyfriend and unemployed, so I built a new website out of the

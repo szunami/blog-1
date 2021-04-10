@@ -17,7 +17,7 @@ Note on how to read this article: everything with a green bar to the left of it
 can, and maybe should, be skipped. Also, if you turned off JavaScript, you’re
 going to have a bad time, because the math is rendered by you, not by me.
 
-# Background
+## Background
 
 I’m rewatching [*Battlestar Galactica*] (2003) and, having recently read an
 excellent hard sci-fi concerned with things like orbital dynamics, I realized I
@@ -29,7 +29,7 @@ wherever possible but subject to story whimsy where not.
 So I wanted to write down some quick sketches of astrodynamic realities of the
 show’s story, just for fun.
 
-## Articles of Faith
+### Articles of Faith
 
 Let’s assume that, since the show takes place in our universe and in our past
 (*Daybreak (Part 3)*), that the rules of physics we currently know to be true
@@ -46,7 +46,7 @@ worry, I’ll write out all the important pieces as I go.
 
 ![Map of the Twelve Colonies of Kobol][map]{:.fullwidth}
 
-# Orbital Motions
+## Orbital Motions
 
 Alright, let’s put some numbers on paper.
 
@@ -63,7 +63,7 @@ internal barycenter, and each star has planets.
 For the rest of the article, I’ll use the word “Cyrannus” to refer
 *specifically* to the joint barycenter of the four stars.
 
-## Helios Α/Β and Γ/Δ Barycenters in Cyrannus
+### Helios Α/Β and Γ/Δ Barycenters in Cyrannus
 
 The Helios Α/Β and Γ/Δ barycenters orbit the Cyrannus barycenter at a diameter
 of 10,091 SU (radius 5,045) and period of 546,892 years. This gives us a linear
@@ -83,7 +83,7 @@ $$
 > and the circular solution is an easy and reasonably
 {:.bq-info .iso7010 .m002 role="complementary"}
 
-## Helios Alpha in Helios Alpha/Beta
+### Helios Alpha in Helios Alpha/Beta
 
 Helios Alpha orbits the Alpha/Beta barycenter at a radius of 63SU and period of
 373 years (unclear, small text). The linear speed of that sun around its
@@ -93,7 +93,7 @@ $$
 \frac { 63 SU \times \tau } { 373 yr } = 5.048 km/s
 $$
 
-## Caprica/Gemenon in Helios Alpha
+### Caprica/Gemenon in Helios Alpha
 
 Caprica is in a binary-planet system, so it orbits in a system probably like the
 Earth-Moon system. The barycenter of that system is 1 SU from Helios Alpha, with
@@ -104,7 +104,7 @@ $$
 \frac { \tau SU } { 1 yr } = 29.89 km/s
 $$
 
-## Caprica in Caprica/Gemenon
+### Caprica in Caprica/Gemenon
 
 Their inter-planet radius is 246,500 km and their period is 28.2 days, so
 Caprica orbits the Gemenon barycenter at six hundred meters per second, slightly
@@ -172,7 +172,7 @@ than travel between planets in different systems.
 > point.
 {:.bq-info .iso7010 .m013 role="complementary"}
 
-# Linear Interstellar Travel
+## Linear Interstellar Travel
 
 The Cyrannus system has four suns, and each pair has different binary-system
 characteristics against the total barycenter. The distances make inter-pair
@@ -211,7 +211,7 @@ engines, and then a decade and a half on the float.
 
 So rather than send colony ships back and forth forever, we have the jump drive.
 
-# Jump Drives
+## Jump Drives
 
 The FTL drive depicted in *Battlestar Galactica* is not a hyperfast accelerator
 like *Star Wars* uses, nor is it a subspace tunneler like *Stargate*.
@@ -256,7 +256,7 @@ point of that statement and all the orbital speed math I did.
 > ([“The Solar System and Beyond is Awash in Water”][jpl]).
 {:.bq-info .iso7010 .m011 role="complementary"}
 
-## Trampoline Mechanics
+### Trampoline Mechanics
 
 When ships jump from one point to another, they move instantaneously. From jump
 scenes in the miniseries, *Razor*, *Exodus Part Two*, and
@@ -264,7 +264,7 @@ scenes in the miniseries, *Razor*, *Exodus Part Two*, and
 bundling the spacetime occupied by the vehicle under transport and immediately
 sending it somewhere else.
 
-### Jump Calculation
+#### Jump Calculation
 
 The miniseries and *33* use a dolly-zoom effect, as well as actor behavior and
 dialogue, to indicate that a warping of spacetime occurs in the moments just
@@ -340,7 +340,7 @@ effort. (I take exception to the comment “a small error could put us in the su
 since space is exceedingly empty, but hey, tension needs to be delivered
 somehow).
 
-### Jump Effects
+#### Jump Effects
 
 There are four jump events in the series that stand out in their significant
 observed side effects.
@@ -397,7 +397,7 @@ Between the visual demonstrations in the first episodes and the physical effects
 in the last, we can conclude that spacetime does weird things before and after a
 jump in order to perform the swap. I’ll come back to this in the conclusion.
 
-## Consequences of Transit
+### Consequences of Transit
 
 Given that the jump process is solely a position swap, it therefore follows that
 linear momentum against the external reference frame is conserved. Ships that
@@ -440,7 +440,7 @@ We can presume that this is also why the ships are depicted as constantly under
 thrust – they’re always gaining or losing local linear speed to compensate for
 the last jump or prepare for the next.
 
-# Enter the Cylon
+## Enter the Cylon
 
 What does *Galactica* have that a Cylon basestar does not have? Besides a hearty
 stock of genetic diversity, of course.
@@ -471,7 +471,7 @@ analysis. Why would they use thrusters with the force necessary to accelerate a
 ship of that mass when they can jump across gravity wells and let astrodynamics
 do the work for them?
 
-# There’s No Such Thing As Free Speed
+## There’s No Such Thing As Free Speed
 
 This article assumes conservation of momentum. Conservation of energy must also
 exist, and instantaneous travel up and down gravity wells grossly violates the
@@ -503,7 +503,7 @@ Thanks for reading. Lieutenant Gaeta is an unsung hero of the fleet.
 
 So say we all.
 
-# Bibliography
+## Bibliography
 
 - [*Battlestar Galactica*]
   - Miniseries

@@ -17,7 +17,7 @@ programming soon.
 This is just a list and brief overview of some advanced topics on processor
 design, to give you some starting points on your own reading.
 
-# Advanced Processor Features
+## Advanced Processor Features
 
 The processor I drew at the end of the previous post was *extremely* simple. It
 consisted solely of a register file and an ALU linked together, with interfaces
@@ -26,7 +26,7 @@ to load instructions from *somewhere else*, and a data input/output bus.
 That’s a good gist of how processors work, but the reality is way, way more
 complicated, and it took up an entire senior-level class.
 
-## Miscellaneous Registers
+### Miscellaneous Registers
 
 While the concept of the register file is accurate, from an engineer’s point of
 view, software architecture puts semantic meaning on various groups of registers
@@ -105,7 +105,7 @@ accesses available.
 
 Computers are wild.
 
-## Pipelines
+### Pipelines
 
 The CPU from my last post could only do one thing at a time, and we had to wait
 for it to complete its operation before we could start another.
@@ -169,7 +169,7 @@ instruction to come out, but from then on an instruction will be emitted every
 Pipelines trade *latency* (time from input to resulting output) for *throughput*
 (time between consecutive outputs).
 
-## Hazards
+### Hazards
 
 Here’s a problem: what if a second instruction depends on the result from the
 instruction just preceding it? This happens all the time, yet in the pipeline,
@@ -184,7 +184,7 @@ There is also a read-after-write hazard, where an instruction clobbers a
 register you had planned to use before you have a chance to read from it, so you
 wind up reading garbage. Neither of these are good things.
 
-## Operand Forwarding
+### Operand Forwarding
 
 This is a solution to WAR and RAW hazards. A cleverly built CPU can detect that
 a new instruction is attempting to use the same register or registers as a
@@ -200,7 +200,7 @@ that register safety is assured, and then resume instruction processing. This is
 called a **stall**, and is less awesome (there are ticks without work), but is
 easier and cheaper to implement.
 
-## Branch Prediction
+### Branch Prediction
 
 > A *branch* refers to an event in the code that informs the CPU to stop getting
 > instructions from the current section of the program, and instead start
@@ -233,7 +233,7 @@ random noise, and you don’t have a good reason why, your professors (and if
 you’re learning from this article, I’m including me in that group) **will** yell
 at you for it.
 
-## Instruction Flow
+### Instruction Flow
 
 Modern desktop CPUs have gotten so ridiculously fast relative to memory access
 that Intel has come up with a clever, opaque-magic piece of wizardry called
@@ -251,7 +251,7 @@ and the CPU interleaves them to get a rather seamless result. This allows each
 stream some more time for memory to come in before it has to work, and reduces
 CPU idle time by increasing the amount of work ready to be done.
 
-# Instruction Set
+## Instruction Set
 
 > This is the only part of the article actually relevant to you if you’re here
 > for programming.
@@ -272,7 +272,7 @@ components that are considered part of the chip (such as a floating-point-math
 coprocessor, a GPU, other hardware...) have instructions that tell the CPU to
 put them on the field, as it were.
 
-# Peripheral Devices
+## Peripheral Devices
 
 A CPU on its own is just a calculator with a small amount of internal memory.
 That’s incredibly useless.
@@ -282,7 +282,7 @@ functionality. Each of these devices has its own controlling processor, but the
 way those work is defined by a *driver specification* the manufacturer provides
 (or the FOSS community reverse-engineers) that tells the CPU how to talk to it.
 
-## Expanded Memory
+### Expanded Memory
 
 The CPU only has so much space in its own register file. The CPU’s register file
 is small for the following reasons:
@@ -306,7 +306,7 @@ or large, but not both.
 The solution for this is a memory hierarchy, with small and fast at one end and
 large and slow at the other.
 
-### Cache
+#### Cache
 
 The *cache* is a collection of memory kept on board the CPU, that is distinct
 from the register file. There are four tiers of cache, with L1 closest to the
@@ -315,7 +315,7 @@ the last, and these caches may be shared among cores in a multi-core chip.
 
 Even L4 cache, though, is orders of magnitude faster than RAM.
 
-### RAM
+#### RAM
 
 RAM (**R**andom **A**ccess **M**emory) is a large array of memory cells. It is
 called random-access in contrast to sequential-access memory (like magnetic
@@ -338,7 +338,7 @@ the CPU is done with them, at which point they are written back to RAM.
 > processor.
 {:.bq-info .iso7010 .m006 role="complementary"}
 
-#### Alignment
+##### Alignment
 
 A 64-bit CPU connects to RAM with a 64-bit bus, so RAM access works best when
 the address being requested is an even multiple of 64 bits. Even though CPUs
@@ -425,7 +425,7 @@ four bytes `0x14` through `0x17`, and store the 64-bit value in the full word
 Efficient memory usage requires that variables be properly aligned according to
 their sizes, and this comes into play significantly in low-level programming.
 
-### Bulk Storage
+#### Bulk Storage
 
 RAM is great, but requires constant power supplies to preserve its stored values
 (dynamic RAM slowly leaks charge; electrical science is just rude like that),
@@ -454,7 +454,7 @@ stop doing whatever task required that transaction and pick up some other task
 instead. This is called *multitasking* and is one of the more important features
 of modern operating systems.
 
-## I/O
+### I/O
 
 What good is a computer that can’t talk to the outside world, where we live? If
 we can’t put in data for it to work on, and it can’t put out results, there’s
@@ -465,7 +465,7 @@ devices, like the computers that sit inside robot parts and cars and satellites,
 receive data from the environment and can control other devices like motors or
 radios or screens.
 
-### Display
+#### Display
 
 The simplest (not really; it’s actually quite complex to implement, but simplest
 from a user’s perspective) output device is a monitor. The computer prints text
@@ -476,7 +476,7 @@ typewriters, which is why our text encodings look like they do), or make noise
 through speakers, but the quintessential form of computer to human communication
 is the display.
 
-### User Input
+#### User Input
 
 Humans give data to the computer through a keyboard (and also a mouse). At first
 computers were given input by directly manipulating electrical switches, but
@@ -492,13 +492,13 @@ That happened in the ‘60s. Nearly sixty years later, and that interface has
 barely changed; the command line is still present in all computers and pretty
 much impossible for a programmer to ignore.
 
-### Networking
+#### Networking
 
 The most revolutionary I/O device is, by far, the networking card. With this,
 computers can communicate with each other and exchange data and share work,
 without having to be in the same case, room, or building.
 
-# Interrupts
+## Interrupts
 
 There are two ways a CPU can check on the outside world: perpetually ask the
 world what its status is, or wait for the world to poke it.

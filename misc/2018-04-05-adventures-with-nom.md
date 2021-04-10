@@ -146,44 +146,44 @@ fn unum(text: CompleteStr) -> ParseResult<u64> {
 This is a much more complex parser; let me break it down.
 
 1. Line 4 finds a logical word in the text. `.and_then` is invoked only if it
-  succeeded, so a failure exits the function immediately. Note that the
-  closing parenthesis of `.and_then` is on line 15; everything inside depends on
-  `word` succeeding!
+   succeeded, so a failure exits the function immediately. Note that the
+   closing parenthesis of `.and_then` is on line 15; everything inside depends
+   on `word` succeeding!
 
 1. Line 4 then attempts to use the standard library’s string-to-number parser.
 
 1. If `num.parse` fails, then the `.or_else` from lines 5 to 11 is invoked. This
-  drops the standard library’s error, and tries to match a series of named
-  keywords that correspond to numbers. The `alt!` combinator takes in `num`, the
-  success output of `word`, and tests if it is the listed strings. If one
-  matches, then the right side of `=>` fires, and a u64 is returned!
+   drops the standard library’s error, and tries to match a series of named
+   keywords that correspond to numbers. The `alt!` combinator takes in `num`,
+   the success output of `word`, and tests if it is the listed strings. If one
+   matches, then the right side of `=>` fires, and a u64 is returned!
 
-  This also attempts the hexadecimal parser on line 11, since hex numbers are
-  valid unsigned integers. `alt!` is a little magic – the transform after the
-  `tag!` calls is actually altering only the `val` in `Ok((rem, val))` – and
-  this doesn’t need to be done on the output value of `hnum`, which is already
-  a `u64`.
+   This also attempts the hexadecimal parser on line 11, since hex numbers are
+   valid unsigned integers. `alt!` is a little magic – the transform after the
+   `tag!` calls is actually altering only the `val` in `Ok((rem, val))` – and
+   this doesn’t need to be done on the output value of `hnum`, which is already
+   a `u64`.
 
 1. Line 12 receives the `ParseResult<CompleteStr, u64, E>` from `alt!` and drops
-  the unparsed output of success – we statically know it will be an empty
-  string, because `word` made sure that the `num` value had no extraneous text
-  – and returns only the number. This is necessary because `num.parse` returns
-  a bare `Ok(u64)` on success, and therefore the closure inside `.or_else` must
-  also return `Ok(u64)` or else the types don’t match and the interior `Result`
-  carrier fails!
+   the unparsed output of success – we statically know it will be an empty
+   string, because `word` made sure that the `num` value had no extraneous text
+   – and returns only the number. This is necessary because `num.parse` returns
+   a bare `Ok(u64)` on success, and therefore the closure inside `.or_else` must
+   also return `Ok(u64)` or else the types don’t match and the interior `Result`
+   carrier fails!
 
-  Line 13 terminates the `.or_else()` call, bringing us back up to the
-  `.and_then` closure.
+   Line 13 terminates the `.or_else()` call, bringing us back up to the
+   `.and_then` closure.
 
 1. The `.and_then` closure must return a `ParseResult` carrier, which is a
-  totally different type than the result of the standard library parser! The
-  output of `num.parse().or_else()` is `Result<u64, _>` but we need a
-  `Result<(CompleteStr, u64), NomError>`!
+   totally different type than the result of the standard library parser! The
+   output of `num.parse().or_else()` is `Result<u64, _>` but we need a
+   `Result<(CompleteStr, u64), NomError>`!
 
-  Thus, line 14 changes the success type from `u64` to `(CompleteStr, u64)` by
-  adding in the remainder of the text that from when `word` did its work, and
-  line 15 throws away the standard-library error type and replaces it with a
-  `nom` error type specific to `unum`.
+   Thus, line 14 changes the success type from `u64` to `(CompleteStr, u64)` by
+   adding in the remainder of the text that from when `word` did its work, and
+   line 15 throws away the standard-library error type and replaces it with a
+   `nom` error type specific to `unum`.
 
 ## Newtype Wrappers
 

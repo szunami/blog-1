@@ -11,7 +11,7 @@ published: false
 2018 was a bad year. I think we all agree on that, though all of us for
 different reasons.
 
-# Workplace Shenanigans
+## Workplace Shenanigans
 
 I started the year without an assignment at work, because my satellite had been
 declared dead shortly before winter break 2017. I got put on a new assignment,
@@ -35,7 +35,7 @@ either town. I gained *fifty* pounds – I had been 145lb before the trip, and I
 broke 190lb before I realized I was in trouble. My work suffered. My personal
 quality of life and my friendships suffered. My mental health took a beating.
 
-# Daddy Issues
+## Daddy Issues
 
 I will tell the full story of this next paragraph in a different post. The
 summary is that, a week before my 25<sup>th</sup> birthday, my mom called me to
@@ -73,7 +73,7 @@ I am leaving shortly after I publish this post.
 
 I really, really, need to book a therapist.
 
-# Bad at Friendship
+## Bad at Friendship
 
 I’ve been a pretty subpar friend this year to everyone who matters to me. I
 would like to blame it on the travel and the cancer, and I plan to lean hard on
@@ -88,7 +88,7 @@ the lowest salary of my friend group. I struggle to get out from behind the
 wheel, even when I’m tired. My friends are my equals, not my Scouts; I need to
 be better at treating them as such.
 
-# Personal Unhealth
+## Personal Unhealth
 
 I didn’t properly exercise at all last year. May onwards is easy to excuse, but
 I dropped the ball all by myself in the front half of the year. And I’m paying
@@ -122,13 +122,13 @@ is a one way street. Can’t let anything happen there. And I’m tired of my vi
 being *just* off enough that it’s perfect if I squint a little. That’s bad for
 my skin.
 
-# Intellectual Languor
+## Intellectual Languor
 
 I didn’t read enough; I didn’t make nearly as much progress on Cosmonaut as I
 wanted. I need to work on expanding my reading list, and on branching out beyond
 technical and genre lit.
 
-# Some Good Things, Please
+## Some Good Things, Please
 
 I gave a hell of a best-man speech for my best friend Kyle. Improvised the day
 of, no notes, spoken off the dome. Kyle cried, his wife cried, his dad cried,
@@ -157,7 +157,7 @@ I am renting an actual house, now! Not an apartment! I refused to buy a house,
 because I want *out* of Albuquerque in three years (I’d apologize to Sean
 Griffin here if I thought he read this).
 
-# Okay But Now What
+## Okay But Now What
 
 Here is a short list of habits and goals I want to actively build this year
 

@@ -59,14 +59,14 @@ where you can write or read typed numeric data against it.
 
 Enough about everyone else. Let’s talk about me.
 
-# Creating bitfields with `bitvec`
+## Creating bitfields with `bitvec`
 
 In order to cook an apple pie, you must first create the universe, and in order
 for me to explain something, I must first deliver a CS101 lecture.
 
 This section is the CS102.
 
-## Treat some memory as bits
+### Treat some memory as bits
 
 In order to have a region of memory we can use as bitfields, we must first
 allocate a region of memory, either on the heap, or the stack, or in the static
@@ -124,7 +124,7 @@ Other languages restrict you from one and/or both of these options. This is
 unfortunate, because as it turns out, there is not a universal convention for
 these among all I/O protocols.
 
-## Choose a region of contiguous bit *indices* within that memory
+### Choose a region of contiguous bit *indices* within that memory
 
 I emphasized the word *indices* in that heading, because `bitvec` **does not**
 expose bit positions in memory to you. The two type parameters in all of the
@@ -148,7 +148,7 @@ in the memory range `[13 .. 27]`. That’s 14 bits. `bitvec` disallows storing a
 type whose bit width is smaller than a region, so we can’t store `u8` in it, but
 `u16`, `u32`, and `u64` are all fair game.
 
-## Put some data in that region
+### Put some data in that region
 
 ```rust
 stack_bits [13 .. 27].store(0x3123u16);
@@ -166,7 +166,7 @@ region.
 This is why the first non-zero digit in the numbers above is `3`: anything
 higher would get truncated, and will not be written into the region.
 
-## Pull that data back out
+### Pull that data back out
 
 ```rust
 let s: u16 = stack_bits [13 .. 27].load().unwrap();
@@ -189,7 +189,7 @@ receive them when `load`ing. `store` exits without effect, `load` returns
 I’m not going to demean myself by posting an uncompiled example here to show
 that the `s`, `m`, and `l` values all match exactly what we put in. They do.[^4]
 
-# More than just variable-width data storage
+## More than just variable-width data storage
 
 So `bitvec` can compress data storage. If you know you have a number that will
 never surpass `1023`, you can treat it as a `u16` when holding it and pack it
@@ -227,7 +227,7 @@ Compacted machine memory isn’t cool. You know what’s cool?
 
 Declaring the layout of an I/O protocol in your type system.
 
-## I/O Packet Destructuring
+### I/O Packet Destructuring
 
 Let’s pick an example out of thin air, like, for instance, an [IPv4 packet].
 
@@ -279,7 +279,7 @@ that range.
 There is one field in the IPv4 header that stymies this approach, and I’ll cover
 it now: Fragment Offset.
 
-## Byte Endianness Gotchas
+### Byte Endianness Gotchas
 
 Fragment Offset is in word `[1]`, bits `[19 .. 32]`. This translates to bits
 `[51 .. 64]` of the bit slice. Note that, in the protocol diagram, bits
@@ -314,7 +314,7 @@ let fragment_offset = u16::from_be_bytes(bytes);
 In the future, `.load_be()` will interpret the memory as big-endian, and
 `.load_le()` will interpret it as little-endian.
 
-## Building a Bitfield Struct
+### Building a Bitfield Struct
 
 Rust does not have bitfield syntax. `bitvec` does not provide this; it is purely
 a library, not a syntax extension. This means that access to bitfields in a
@@ -411,7 +411,7 @@ ABI with `#[repr(C)]` and faithful transcription of the memory types.
 > I did.
 {:.bq-safe}
 
-# Summary
+## Summary
 
 Rust has bitfields now. More flexible than C, about as capable as Erlang, though
 without the language support, and miles beyond the sequence libraries in every
@@ -445,7 +445,7 @@ based on runtime conditions of the slice, and must include code for all paths),
 the comprehension gain in the source code – clear text, automatic bounds checks,
 and idiomatic Rust patterns – is a benefit you do not want to miss.
 
-# Footnotes
+## Footnotes
 
 \[^1\]: Ruby’s `Integer` class is, in fact, implemented as a hybrid between an
 `i31` and a bit-vector so that it can have arbitrary-sized integers with minimal

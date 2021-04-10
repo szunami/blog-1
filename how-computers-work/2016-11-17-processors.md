@@ -38,7 +38,7 @@ processing device, including *peripheral devices* (single-purpose computers
 controlled by a CPU, which provide real functionality such as storage or
 transmission).
 
-# CPU Components
+## CPU Components
 
 In order to determine what should go in a CPU, we first need to identify what it
 is.
@@ -49,7 +49,7 @@ emitting the result as output.
 
 Let us begin there, at the module called the **Arithmetic/Logic Unit** (ALU).
 
-# ALU
+## ALU
 
 The ALU is essentially a multi-function calculator. It has two main input
 *buses* and one main output *bus*. These buses must all have the same width; for
@@ -68,7 +68,7 @@ simple: pick the operations to implement, and then create them in parallel.
 > this: `Name[high:low]`, for wide slices, or `Name[bit]` for single-bit slices.
 {:.bq-safe role="complementary"}
 
-## Logic
+### Logic
 
 Let us implement the three Boolean fundamental operations: `AND`, `OR`, and
 `NOT`. While we can ask our electrical engineers to make 8-bit-wide logic gates,
@@ -99,7 +99,7 @@ different logic gates. Suppose that an `AND` gate asserts low voltage while the
 high voltage coming out of `OR`, into `AND`, and thence into `GND`, will not
 only waste power, but also destroy the logic gates.
 
-## Selection
+### Selection
 
 The solution to this problem is called a *multiplexer*. A multiplexer is a logic
 element which is capable of acting like a railway switch: multiple input buses
@@ -137,7 +137,7 @@ logic only has two symbols), so we only connect the `A` input to it.
 
 This is three operation clusters, but our multiplexer only supports two!
 
-### Composition
+#### Composition
 
 This is where composition becomes most useful. We have established that a 2:1
 multiplexer (mux for short, henceforth) and 1:2 demultiplexer (demux) are a
@@ -150,7 +150,7 @@ So, suppose you want to select between more than two things. What do you do?
 You take a 2:1 mux, and have each of its inputs be… another mux! This is a
 “binary tree” structure, and it’s extremely common in computing.
 
-#### Multiplexer Tree
+##### Multiplexer Tree
 
 It looks something like this:
 
@@ -218,7 +218,7 @@ demux and mux are properly synchronized, traffic flow through the whole system
 is seamless, and it appears from the outside as if the logic operators are
 swapped out on the fly.
 
-##### Braced ALU Core
+###### Braced ALU Core
 
 ```term
      ┌─────┐     ┌─────┐
@@ -266,7 +266,7 @@ We can imagine adding in a `NOT` block in our system, connecting it only to `A`
 and letting `B` be discarded, and our ALU gains new functionality without
 any change to the interface besides widening the mode selector.
 
-## Mathematics
+### Mathematics
 
 This is where things get weird. Honestly, you can skip this.
 
@@ -277,7 +277,7 @@ cover the very simplest method of performing arithmetic, which is not the method
 used in any modern computer, and if you really want to know, email me asking for
 it.
 
-### Decimal Addition
+#### Decimal Addition
 
 Let’s do some basic addition. In base-10 numbers, the order of digits is
 0123456789, and after 9, you wrap to 0 and generate a *carry digit* which
@@ -301,7 +301,7 @@ working your way left, until you reach the end of the number. The sum is
 guaranteed to be one digit wider, at most, than the arguments going in (called
 *addends* for addition).
 
-### Binary Addition
+#### Binary Addition
 
 Binary addition works the exact same way, except it only has two digits, so we
 have the digits $$0$$ and $$1$$, and $$1 + 1 == 10$$, which means that the
@@ -320,7 +320,7 @@ column left. In 4-bit addition, the result is also 4-bits, so the carry output
 (the fifth bit from the right) is not part of the returned sum, but on a carry
 line, which goes somewhere else.
 
-### Ripple-Carry Adder
+#### Ripple-Carry Adder
 
 So, the most obvious algorithm for addition is that which you learned in grade
 school: start at the right and work your way left, pushing carries as you go. A
@@ -329,17 +329,16 @@ carry plus a one plus a one is 1 and a carry, so the carries can never build up.
 Let’s take a look!
 
 ```term
-A B                                        Cin
-║ ║                                         │
-║ ╚═══╤════╤════╤════╤════╤════╤════╤════╕  │
-╚════╤╪═══╤╪═══╤╪═══╤╪═══╤╪═══╤╪═══╤╪═══╕│  │
-    ┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐│
-┌───┤ 7 ├┤ 6 ├┤ 5 ├┤ 4 ├┤ 3 ├┤ 2 ├┤ 1 ├┤ 0 ├┘
-│   └──┬┘└──┬┘└──┬┘└──┬┘└──┬┘└──┬┘└──┬┘└──┬┘
-│ ╔════╧════╧════╧════╧════╧════╧════╧════╛
+A B                                     Cin
+║ ║                                      │
+║ ╚╤════╤════╤════╤════╤════╤════╤════╕  │
+╚═╤╪═══╤╪═══╤╪═══╤╪═══╤╪═══╤╪═══╤╪═══╕│  │
+ ┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐┌┴┴─┐│
+┌┤ 7 ├┤ 6 ├┤ 5 ├┤ 4 ├┤ 3 ├┤ 2 ├┤ 1 ├┤ 0 ├┘
+│└──┬┘└──┬┘└──┬┘└──┬┘└──┬┘└──┬┘└──┬┘└──┬┘
+│ ╔═╧════╧════╧════╧════╧════╧════╧════╛
 │ ║
 │ Y
-│
 Cout
 ```
 
@@ -413,7 +412,7 @@ altered, but that’s an electrical engineer’s problem, not ours.)
 > tradeoff is not always ideal.
 {:.bq-info role="complementary"}
 
-#### Binary Subtraction
+##### Binary Subtraction
 
 First, let’s talk about how numbers are represented in binary. 8-bit *unsigned*
 numbers (positive only) range from 0 (`0b00000000`) to 255 (`0b11111111`).
@@ -473,7 +472,7 @@ basic arithmetic.
 Multiplication and division, and fractional numbers, are an entirely other
 problem. I will not be discussing them.
 
-## Combining Mathematics and Logic
+### Combining Mathematics and Logic
 
 Scroll way back up to the top, and imagine a multiplexer setup rigged to route
 two data streams through one of our available operations: `AND`, `OR`, `NOT`,
@@ -493,7 +492,7 @@ The specification of which bits in the number are which inputs, and which
 numbers are legal (not all combinations of `S` and `Cin` result in sensible
 output), comprise (part of) an **instruction set**.
 
-# Memory
+## Memory
 
 As it stands, our ALU is barely useful. We have to manually provide the input
 instruction, and the output result gets dumped in our lap for us to use or throw
@@ -562,7 +561,7 @@ and receive data from the `Y` bus into the specified register.
 
 That’s pretty much it for a (simple) CPU.
 
-# Review
+## Review
 
 A CPU consists of the worker logic in the ALU (arithmetic/logic unit) and
 data storage in the register file. A multiplexer pair bookends the ALU, so that

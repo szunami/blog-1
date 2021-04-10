@@ -14,7 +14,7 @@ Engineering classes, but I’m not an Electrical Engineer and it’s not really 
 strength. I’ll do my best to discuss them, but don’t expect the same depth I’ll
 give the actual computing articles.
 
-# Basic Principles
+## Basic Principles
 
 Short version: transistors are light switches. Each controls one light bulb, and
 when looking at light bulbs you can decide whether to flick other lights on or
@@ -25,7 +25,7 @@ switch lights on and off, you have a computer.
 Imagine transistors as light-sensitive light switches, which turn on or off
 according to how much light is hitting them, and you’re pretty much there.
 
-## Electrical Operation
+### Electrical Operation
 
 A transistor is essentially a switch that can be controlled by voltage signals.
 There are two main kinds: [bipolar junction transistors] and [field effect
@@ -70,7 +70,7 @@ of the silicon.
 > ![][xkcd_img]{:.ctr}
 {:.bq-info .iso7010 .m002 role="complementary"}
 
-## Logical Signaling
+### Logical Signaling
 
 Since there are two electrical charges, there are two flavors of transistor
 layout: *PNP* and *NPN*. These terms simply refer to whether the primary
@@ -129,7 +129,7 @@ signal, and turn on when their control gate goes low (active-low) and NPN
 transistors connect signal to GND, and turn on when their control gate goes high
 (active-high).
 
-# Logic Gates
+## Logic Gates
 
 There are three general classes of transistor logic: PMOS, NMOS, and CMOS. The
 first letter of the name indicates the type of transistors used: PNP, NPN, and
@@ -176,7 +176,7 @@ pathways connects, pulling Y low. This is a NOR gate. Switch to PMOS in parallel
 and NMOS in series, and we have a NAND gate that will output high when either A
 or B is low, and will only output low when both A and B are high.
 
-# Conclusion
+## Conclusion
 
 Since NAND and NOR are each functionally-complete logic elements, we can chain
 together their simple CMOS implementations into the Boolean primitives using
