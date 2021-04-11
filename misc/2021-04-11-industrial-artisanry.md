@@ -28,7 +28,7 @@ to write the stylsheet for a subreddit I liked.
 
 Web programming is cool because the best way to convince a person that they’re
 doing useful work is to show them something, then have them do stuff and watch
-vit change in response to their actions. Command-line programs just don’t have
+it change in response to their actions. Command-line programs just don’t have
 the same level of engagement, and desktop graphical programming has a lot more
 boilerplate and required components. But to make a website, you can just write
 some stuff down in a file, drag it into Firefox™️, and see it live.
