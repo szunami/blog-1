@@ -4,7 +4,7 @@ date: 2018-12-01
 tags:
 - physics
 - space
-summary: |
+summary: >
   I accidentally got way too invested in the astrodynamics of a complex stellar
   system and the mechanics of teleporting.
 ---

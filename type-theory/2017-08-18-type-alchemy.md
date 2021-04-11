@@ -5,7 +5,7 @@ tags:
 - c
 - rust
 - software design
-summary: |
+summary: >
   We regularly work with data whose size is not fixed or known ahead-of-time –
   text, especially C strings, are a prominent example of this – and manipulating
   it safely requires effort. Part of my work involves using streams of

@@ -5,7 +5,7 @@ tags:
 - computers
 - electronics
 - digital design
-summary: |
+summary: >
   This is a very long piece which I should probably split apart, that covers the
   assembly of logic elements into decision evaluators, arithmetic operators, and
   eventually a primitive processor.

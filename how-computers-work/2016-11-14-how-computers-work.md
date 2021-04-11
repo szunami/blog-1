@@ -4,7 +4,7 @@ date: 2016-11-14
 tags:
 - computers
 - computing theory
-summary: |
+summary: >
   A general introduction to computing and the topics I intend to cover in more
   depth in following posts.
 ---

@@ -3,7 +3,7 @@ title: Rust Flow, Part Two
 date: 2018-11-29
 tags:
 - rust
-summary: |
+summary: >
   Rust doesn’t have a language-level concept of generic mutability, which makes
   “method threading” (which take `self` by some handle, and return it in the
   same way) hard to write. This article covers how to write in that pattern in a

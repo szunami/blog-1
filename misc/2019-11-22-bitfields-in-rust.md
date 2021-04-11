@@ -4,7 +4,7 @@ date: 2019-11-22
 tags:
 - programming
 - rust
-summary: |
+summary: >
   A walkthrough of the recent bitfield behavior I implemented in `bitvec`
 ---
 

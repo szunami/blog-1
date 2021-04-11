@@ -5,7 +5,7 @@ tags:
 - computers
 - computing theory
 - software design
-summary: |
+summary: >
   An exploration of how programs assign meaning to patterns of data, and the
   theories behind that behavior.
 ---

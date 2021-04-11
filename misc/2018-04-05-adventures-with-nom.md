@@ -3,7 +3,7 @@ title: Adventures with nom
 date: 2018-04-05
 tags:
 - rust
-summary: |
+summary: >
   Some things I learned while using the `nom` library on a parser project.
 ---
 

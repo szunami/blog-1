@@ -4,7 +4,7 @@ date: 2017-03-26
 tags:
 - computers
 - language
-summary: |
+summary: >
   An article about a small, small subset of problems with using software tools
   that have ASCII- and/or English- only syntax elements.
 ---

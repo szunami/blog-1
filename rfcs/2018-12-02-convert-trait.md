@@ -3,7 +3,7 @@ title: Convert Trait
 date: 2018-12-02
 tags:
 - rust
-summary: |
+summary: >
   Create a partner trait to `From` that allows conversion in a method chain.
   Available in the [`tap`](/crates/tap) crate now.
 ---

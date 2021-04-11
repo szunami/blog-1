@@ -3,7 +3,7 @@ title: Cargo Book
 date: 2018-03-26
 tags:
 - rust
-summary: |
+summary: >
   A draft RFC for adding a `book` subcommand to Rust’s Cargo tool.
 ---
 

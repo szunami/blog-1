@@ -3,7 +3,7 @@ title: Lint Level Reasons
 date: 2018-03-26
 tags:
 - rust
-summary: |
+summary: >
   A draft RFC for attaching rationale directly to lint attributes.
 ---
 

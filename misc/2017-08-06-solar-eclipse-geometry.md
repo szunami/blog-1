@@ -4,7 +4,7 @@ date: 2017-08-06
 tags:
 - physics
 - eclipse
-summary: |
+summary: >
   Far too much information about why the moon’s shadow does what it does in an
   eclipse.
 ---

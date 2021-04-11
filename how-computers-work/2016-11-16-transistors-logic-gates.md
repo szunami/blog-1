@@ -4,7 +4,7 @@ date: 2016-11-16
 tags:
 - computers
 - electronics
-summary: |
+summary: >
   An overview of how transistors work and how they can be assembled into Boolean
   logic elements.
 ---

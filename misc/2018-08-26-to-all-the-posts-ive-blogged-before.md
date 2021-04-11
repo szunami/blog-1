@@ -3,7 +3,7 @@ title: To All the Posts I’ve Blogged Before
 date: 2018-08-26
 tags:
 - writing
-summary: |
+summary: >
   A self-involved reflection on why I have this section of my site. Blame
   Manish.
 ---

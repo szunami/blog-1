@@ -4,7 +4,7 @@ date: 2017-01-25
 tags:
 - computers
 - personal
-summary: |
+summary: >
   A brief, evergreen note about why sometimes you can’t read my website. Posting
   it on that website was, perhaps, foolish.
 ---

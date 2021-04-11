@@ -7,7 +7,7 @@ tags:
 - computing theory
 - rust
 - software design
-summary: |
+summary: >
   Complex data records are often only used as subsets of themselves. In
   languages such as C++, Java, and C♯, the class and interface systems are built
   in a way to allow this polymorphism using compile- or run- time typing

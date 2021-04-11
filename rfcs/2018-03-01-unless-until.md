@@ -3,7 +3,7 @@ title: Unless, Until
 date: 2018-03-01
 tags:
 - rust
-summary: |
+summary: >
   A draft RFC for adding `unless` and `until` keywords to Rust. Rejected.
 ---
 

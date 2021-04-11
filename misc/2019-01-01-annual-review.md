@@ -3,7 +3,7 @@ title: Annual Review, 2019
 date: 2019-01-01
 tags:
 - personal
-summary: |
+summary: >
   A review of my 2018, and hopes and goals for 2019.
 published: false
 ---

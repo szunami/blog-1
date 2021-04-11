@@ -5,7 +5,7 @@ tags:
 - computers
 - electronics
 - digital design
-summary: |
+summary: >
   A continued exploration of computer processors and memory.
 ---
 
