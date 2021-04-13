@@ -144,7 +144,7 @@ I’m not a one-trick pony; I know how to do more than one craft. I build
 furniture as well as websites. Or at least *built*; that present tense is going
 to be intellectually dishonest until I make my own desk.
 
-Chances are if you’re reading this your the kind of computers nerd who has
+Chances are if you’re reading this you’re the kind of computers nerd who has
 built, or at least *could build*, your own web presence beyond merely picking a
 CMS and putting text on it.
 

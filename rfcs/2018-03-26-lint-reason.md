@@ -5,6 +5,8 @@ tags:
 - rust
 summary: >
   A draft RFC for attaching rationale directly to lint attributes.
+embeds:
+- tweet
 ---
 
 - Feature Name: lint_reasons
@@ -137,7 +139,10 @@ Similarly, if you want to increase the strictness of a lint, you can explain why
 you think the lint is worth warning or forbidding directly in it:
 
 ```rust
-#![deny(float_arithmetic, reason = "This code runs in a context without floats")]
+#![deny(
+  float_arithmetic,
+  reason = "This code runs in a context without floats",
+)]
 ```
 
 With a warning or denial marker, when a linting tool encounters such a lint trap
