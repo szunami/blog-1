@@ -1,6 +1,5 @@
 ---
 title: "Inverted Discourse"
-date: 2017-06-08
 tags:
 - social media
 summary: >

@@ -1,6 +1,5 @@
 ---
 title: Transistors and Logic Gates
-date: 2016-11-16
 tags:
 - computers
 - electronics

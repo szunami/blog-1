@@ -1,8 +1,6 @@
 ---
 title: "Immigration Ban"
-date: 2017-01-28
 tags:
-- personal
 - politics
 summary: >
   I have some strong thoughts about immigration and social attitudes.

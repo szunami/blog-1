@@ -1,6 +1,5 @@
 ---
 title: Solar Eclipse Geometry
-date: 2017-08-06
 tags:
 - physics
 - eclipse

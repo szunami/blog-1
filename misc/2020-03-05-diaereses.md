@@ -1,8 +1,5 @@
 ---
 title: What’s With the Diæreses
-date: 2020-03-05
-tags:
-- personal
 summary: >
   There are more things in language and orthography, Horatio, than are dreamt of
   in your ASCII encoding.

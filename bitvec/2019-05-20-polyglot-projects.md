@@ -1,6 +1,5 @@
 ---
 title: Polyglot Projects
-date: 2019-05-20
 tags:
 - bitvec
 - c

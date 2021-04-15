@@ -1,6 +1,5 @@
 ---
 title: Battlestar Astrodynamica
-date: 2018-12-01
 tags:
 - physics
 - space

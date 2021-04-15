@@ -1,6 +1,5 @@
 ---
 title: Type Alchemy
-date: 2017-08-18
 tags:
 - c
 - rust

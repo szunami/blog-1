@@ -1,6 +1,5 @@
 ---
 title: Unless, Until
-date: 2018-03-01
 tags:
 - rust
 summary: >

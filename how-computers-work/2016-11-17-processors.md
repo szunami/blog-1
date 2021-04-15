@@ -1,6 +1,5 @@
 ---
 title: Processors
-date: 2016-11-17
 tags:
 - computers
 - electronics

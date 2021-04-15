@@ -1,6 +1,5 @@
 ---
 title: Convert Trait
-date: 2018-12-02
 tags:
 - rust
 summary: >

@@ -1,6 +1,5 @@
 ---
 title: Cargo Book
-date: 2018-03-26
 tags:
 - rust
 summary: >

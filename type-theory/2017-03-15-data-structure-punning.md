@@ -1,6 +1,5 @@
 ---
 title: Data Structure Punning
-date: 2017-03-15
 tags:
 - c
 - computers

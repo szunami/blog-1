@@ -1,6 +1,5 @@
 ---
 title: Data Types
-date: 2017-03-14
 tags:
 - computers
 - computing theory

@@ -1,6 +1,5 @@
 ---
 title: Bitfields in Rust
-date: 2019-11-22
 tags:
 - programming
 - rust

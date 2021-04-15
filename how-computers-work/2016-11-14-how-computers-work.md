@@ -1,6 +1,5 @@
 ---
 title: How Computers Work
-date: 2016-11-14
 tags:
 - computers
 - computing theory

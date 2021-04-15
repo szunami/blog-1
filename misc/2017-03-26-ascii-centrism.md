@@ -1,6 +1,5 @@
 ---
 title: ASCII-Centrism
-date: 2017-03-26
 tags:
 - computers
 - language

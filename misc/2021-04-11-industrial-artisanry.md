@@ -1,7 +1,6 @@
 ---
 title: Industrial Artisanry
 subtitle: Individual Craftwork in the Autofactory Era
-date: 2021-04-11
 tags:
 - craftwork
 - economy

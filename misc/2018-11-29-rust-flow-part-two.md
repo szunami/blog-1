@@ -1,6 +1,5 @@
 ---
 title: Rust Flow, Part Two
-date: 2018-11-29
 tags:
 - rust
 summary: >
