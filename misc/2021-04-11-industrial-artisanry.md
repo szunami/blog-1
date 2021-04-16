@@ -233,7 +233,11 @@ but is not an inherent requirement of the technology or the marketplace.
 There’s a great snippet of the movie *I, Robot* (2004) delivered by Will Smith’s
 character that’s stuck with me ever since I saw it:
 
+<div class="youtube">
+<div>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ROeaIv-5jwo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+</div>
 
 > I got an idea for one of your commercials. We can see a carpenter, making a
 > beautiful chair. And then one of your robots comes in, and makes a better

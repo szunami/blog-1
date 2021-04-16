@@ -107,7 +107,11 @@ $AMZN stock, $20.3bn, distributed proportionally.
 
 Pause. Watch this.
 
+<div class="youtube">
+<div>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/m81q-ZkfBm0?start=774" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+</div>
 
 If the embedded video doesn’t load, it’s PhilosophyTube’s video [*Jordan*
 *Peterson’s Ideology*][1]. The relevant part is 12:54–14:25, about the implicit
