@@ -11,7 +11,7 @@ summary: >
 > in 2020, many, ironically, shortly after publishing this. I will rewrite it
 > soon; in the meantime, it is still correct in the general case but
 > occasionally very wrong in the specifics.
-{:.bq-warn .iso7010 .w001}
+{:.bq-warn .iso7010 .w001 role="complementary"}
 
 Rust version: 1.36. `bitvec` version: 0.16.
 
@@ -101,7 +101,7 @@ as storage types: `u8`, `u16`, `u32`, and (only on 64-bit-word processors)
 `u64`. The `Word` type aliases to your local `usize`[^2].
 
 > Now it’s just `usize`.
-{:.bq-warn}
+{:.bq-warn role="complementary"}
 
 You may also notice that each of the three allocations uses a different first
 type parameter. The first type parameter is an implementation of the `Cursor`
@@ -403,12 +403,12 @@ ABI with `#[repr(C)]` and faithful transcription of the memory types.
 >
 > Which, now that I write it here, looks like it’s going on the to-do list. For
 > `0.17`.
-{:.bq-info}
+{:.bq-info role="complementary"}
 
 <!-- -->
 
 > I did.
-{:.bq-safe}
+{:.bq-safe role="complementary"}
 
 ## Summary
 

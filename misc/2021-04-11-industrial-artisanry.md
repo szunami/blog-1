@@ -96,7 +96,7 @@ this time focusing on a strict separation of content and presentation.
 > topic and suddenly inspiration struck”, and nothing else.
 >
 > Don’t save drafts. Publish or discard; you won’t be coming back to them.
-{:.bq-warn .iso7010 .w011}
+{:.bq-warn .iso7010 .w011 role="complementary"}
 
 Over the past three-ish weeks (initial commit was 2021-03-16), I built the
 application currently serving this out of the [Phoenix] framework in [Elixir].
@@ -206,7 +206,7 @@ roughly buyer-equivalent quality.
 > 1850 levels, and *that* is not morally permissible either. Population degrowth
 > is fine but the lead time and decline rate are not going to get us there
 > before the planet is inhospitable in 2150.
-{:.bq-harm .iso7010 .f005}
+{:.bq-harm .iso7010 .f005 role="complementary"}
 
 I have long believed that one of the overarching goals of human civilization is
 to decrease the amount of human labor expended on survival and allow an increase
@@ -219,7 +219,7 @@ in the market trend to migrate from luxury to commodity and then to necessity.
 > fourteen years, respectively; what was once a luxury reserved for academia or
 > the economic aristocracy has become a critical aspect of infrastructure and a
 > necessary tool to daily interaction.
-{:.bq-safe .iso7010 .e007}
+{:.bq-safe .iso7010 .e007 role="complementary"}
 
 So I firmly, though critically, support the concept of mass-market autofacture.
 It represents yet another step in the technological advancement of human

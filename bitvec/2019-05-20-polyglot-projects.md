@@ -10,7 +10,7 @@ summary: >
 ---
 
 > The GitHub links are dead.
-{:.bq-harm}
+{:.bq-harm role="complementary"}
 
 ## Introduction
 
@@ -804,7 +804,7 @@ linkage.
 > unwind/abort. In the future, signaling failure and mapping error codes to
 > local-language exceptions or other error propagation mechanisms would increase
 > native integration and reduce the brittleness of the library’s use.
-{:.bq-warn .iso7010 .w002}
+{:.bq-warn .iso7010 .w002 role="complementary"}
 
 ## Conclusion
 

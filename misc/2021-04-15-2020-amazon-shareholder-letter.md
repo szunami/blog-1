@@ -138,10 +138,9 @@ the section I want you to reread in full:
 > another $11 billion to include benefits and various payroll taxes, for a total
 > of $91 billion.
 
-I didn’t mark it with my bias this time. You can probably guess what it is. But
-in these paragraphs, what did Mr. Bezos *not* say? There are a lot of things he
-didn’t say. You’ve probably got an answer. I have one. You can probably guess
-what it is.
+I didn’t mark it with my bias this time. But in these paragraphs, what did Mr.
+Bezos *not* say? There are a lot of things he didn’t say. You’ve probably got an
+answer. I have one. You probably have a reasonable idea of what it is.
 
 ----
 

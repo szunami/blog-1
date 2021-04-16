@@ -35,7 +35,7 @@ of the scripting for which I couldn’t find solutions I liked.
 > Note from the future: the Middleman app slowly grew more and more brittle,
 > which slowed down my willingness to put up with it when writing new content.
 > I eventually scrapped it entirely in favor of a new implementation.
-{:.bq-safe}
+{:.bq-safe role="complementary"}
 
 I also host this on one of my own machines that I manage myself, including the
 actual operating system (Arch Linux is my preferred flavor), security, and DNS.
