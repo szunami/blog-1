@@ -345,3 +345,4 @@ detract from survival.
 [Phoenix]: https://www.phoenixframework.org/
 [Ruby]: https://ruby-lang.org/
 [Sass]: https://sass-lang.com/
+[oeuvre]: /oeuvre

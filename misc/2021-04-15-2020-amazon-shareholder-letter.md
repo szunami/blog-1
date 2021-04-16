@@ -3,6 +3,7 @@ title: 2020 Amazon Letter to Shareholders
 summary: >
   A critical (somewhat scathing, somewhat philosophical) review of the 2020
   Amazon letter to shareholders.
+published: false
 ---
 
 [Here is the 2020 Amazon letter to shareholders][0]. It is a public document,

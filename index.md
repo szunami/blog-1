@@ -1,12 +1,12 @@
 ---
-title: Insufficient Magic
+title: Insufficiently Magical
 summary: Alexander Payne’s writings.
 ---
 
-# Insufficient Magic
+# Insufficiently Magical
 
-> Any sufficiently advanced technology is indistinguishable from magic. Any
-> distinguishable technology, therefore, is insufficiently magical.
+> Any technology that does not translate our desires into effects cannot be
+> called magic.
 
 When I made this website, I had planned to write a lot more long-form text a lot
 more often. Unfortunately, it’s self-hosted, which is to say, more often broken

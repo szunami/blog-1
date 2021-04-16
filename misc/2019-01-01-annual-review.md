@@ -183,5 +183,5 @@ my mental health, and that will do much more for me than any list of individual
 entries. But those are some of the main demonstrable milestones I want to hit as
 a way of measuring improvement.
 
-[AHCA]: /blog/misc/ahca
+[AHCA]: /blog/personal/ahca
 [`bitvec`]: /crates/bitvec

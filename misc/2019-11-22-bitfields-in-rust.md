@@ -118,6 +118,7 @@ aliases to `LittleEndian` on little-endian byte-order architectures, and
 > table which I will not reproduce here to explain. I picked this behavior as a
 > convenience for people who look at core dumps of memory. Do not read more into
 > it than that!
+{:.bq-warn .iso7010 .w001 role="complementary"}
 
 Other languages restrict you from one and/or both of these options. This is
 unfortunate, because as it turns out, there is not a universal convention for

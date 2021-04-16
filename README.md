@@ -1,7 +1,4 @@
-# Insufficient Magic
-
-> Any sufficiently advanced technology is indistinguishable from magic. Any
-> distinguishable technology, therefore, is insufficiently magical.
+# Insufficiently Magical
 
 This is a collection of essays, monologues, and observations that makes up my
 idea of a blog. I am not committing to a topic or schedule at this time.

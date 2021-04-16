@@ -61,13 +61,14 @@ orthographic symbols.
 > <kbd><key>ALT</key> <key>+</key> <key>3</key> <key>0</key> <key>8</key></kbd>
 > (hold down <kbd><key>ALT</key></kbd> with your left hand, and type
 > <kbd><key>+</key><key>3</key><key>0</key><key>8</key></kbd> on the numpad with
-> your right. No numpad? Copy it from Wikipedia). On macOS, type your vowel and
-> then <kbd><key>Option</key>+<key>u</key></kbd>. And on Linux (GNOME and Qt
-> windows, at least),
+> your right. No numpad? Copy it from Wikipedia). On macOS,
+> <kbd><key>Option</key>+<key>u</key></kbd> and then your vowel. And on Linux
+> (GNOME and Qt windows, at least),
 > <kbd><key>Ctrl</key>+<key>Shift</key>+<key>U</key></kbd> followed by
 > <kbd>308 <key>Space</key></kbd>.
 >
 > Just long-press the letter on a phone keyboard.
+{:.bq-info role="complementary"}
 
 The advance of the emoji as a modern ideögraphic language is a case study in the
 human desire for disambiguäted glyphs and tolerance for a combinatorial
