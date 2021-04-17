@@ -6,7 +6,7 @@ tags:
 scripts:
 - ./2021-04-16-addressing-bits/randaddr.js
 summary: |
-  My [`bitvec`] project is composed of a very small handful of core engineerin
+  My [`bitvec`] project is composed of a very small handful of core engineering
   components without which the project fundamentally cannot exist. This article
   addresses the pointer encoding allowing it to interact with the language core
   libraries.
@@ -411,9 +411,16 @@ memory, and types that have an unknown size. There is a third family of types:
 those that don’t have any size at all. These are called Zero-Sized Types, or
 ZSTs for short.
 
-A ZST can be found at any address in the memory space. It has no width, so it
-has no alignment. Addresses cannot get narrower than a byte, so ZSTs can only
-be placed at the start of a byte, but any byte address will do.
+A ZST can be found at any address in the memory space. It has no width, and it
+<ins>generally</ins> has no alignment requirement. Addresses cannot get narrower
+than a byte, so ZSTs can only be placed at the start of a byte, but any
+<ins>aligned</ins> byte address will do.
+
+> ERRATUM: ZSTs can have alignment requirements attached to them externally. For
+> example, `[u64; 0]` has size 0 and alignment 8. Additionally, you can still
+> attach the `#[repr(align(BYTES))]` attribute to your own ZST struct
+> declarations. Thanks to [@lcnr] for the feedback.
+{:.bq-info .iso7010 .m011 role="complementary"}
 
 ZSTs have no width. If you put two ZST elements in a row, the first will be at
 some address `x`, and the second will be offset from that address by its width:
@@ -421,8 +428,10 @@ some address `x`, and the second will be offset from that address by its width:
 
 You can have infinitely (well, `!0`) many ZST elements in a row in memory,
 starting at any address you want, and the only constraint is that the address
-you choose must actually be available in your context. This means no
-kernel-space addresses, but that’s pretty much it.
+you choose must actually be available in your context. This probably means no
+kernel-space addresses, but that’s pretty much it. In particular, it does *not*
+disallow the zero page – Rust makes a great deal of use of addresses just above
+0 as sentinel values that are valid to have as pointers to empty regions.
 
 This even means, for instance, that you can have eight times too many ZST
 elements at an address.
@@ -584,6 +593,7 @@ from any of its competitors and to fulfill its goal of drop-in compatibility
 with existing code.
 
 [0]: /blog/bitvec/alias-detection
+[@lcnr]: https://twitter.com/lcnr
 [`BitOrder`]: https://docs.rs/bitvec/latest/bitvec/order/trait.BitOrder.html
 [`BitSlice`]: https://docs.rs/bitvec/latest/bitvec/slice/struct.BitSlice.html
 [`bitvec`]: /crates/bitvec
