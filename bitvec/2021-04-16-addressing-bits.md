@@ -111,7 +111,7 @@ Let’s ask for the address of a four-byte region.
 {:data-contents="pointer"}
 
 This address is required to be a multiple of four, ending in `0`, `4`, `8`, or
-`8`. Let’s finish by asking for the address of an eight-byte region:
+`c`. Let’s finish by asking for the address of an eight-byte region:
 
 ```text
 0x00_00_7f_ff_26_fb_ef_88
