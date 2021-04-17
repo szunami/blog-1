@@ -20,6 +20,16 @@ grammatical construction.
 
 ## Writing Style
 
+I strive to keep my writing correct to both the facts and the context in which I
+wrote it. I will generally mark technical writing with the relevant context
+(such as date or project version), and I will mark significant technical
+corrections explicitly, like this:
+
+~~Outdated or incorrect original~~ <ins>Updated or checked replacement</ins>
+
+I will make minor grammatical or stylistic changes silently. You can read the
+versioning history if you want to see diffs that badly 🙃.
+
 I will use marked call-out boxes, with colored backgrounds and frequently an
 icon, to indicate information that is related to the main text but is not part
 of the primary narrative. These are themed after industrial safety/hazard
